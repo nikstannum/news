@@ -1,0 +1,7 @@
+server:
+  port: 8079
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+  datacenter: localhost
