@@ -3,9 +3,9 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   application:
-    name: user-data-service
+    name: news-data-service
   datasource:
-    url: jdbc:postgresql://postgres:5432/news
+    url: jdbc:postgresql://localhost:5432/news
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root

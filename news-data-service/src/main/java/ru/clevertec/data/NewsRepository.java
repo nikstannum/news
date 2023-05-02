@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface NewsRepository extends JpaRepository<News, Long>, JpaSpecificationExecutor<News> {
 
-    Page<News> findByTitleContainsOrTextContains(String content, Pageable pageable);
+    Page<News> findByTitleOrTextContains(String titleKeyWord, String textKeyWord, Pageable pageable);
 }

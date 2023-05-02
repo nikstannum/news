@@ -5,7 +5,7 @@ spring:
   application:
     name: user-data-service
   datasource:
-    url: jdbc:postgresql://postgres:5432/users
+    url: jdbc:postgresql://localhost:5432/users
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
@@ -27,3 +27,4 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8079/eureka/
+

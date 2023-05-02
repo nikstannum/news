@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Objects;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class News {
     private Long userId;
 
     @Column(name = "title", nullable = false, columnDefinition = "varchar(150)")
+    @Size(max = 150, message = "Too long header of article. Max length should be 150 characters.")
     private String title;
 
     @Column(name = "text")
