@@ -5,12 +5,12 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import ru.clevertec.client.User;
+import ru.clevertec.service.dto.UserReadDto;
 
 @Component
 @Aspect
 @RequiredArgsConstructor
-public class CacheCheckingAdvice {
+public class CacheAdvice {
     private final Cache cache;
 
     @Around("@annotation(CacheGet)")
@@ -30,18 +30,16 @@ public class CacheCheckingAdvice {
     private Object post(ProceedingJoinPoint jp) throws Throwable {
         Object value = jp.proceed();
         Object target = jp.getTarget();
-        User user = (User) value;
+        UserReadDto user = (UserReadDto) value;
         cache.put(user.getId(), target, value);
         return value;
     }
 
     @Around("@annotation(CacheDelete)")
-    private boolean delete(ProceedingJoinPoint jp) throws Throwable {
+    private void delete(ProceedingJoinPoint jp) throws Throwable {
         Object target = jp.getTarget();
         Object id = jp.getArgs()[0];
-        if (jp.proceed().equals(true)) {
-            return cache.delete(id, target);
-        }
-        return false;
+        cache.delete(id, target);
+        jp.proceed();
     }
 }

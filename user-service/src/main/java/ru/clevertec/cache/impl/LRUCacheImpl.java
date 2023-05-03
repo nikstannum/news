@@ -38,14 +38,13 @@ public class LRUCacheImpl implements Cache {
     }
 
     @Override
-    public boolean delete(Object id, Object target) {
+    public Object delete(Object id, Object target) {
         if (contains(id, target)) {
             String compositeId = id + ":" + target;
             keyList.remove(compositeId);
-            map.remove(compositeId);
-            return true;
+            return map.remove(compositeId);
         }
-        return false;
+        return null;
     }
 
     @Override

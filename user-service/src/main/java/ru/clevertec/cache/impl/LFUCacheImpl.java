@@ -56,16 +56,15 @@ public class LFUCacheImpl implements Cache {
     }
 
     @Override
-    public boolean delete(Object id, Object target) {
+    public Object delete(Object id, Object target) {
         deleteUnusedLongTime(map, sortedMap);
         if (contains(id, target)) {
             String compositeId = id + ":" + target;
             Object obj = map.remove(compositeId);
             CacheElm cacheElm = (CacheElm) obj;
-            sortedMap.remove(cacheElm);
-            return true;
+            return sortedMap.remove(cacheElm);
         }
-        return false;
+        return null;
     }
 
     @Override

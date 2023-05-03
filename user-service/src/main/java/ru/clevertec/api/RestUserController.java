@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.exception.ValidationException;
+import ru.clevertec.logger.LogInvocation;
 import ru.clevertec.service.UserService;
 import ru.clevertec.service.dto.UserCreateUpdateDto;
 import ru.clevertec.service.dto.UserReadDto;
@@ -32,6 +33,7 @@ public class RestUserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @LogInvocation
     UserReadDto getById(@PathVariable Long id) {
         return userService.findById(id);
     }

@@ -29,6 +29,7 @@ import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.exception.ValidationException;
+import ru.clevertec.logger.LogInvocation;
 
 @RestController
 @RequestMapping("/api/users")
@@ -77,6 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @LogInvocation
     @ResponseStatus(HttpStatus.OK)
     public User findById(@PathVariable Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
