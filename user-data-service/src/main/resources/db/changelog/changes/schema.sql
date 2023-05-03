@@ -1,3 +1,7 @@
+-- liquibase formatted sql
+
+-- changeset create tables:add constraints
+
 CREATE TABLE IF NOT EXISTS roles (
 	role_id SERIAL PRIMARY KEY,
 	"name" VARCHAR (20) UNIQUE NOT NULL

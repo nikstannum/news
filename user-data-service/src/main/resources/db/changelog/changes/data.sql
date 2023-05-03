@@ -1,3 +1,7 @@
+-- liquibase formatted sql
+
+-- changeset fill tables:add data
+
 INSERT INTO roles ("name")
 VALUES ('ADMIN'),
 		('JOURNALIST'),
