@@ -24,7 +24,7 @@ public interface CommentDataServiceClient {
     @GetMapping("/api/comments/params")
     List<Comment> getByParams(@RequestParam("page") Integer page,
                               @RequestParam("size") Integer size,
-                              @SpringQueryMap QueryParamsComment queryParams); // FIXME see CommentController findByParams
+                              @SpringQueryMap QueryParamsComment queryParams);
 
     @PostMapping("/api/comments")
     ResponseEntity<Comment> create(@RequestBody Comment comment);

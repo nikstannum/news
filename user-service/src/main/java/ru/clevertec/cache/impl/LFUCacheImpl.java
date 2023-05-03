@@ -1,4 +1,4 @@
-package ru.clevertec.service.cache.impl;
+package ru.clevertec.cache.impl;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -10,8 +10,8 @@ import java.util.TreeMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import ru.clevertec.service.cache.Cache;
-import ru.clevertec.service.cache.CacheElm;
+import ru.clevertec.cache.Cache;
+import ru.clevertec.cache.CacheElm;
 
 @Component
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "LFU")

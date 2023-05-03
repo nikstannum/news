@@ -2,7 +2,7 @@ spring:
   application:
     name: user-service
   cache:
-    type: LFU
+    type: LRU
     size: 4
     time-clear: 600
 server:

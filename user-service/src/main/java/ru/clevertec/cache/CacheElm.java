@@ -1,4 +1,4 @@
-package ru.clevertec.service.cache;
+package ru.clevertec.cache;
 
 import java.time.LocalDateTime;
 import lombok.Getter;

@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -72,16 +71,11 @@ public class CommentController {
         return commentRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
     }
 
-    @ModelAttribute
-    QueryParams queryParams() {
-        return new QueryParams();
-    }
-
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
     public List<Comment> findByParams(@RequestParam Integer page,
                                       @RequestParam Integer size,
-                                      @ModelAttribute QueryParams queryParams) { // FIXME see CommentDataServiceClient getByParams
+                                      QueryParams queryParams) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         Specification<Comment> specification = specificationBuilder.getSpecificationSelectCommentByParams(queryParams);
         return commentRepository.findAll(specification, pageable).toList();

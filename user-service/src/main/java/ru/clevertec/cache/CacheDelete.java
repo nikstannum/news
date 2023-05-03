@@ -1,4 +1,4 @@
-package ru.clevertec.service.cache;
+package ru.clevertec.cache;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

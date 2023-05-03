@@ -86,7 +86,7 @@ public class NewsController {
     public List<News> findByParams(@RequestParam Integer page,
                                    @RequestParam Integer size,
                                    @RequestParam(value = "keyword", required = false) String keyWord,
-                                   @RequestBody(required = false) QueryParams params) { // FIXME see NewsDataServiceClient getByParams
+                                   QueryParams params) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         if (keyWord != null) {
             return newsRepository.findByTitleOrTextContains(keyWord, keyWord, pageable).toList();

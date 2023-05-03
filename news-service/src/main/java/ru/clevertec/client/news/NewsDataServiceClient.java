@@ -24,7 +24,7 @@ public interface NewsDataServiceClient {
     List<News> getByParams(@RequestParam("page") Integer page,
                            @RequestParam("size") Integer size,
                            @RequestParam(value = "keyword", required = false) String keyWord,
-                           @SpringQueryMap QueryParamsNews queryParams); // FIXME see NewsController findByParams
+                           @SpringQueryMap QueryParamsNews queryParams);
 
     @PostMapping("/api/news")
     ResponseEntity<News> create(@RequestBody News news);

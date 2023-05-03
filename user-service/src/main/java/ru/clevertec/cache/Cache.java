@@ -1,4 +1,4 @@
-package ru.clevertec.service.cache;
+package ru.clevertec.cache;
 
 public interface Cache {
     void put(Object id, Object target, Object value);

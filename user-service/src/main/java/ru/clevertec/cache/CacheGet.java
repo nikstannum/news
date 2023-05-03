@@ -1,4 +1,4 @@
-package ru.clevertec.service.cache;
+package ru.clevertec.cache;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,5 +9,5 @@ import org.springframework.stereotype.Component;
 @Component
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface CachePutPost {
+public @interface CacheGet {
 }
