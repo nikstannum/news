@@ -1,9 +1,18 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8091/auth
+          jwk-set-uri: http://localhost:8091/auth/certs
   application:
     name: user-service
   cache:
-    type: LFU
-    size: 4
-    time-clear: 600
+    type: NONE
 server:
   port: 8090
+jwt:
+  access:
+    secret: 39EhCCpO0YTlfETjF94nwOfa9Q5ls9nwQxy7yeI4ftAipRnyhWFwm
+  refresh:
+    secret: eijlSaysX8yEsJ4a2yVIdOQ6euYO99QQ3uT5hg4ILcZpAvgdJlF

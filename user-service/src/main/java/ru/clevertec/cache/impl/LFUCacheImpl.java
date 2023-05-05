@@ -14,14 +14,14 @@ import ru.clevertec.cache.Cache;
 import ru.clevertec.cache.CacheElm;
 
 @Component
-@ConditionalOnProperty(name = "spring.cache.type", havingValue = "LFU")
+@ConditionalOnProperty(name = "custom.cache.type", havingValue = "LFU")
 public class LFUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
     private final TreeMap<CacheElm, String> sortedMap;
-    @Value("${spring.cache.size}")
+    @Value("${custom.cache.size}")
     private int cacheSize;
-    @Value("${spring.cache.time-clear}")
+    @Value("${custom.cache.time-clear}")
     private Integer clearTime;
 
     public LFUCacheImpl() {

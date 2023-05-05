@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import ru.clevertec.client.news.News;
+import ru.clevertec.service.dto.NewsCreateUpdateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
 
@@ -16,4 +17,6 @@ public interface NewsMapper {
     @Mappings({@Mapping(source = "userId", target = "authorId"),
             @Mapping(source = "time", target = "createTime")})
     SimpleNewsReadDto toSimpleNewsReadDto(News news);
+
+    News toNews(NewsCreateUpdateDto newsCreateDto);
 }

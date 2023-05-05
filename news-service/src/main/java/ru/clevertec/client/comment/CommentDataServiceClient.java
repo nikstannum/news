@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.clevertec.service.dto.QueryParamsComment;
 
 @FeignClient(name = "comment-data-service", url = "http://localhost:8083")
 public interface CommentDataServiceClient {

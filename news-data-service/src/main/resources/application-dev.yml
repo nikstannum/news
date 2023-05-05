@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news
+    username: postgres
+    password: root
+  jpa:
+    show-sql: true
+  liquibase:
+    enabled: true
+    clear-checksums: true

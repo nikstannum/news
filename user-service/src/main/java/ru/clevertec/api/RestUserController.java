@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -34,12 +35,19 @@ public class RestUserController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @LogInvocation
+    @Cacheable(value = "User", key = "#id")
     UserReadDto getById(@PathVariable Long id) {
-        return userService.findById(id);
-    }
+//        String currentPrincipalEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserReadDto userReadDto = userService.findById(id);
+//        if (currentPrincipalEmail.equals(userReadDto.getEmail())) {
+            return userService.findById(id);
+        }
+//        throw new RuntimeException("SOMETHING WRONG"); // FIXME
+//    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAuthority('ADMIN')")
     List<UserReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
         return userService.findAll(page, size);
     }

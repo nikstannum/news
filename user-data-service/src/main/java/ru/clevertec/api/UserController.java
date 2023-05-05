@@ -44,6 +44,7 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> create(@RequestBody @Valid User user, Errors errors) {
@@ -76,6 +77,14 @@ public class UserController {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         return userRepository.findAll(pageable).toList();
     }
+
+    @PutMapping("/ids")
+    @ResponseStatus(HttpStatus.OK)
+    @LogInvocation
+    public List<User> findUsersByIds(@RequestBody List<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
 
     @GetMapping("/{id}")
     @LogInvocation

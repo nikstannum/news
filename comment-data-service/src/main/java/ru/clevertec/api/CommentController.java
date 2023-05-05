@@ -2,8 +2,9 @@ package ru.clevertec.api;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -25,7 +26,6 @@ import ru.clevertec.data.Comment;
 import ru.clevertec.data.CommentRepository;
 import ru.clevertec.data.util.QueryParams;
 import ru.clevertec.data.util.SpecificationBuilder;
-import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 
 @RestController
@@ -40,10 +40,14 @@ public class CommentController {
     private final SpecificationBuilder specificationBuilder;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Comment> create(@RequestBody Comment comment) {
-        Comment created = commentRepository.save(comment);
+        Comment created = createComment(comment);
         return buildResponseCreated(created);
+    }
+
+    @CachePut(value = "Comment", key = "#comment.id")
+    public Comment createComment(Comment comment) {
+        return commentRepository.save(comment);
     }
 
     private ResponseEntity<Comment> buildResponseCreated(Comment created) {
@@ -67,6 +71,7 @@ public class CommentController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(value = "Comment", key = "#id")
     public Comment findById(@PathVariable Long id) {
         return commentRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
     }
@@ -84,9 +89,7 @@ public class CommentController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Comment update(@PathVariable Long id, @RequestBody Comment comment) {
-        if (!Objects.equals(id, comment.getId())) {
-            throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
-        }
+        comment.setId(id);
         return commentRepository.save(comment);
     }
 

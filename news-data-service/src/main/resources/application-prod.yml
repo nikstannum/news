@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news_prod
+    username: postgres
+    password: root
+  jpa:
+    show-sql: false
+  liquibase:
+    enabled: false

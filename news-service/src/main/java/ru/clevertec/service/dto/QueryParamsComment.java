@@ -1,4 +1,4 @@
-package ru.clevertec.client.comment;
+package ru.clevertec.service.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

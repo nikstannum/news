@@ -1,0 +1,5 @@
+custom:
+  cache:
+    type: LRU
+    size: 1000
+    time-clear: 3600

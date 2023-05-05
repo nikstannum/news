@@ -2,6 +2,7 @@ package ru.clevertec.client;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -16,7 +17,15 @@ public class User {
     private String password;
     private UserRole role;
 
-    public enum UserRole {
-        ADMIN, JOURNALIST, SUBSCRIBER
+    @RequiredArgsConstructor
+    public enum UserRole /*implements GrantedAuthority*/ {
+        ADMIN("ADMIN"), JOURNALIST("JOURNALIST"), SUBSCRIBER("SUBSCRIBER");
+
+        private final String value;
+
+//        @Override
+//        public String getAuthority() {
+//            return value;
+//        }
     }
 }

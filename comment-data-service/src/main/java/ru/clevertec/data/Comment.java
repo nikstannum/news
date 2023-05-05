@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import org.hibernate.annotations.GenerationTime;
 @Setter
 @ToString
 @NoArgsConstructor
-public class Comment {
+public class Comment implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

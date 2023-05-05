@@ -21,9 +21,4 @@ public class UserCreateUpdateDto {
     private String email;
     @Size(min = 6, message = "Too short password.")
     private String password;
-    private UserCreateUpdateRoleDto role;
-
-    public enum UserCreateUpdateRoleDto {
-        ADMIN, JOURNALIST, SUBSCRIBER
-    }
 }

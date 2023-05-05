@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.User;
+import ru.clevertec.client.User.UserRole;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.service.UserService;
 import ru.clevertec.cache.CacheDelete;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     @CachePutPost
     public UserReadDto create(UserCreateUpdateDto dto) {
         User user = mapper.convert(dto);
+        user.setRole(UserRole.SUBSCRIBER); // FIXME если регистрирует админ - менять роль должен иметь возможность
         ResponseEntity<User> createdResponse = userClient.create(user);
         User createdUser = createdResponse.getBody();
         return mapper.convert(createdUser);
@@ -54,6 +56,7 @@ public class UserServiceImpl implements UserService {
     public UserReadDto update(Long id, UserCreateUpdateDto userCreateUpdateDto) {
         User user = mapper.convert(userCreateUpdateDto);
         user.setId(id);
+        user.setRole(UserRole.SUBSCRIBER); // FIXME если регистрирует админ - менять роль должен иметь возможность
         User updated = userClient.update(id, user);
         return mapper.convert(updated);
     }

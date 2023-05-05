@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 import ru.clevertec.cache.Cache;
 
 @Component
-@ConditionalOnProperty(name = "spring.cache.type", havingValue = "LRU")
+@ConditionalOnProperty(name = "custom.cache.type", havingValue = "LRU")
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
-    @Value("${spring.cache.size}")
+    @Value("${custom.cache.size}")
     private int size;
     private final LinkedList<String> keyList;
 
