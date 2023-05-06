@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.clevertec.exception.FeignErrorDecoder;
 
-@FeignClient(name = "user-data-service", url = "http://localhost:8081")
+@FeignClient(name = "user-data-service", url = "http://localhost:8081", configuration = FeignErrorDecoder.class)
 public interface UserDataServiceClient {
 
     @GetMapping("/api/users/{id}")
