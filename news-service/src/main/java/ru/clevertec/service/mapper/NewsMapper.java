@@ -3,7 +3,7 @@ package ru.clevertec.service.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import ru.clevertec.client.news.News;
+import ru.clevertec.client.entity.News;
 import ru.clevertec.service.dto.NewsCreateUpdateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;

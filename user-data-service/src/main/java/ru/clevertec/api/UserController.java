@@ -49,6 +49,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<User> create(@RequestBody @Valid User user, Errors errors) {
         checkErrors(errors);
+        Optional<User> existingOpt = userRepository.findUserByEmail(user.getEmail());
+        if (existingOpt.isPresent()) {
+            throw new SuchEntityExistsException(EXC_MSG_EMAIL_EXISTS + user.getEmail());
+        }
         User created = userRepository.save(user);
         return buildResponseCreated(created);
     }
@@ -80,14 +84,12 @@ public class UserController {
 
     @PutMapping("/ids")
     @ResponseStatus(HttpStatus.OK)
-    @LogInvocation
     public List<User> findUsersByIds(@RequestBody List<Long> ids) {
         return userRepository.findAllById(ids);
     }
 
 
     @GetMapping("/{id}")
-    @LogInvocation
     @ResponseStatus(HttpStatus.OK)
     public User findById(@PathVariable Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
@@ -110,7 +112,7 @@ public class UserController {
         if (existing.isEmpty() || existing.get().getId().equals(id)) {
             return userRepository.save(user);
         } else {
-            throw new SuchEntityExistsException(EXC_MSG_EMAIL_EXISTS + id);
+            throw new SuchEntityExistsException(EXC_MSG_EMAIL_EXISTS + user.getEmail());
         }
     }
 

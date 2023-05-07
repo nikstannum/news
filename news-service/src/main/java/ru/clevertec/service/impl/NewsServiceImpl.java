@@ -4,12 +4,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.clevertec.client.comment.Comment;
-import ru.clevertec.client.comment.CommentDataServiceClient;
-import ru.clevertec.client.news.News;
-import ru.clevertec.client.news.NewsDataServiceClient;
-import ru.clevertec.client.user.User;
-import ru.clevertec.client.user.UserDataServiceClient;
+import ru.clevertec.client.entity.Comment;
+import ru.clevertec.client.CommentDataServiceClient;
+import ru.clevertec.client.entity.News;
+import ru.clevertec.client.NewsDataServiceClient;
+import ru.clevertec.client.entity.User;
+import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.service.NewsService;
 import ru.clevertec.service.dto.AuthorReadDto;
 import ru.clevertec.service.dto.NewsCreateUpdateDto;
@@ -19,6 +19,9 @@ import ru.clevertec.service.dto.QueryParamsNews;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
 import ru.clevertec.service.mapper.AuthorMapper;
 import ru.clevertec.service.mapper.NewsMapper;
+import ru.clevertec.util.cache.CacheDelete;
+import ru.clevertec.util.cache.CacheGet;
+import ru.clevertec.util.cache.CachePutPost;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @CacheGet
     public NewsReadDto findById(Long id, Integer page, Integer size) {
         News news = newsClient.getById(id);
         NewsReadDto newsReadDto = newsMapper.toDto(news);
@@ -58,6 +62,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @CachePutPost
     public NewsReadDto create(NewsCreateUpdateDto newsCreateDto) {
         News news = newsMapper.toNews(newsCreateDto);
         ResponseEntity<News> createdEntity = newsClient.create(news);
@@ -70,13 +75,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public SimpleNewsReadDto update(Long id, NewsCreateUpdateDto newsCreateDto) {
+    @CachePutPost
+    public NewsReadDto update(Long id, NewsCreateUpdateDto newsCreateDto) {
         News news = newsMapper.toNews(newsCreateDto);
         News updated = newsClient.update(id, news);
-        return newsMapper.toSimpleNewsReadDto(updated);
+        return newsMapper.toDto(updated);
     }
 
     @Override
+    @CacheDelete
     public void delete(Long id) {
         newsClient.deleteById(id);
     }

@@ -17,7 +17,7 @@ import javax.crypto.SecretKey;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.clevertec.entity.User;
+import ru.clevertec.client.entity.User;
 
 @Component
 public class JwtProvider {

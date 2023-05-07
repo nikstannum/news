@@ -8,3 +8,5 @@ spring:
   liquibase:
     enabled: true
     clear-checksums: true
+    drop-first: true
+

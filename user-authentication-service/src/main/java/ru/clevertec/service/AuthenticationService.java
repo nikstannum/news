@@ -1,8 +1,8 @@
 package ru.clevertec.service;
 
 import lombok.NonNull;
-import ru.clevertec.entity.JwtToken;
-import ru.clevertec.entity.LoginDto;
+import ru.clevertec.security.token.JwtToken;
+import ru.clevertec.service.dto.LoginDto;
 
 public interface AuthenticationService {
     JwtToken login(@NonNull LoginDto loginDto);

@@ -98,7 +98,9 @@ public class NewsController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public News update(@PathVariable Long id, @RequestBody @Valid News news, Errors errors) {
-        news.setId(id);
+        if (!Objects.equals(id, news.getId())) {
+            throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
+        }
         checkErrors(errors);
         return newsRepository.save(news);
     }

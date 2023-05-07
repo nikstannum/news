@@ -7,8 +7,8 @@
 //import lombok.Setter;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.GrantedAuthority;
-//import ru.clevertec.client.User;
-//import ru.clevertec.client.User.UserRole;
+//import ru.clevertec.client.entity.User;
+//import ru.clevertec.client.entity.User.UserRole;
 //
 //@Getter
 //@Setter

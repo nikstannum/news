@@ -1,5 +1,7 @@
 jwt:
   access:
-    expiration: 5
+    secret:
+    expiration:
   refresh:
-    expiration: 30
+    secret:
+    expiration:

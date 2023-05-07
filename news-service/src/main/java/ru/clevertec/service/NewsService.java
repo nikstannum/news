@@ -16,7 +16,7 @@ public interface NewsService {
 
     NewsReadDto create(NewsCreateUpdateDto news);
 
-    SimpleNewsReadDto update(Long id, NewsCreateUpdateDto news);
+    NewsReadDto update(Long id, NewsCreateUpdateDto news);
 
     void delete(Long id);
 }

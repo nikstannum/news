@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.UserDataServiceClient;
-import ru.clevertec.entity.JwtToken;
-import ru.clevertec.entity.LoginDto;
-import ru.clevertec.entity.User;
-import ru.clevertec.exception.AuthenticationException;
+import ru.clevertec.security.token.JwtToken;
+import ru.clevertec.service.dto.LoginDto;
+import ru.clevertec.client.entity.User;
+import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.AuthenticationService;
 import ru.clevertec.service.JwtProvider;
 

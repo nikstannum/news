@@ -3,7 +3,7 @@
 //import io.jsonwebtoken.Claims;
 //import lombok.AccessLevel;
 //import lombok.NoArgsConstructor;
-//import ru.clevertec.client.User.UserRole;
+//import ru.clevertec.client.entity.User.UserRole;
 //import ru.clevertec.security.JwtAuthentication;
 //
 //@NoArgsConstructor(access = AccessLevel.PRIVATE)

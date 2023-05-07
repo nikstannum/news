@@ -14,17 +14,17 @@ import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.exception.ValidationException;
-import ru.clevertec.service.dto.ErrorDto;
-import ru.clevertec.service.dto.ValidationResultDto;
+import ru.clevertec.exception.error.ErrorDto;
+import ru.clevertec.exception.error.ValidationResultDto;
 
-@RestControllerAdvice
+@RestControllerAdvice("ru.clevertec")
 public class RestExceptionAdvice {
     private static final String MSG_SERVER_ERROR = "Server error";
     private static final String MSG_CLIENT_ERROR = "Client error";
     private static final String DEFAULT_MSG = "Unknown error";
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto error(NotFoundException e) {
         //        log.error(e); // FIXME
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());

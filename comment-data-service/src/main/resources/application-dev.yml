@@ -7,4 +7,5 @@ spring:
     show-sql: true
   liquibase:
     enabled: true
+    drop-first: true
     clear-checksums: true

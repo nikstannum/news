@@ -1,0 +1,12 @@
+jwt:
+  access:
+    secret:
+    expiration:
+  refresh:
+    secret:
+    expiration:
+custom:
+  cache:
+    type: LRU
+    size: 1000
+    time-clear: 3600

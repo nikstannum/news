@@ -3,3 +3,10 @@ custom:
     type: LRU
     size: 1000
     time-clear: 3600
+jwt:
+  access:
+    secret:
+    expiration:
+  refresh:
+    secret:
+    expiration:

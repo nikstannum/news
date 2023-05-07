@@ -3,3 +3,10 @@ custom:
     type: LRU
     size: 4
     time-clear: 60
+jwt:
+  access:
+    secret: 39EhCCpO0YTlfETjF94nwOfa9Q5ls9nwQxy7yeI4ftAipRnyhWFwm
+    expiration: 22000
+  refresh:
+    secret: eijlSaysX8yEsJ4a2yVIdOQ6euYO99QQ3uT5hg4ILcZpAvgdJlF
+    expiration: 22000

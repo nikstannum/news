@@ -3,6 +3,7 @@ package ru.clevertec.data.converter;
 import jakarta.persistence.AttributeConverter;
 import org.springframework.stereotype.Component;
 import ru.clevertec.data.User.UserRole;
+import ru.clevertec.logger.LogInvocation;
 
 import static ru.clevertec.data.User.UserRole.ADMIN;
 import static ru.clevertec.data.User.UserRole.JOURNALIST;
@@ -11,6 +12,7 @@ import static ru.clevertec.data.User.UserRole.SUBSCRIBER;
 @Component
 public class UserRoleConverter implements AttributeConverter<UserRole, Integer> {
     @Override
+    @LogInvocation
     public Integer convertToDatabaseColumn(UserRole attribute) {
         switch (attribute) {
             case ADMIN -> {
@@ -27,6 +29,7 @@ public class UserRoleConverter implements AttributeConverter<UserRole, Integer> 
     }
 
     @Override
+    @LogInvocation
     public UserRole convertToEntityAttribute(Integer dbData) {
         switch (dbData) {
             case 1 -> {
