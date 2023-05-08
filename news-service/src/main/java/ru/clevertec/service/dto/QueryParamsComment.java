@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class QueryParamsComment {
     private Long news_id;
     private Long user_id;

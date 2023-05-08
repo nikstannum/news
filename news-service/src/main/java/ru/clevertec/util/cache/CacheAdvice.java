@@ -6,8 +6,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import ru.clevertec.service.dto.CommentReadDto;
-import ru.clevertec.service.dto.NewsReadDto;
+import ru.clevertec.service.dto.ClientCommentReadDto;
+import ru.clevertec.service.dto.ClientNewsReadDto;
 
 @Component
 @Aspect
@@ -35,12 +35,12 @@ public class CacheAdvice {
         String simpleClassName = value.getClass().getSimpleName();
         Object target = jp.getTarget();
         switch (simpleClassName) {
-            case "NewsReadDto" -> {
-                NewsReadDto newsReadDto = (NewsReadDto) value;
+            case "ClientNewsReadDto" -> {
+                ClientNewsReadDto newsReadDto = (ClientNewsReadDto) value;
                 cache.put(newsReadDto.getId(), target, value);
             }
-            case "CommentReadDto" -> {
-                CommentReadDto commentReadDto = (CommentReadDto) value;
+            case "ClientCommentReadDto" -> {
+                ClientCommentReadDto commentReadDto = (ClientCommentReadDto) value;
                 cache.put(commentReadDto.getId(), target, value);
             }
         }

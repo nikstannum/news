@@ -1,7 +1,5 @@
 package ru.clevertec.util.cache;
 
-import ru.clevertec.util.logger.LogInvocation;
-
 public interface Cache {
     void put(Object id, Object target, Object value);
 

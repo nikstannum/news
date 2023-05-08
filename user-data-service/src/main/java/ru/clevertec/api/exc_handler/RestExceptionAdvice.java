@@ -26,28 +26,24 @@ public class RestExceptionAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto error(NotFoundException e) {
-        //        log.error(e); // FIXME
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto error(BadRequestException e) {
-        //        log.error(e); // FIXME
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorDto error(SuchEntityExistsException e) {
-        //        log.error(e); // FIXME
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ValidationResultDto error(ValidationException e) {
-//        log.error(e); // FIXME
         Map<String, List<String>> errors = mapErrors(e.getErrors());
         return new ValidationResultDto(errors);
     }
@@ -61,14 +57,12 @@ public class RestExceptionAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto error(AppUserDataServiceException e) {
-        //        log.error(e); // FIXME
         return new ErrorDto(MSG_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto error(Exception e) {
-        //        log.error(e); // FIXME
         return new ErrorDto(MSG_SERVER_ERROR, DEFAULT_MSG);
     }
 }

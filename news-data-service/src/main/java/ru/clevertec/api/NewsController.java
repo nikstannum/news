@@ -5,10 +5,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -23,30 +19,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.clevertec.data.News;
-import ru.clevertec.data.NewsRepository;
-import ru.clevertec.data.util.QueryParams;
-import ru.clevertec.data.util.SpecificationBuilder;
+import ru.clevertec.data.util.NewsQueryParams;
+import ru.clevertec.dto.NewsCreateDto;
+import ru.clevertec.dto.NewsReadDto;
+import ru.clevertec.dto.NewsUpdateDto;
+import ru.clevertec.dto.SimpleNewsReadDto;
 import ru.clevertec.exception.BadRequestException;
-import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.ValidationException;
+import ru.clevertec.service.NewsService;
 
 @RestController
 @RequestMapping("/api/news")
 @RequiredArgsConstructor
 public class NewsController {
 
-    public static final String EXC_MSG_NOT_FOUND_BY_ID = "wasn't found news with id = ";
-    public static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
-    public static final String ATTRIBUTE_ID = "id";
-    private final NewsRepository newsRepository;
-    private final SpecificationBuilder specificationBuilder;
+    private static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
+
+    private final NewsService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<News> create(@RequestBody @Valid News news, Errors errors) {
+    public ResponseEntity<NewsReadDto> create(@RequestBody @Valid NewsCreateDto news, Errors errors) {
         checkErrors(errors);
-        News created = newsRepository.save(news);
+        NewsReadDto created = service.create(news);
         return buildResponseCreated(created);
     }
 
@@ -56,13 +51,13 @@ public class NewsController {
         }
     }
 
-    private ResponseEntity<News> buildResponseCreated(News created) {
+    private ResponseEntity<NewsReadDto> buildResponseCreated(NewsReadDto created) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(getLocation(created))
                 .body(created);
     }
 
-    private URI getLocation(News created) {
+    private URI getLocation(NewsReadDto created) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path("api/news/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
@@ -70,44 +65,39 @@ public class NewsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<News> findAll(@RequestParam Integer page, @RequestParam Integer size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
-        return newsRepository.findAll(pageable).toList();
+    public List<SimpleNewsReadDto> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+        return service.findAll(page, size);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public News findById(@PathVariable Long id) {
-        return newsRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
+    public NewsReadDto findById(@PathVariable Long id, @RequestParam Integer page, @RequestParam Integer size) {
+        return service.findById(id, page, size);
     }
+
 
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public List<News> findByParams(@RequestParam Integer page,
-                                   @RequestParam Integer size,
-                                   @RequestParam(value = "keyword", required = false) String keyWord,
-                                   QueryParams params) {
-        Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
-        if (keyWord != null) {
-            return newsRepository.findByTitleOrTextContains(keyWord, keyWord, pageable).toList();
-        }
-        Specification<News> specification = specificationBuilder.getSpecificationSelectNewsByParams(params);
-        return newsRepository.findAll(specification, pageable).toList();
+    public List<SimpleNewsReadDto> findByParams(@RequestParam Integer page,
+                                                @RequestParam Integer size,
+                                                @RequestParam(value = "keyword", required = false) String keyWord,
+                                                NewsQueryParams params) {
+        return service.findByParams(page, size, keyWord, params);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public News update(@PathVariable Long id, @RequestBody @Valid News news, Errors errors) {
+    public NewsReadDto update(@PathVariable Long id, @RequestBody @Valid NewsUpdateDto news, Errors errors) {
         if (!Objects.equals(id, news.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
         }
         checkErrors(errors);
-        return newsRepository.save(news);
+        return service.update(news);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        newsRepository.deleteById(id);
+        service.deleteById(id);
     }
 }

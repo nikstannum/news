@@ -11,29 +11,60 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.clevertec.client.entity.News;
+import ru.clevertec.client.dto.CommentCreateDto;
+import ru.clevertec.client.dto.CommentReadDto;
+import ru.clevertec.client.dto.CommentUpdateDto;
+import ru.clevertec.client.dto.NewsCreateDto;
+import ru.clevertec.client.dto.NewsReadDto;
+import ru.clevertec.client.dto.NewsUpdateDto;
+import ru.clevertec.client.dto.SimpleNewsReadDto;
+import ru.clevertec.service.dto.QueryParamsComment;
 import ru.clevertec.service.dto.QueryParamsNews;
 
 @FeignClient(name = "news-data-service", url = "http://localhost:8082")
 public interface NewsDataServiceClient {
+    // news
     @GetMapping("/api/news")
-    List<News> getAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
+    List<SimpleNewsReadDto> getAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
     @GetMapping("/api/news/{id}")
-    News getById(@PathVariable("id") Long id);
+    NewsReadDto getById(@PathVariable("id") Long id, @RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
     @GetMapping("/api/news/params")
-    List<News> getByParams(@RequestParam("page") Integer page,
-                           @RequestParam("size") Integer size,
-                           @RequestParam(value = "keyword", required = false) String keyWord,
-                           @SpringQueryMap QueryParamsNews queryParams);
+    List<SimpleNewsReadDto> getByParams(@RequestParam("page") Integer page,
+                                        @RequestParam("size") Integer size,
+                                        @RequestParam(value = "keyword", required = false) String keyWord,
+                                        @SpringQueryMap QueryParamsNews queryParams);
 
     @PostMapping("/api/news")
-    ResponseEntity<News> create(@RequestBody News news);
+    ResponseEntity<NewsReadDto> create(@RequestBody NewsCreateDto news);
 
     @PutMapping("/api/news/{id}")
-    News update(@PathVariable("id") Long id, @RequestBody News news);
+    NewsReadDto update(@PathVariable("id") Long id, @RequestBody NewsUpdateDto news);
 
     @DeleteMapping("/api/news/{id}")
     void deleteById(@PathVariable("id") Long id);
+
+
+    // comments
+    @GetMapping("/api/comments")
+    List<CommentReadDto> getAllComments(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
+
+    @GetMapping("/api/comments/{id}")
+    CommentReadDto getCommentById(@PathVariable("id") Long id);
+
+    @GetMapping("/api/comments/params")
+    List<CommentReadDto> getCommentByParams(@RequestParam("page") Integer page,
+                                            @RequestParam("size") Integer size,
+                                            @SpringQueryMap QueryParamsComment queryParams);
+
+    @PostMapping("/api/comments")
+    ResponseEntity<CommentReadDto> createComment(@RequestBody CommentCreateDto comment);
+
+    @PutMapping("/api/comments/{id}")
+    CommentReadDto updateComment(@PathVariable("id") Long id, @RequestBody CommentUpdateDto comment);
+
+    @DeleteMapping("/api/comments/{id}")
+    void deleteCommentById(@PathVariable("id") Long id);
+
 }

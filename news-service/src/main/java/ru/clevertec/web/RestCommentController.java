@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.clevertec.service.dto.ClientCommentCreateDto;
+import ru.clevertec.service.dto.ClientCommentReadDto;
+import ru.clevertec.service.dto.ClientCommentUpdateDto;
+import ru.clevertec.service.dto.SimpleClientCommentReadDto;
 import ru.clevertec.service.exception.ValidationException;
 import ru.clevertec.service.CommentService;
-import ru.clevertec.service.dto.CommentCreateUpdateDto;
-import ru.clevertec.service.dto.CommentReadDto;
 import ru.clevertec.service.dto.QueryParamsComment;
 
 @RestController
@@ -32,19 +34,19 @@ public class RestCommentController {
     private final CommentService service;
 
     @PostMapping
-    public ResponseEntity<CommentReadDto> create(@RequestBody @Valid CommentCreateUpdateDto comment, Errors errors) {
+    public ResponseEntity<ClientCommentReadDto> create(@RequestBody @Valid ClientCommentCreateDto comment, Errors errors) {
         checkErrors(errors);
-        CommentReadDto created = service.create(comment);
+        ClientCommentReadDto created = service.create(comment);
         return buildResponseCreated(created);
     }
 
-    private ResponseEntity<CommentReadDto> buildResponseCreated(CommentReadDto created) {
+    private ResponseEntity<ClientCommentReadDto> buildResponseCreated(ClientCommentReadDto created) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(getLocation(created))
                 .body(created);
     }
 
-    private URI getLocation(CommentReadDto created) {
+    private URI getLocation(ClientCommentReadDto created) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path("/v1/comments/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
@@ -59,34 +61,34 @@ public class RestCommentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    CommentReadDto update(@PathVariable Long id, @RequestBody @Valid CommentCreateUpdateDto commentCreateDto, Errors errors) {
+    ClientCommentReadDto update(@PathVariable Long id, @RequestBody @Valid ClientCommentUpdateDto commentUpdateDto, Errors errors) {
         checkErrors(errors);
-        return service.update(id, commentCreateDto);
+        return service.update(id, commentUpdateDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long id) {
+    public void delete(@PathVariable Long id) {
         service.delete(id);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
+    public List<SimpleClientCommentReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
         return service.findAll(page, size);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentReadDto getById(@PathVariable Long id) {
+    public ClientCommentReadDto getById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentReadDto> getByParams(@RequestParam Integer page,
-                                            @RequestParam Integer size,
-                                            @RequestBody QueryParamsComment queryParamsComment) {
+    public List<SimpleClientCommentReadDto> getByParams(@RequestParam Integer page,
+                                                  @RequestParam Integer size,
+                                                  @RequestBody QueryParamsComment queryParamsComment) {
         return service.findByParams(page, size, queryParamsComment);
     }
 

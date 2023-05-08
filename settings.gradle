@@ -1,5 +1,4 @@
 rootProject.name = 'news'
-include 'comment-data-service'
 include 'news-data-service'
 include 'user-data-service'
 include 'news-service'

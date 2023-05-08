@@ -1,20 +1,22 @@
 package ru.clevertec.service;
 
 import java.util.List;
-import ru.clevertec.service.dto.CommentCreateUpdateDto;
-import ru.clevertec.service.dto.CommentReadDto;
+import ru.clevertec.service.dto.ClientCommentCreateDto;
+import ru.clevertec.service.dto.ClientCommentReadDto;
+import ru.clevertec.service.dto.ClientCommentUpdateDto;
 import ru.clevertec.service.dto.QueryParamsComment;
+import ru.clevertec.service.dto.SimpleClientCommentReadDto;
 
 public interface CommentService {
-    CommentReadDto create(CommentCreateUpdateDto commentCreateDto);
+    ClientCommentReadDto create(ClientCommentCreateDto clientCommentCreateDto);
 
-    CommentReadDto update(Long id, CommentCreateUpdateDto commentCreateDto);
+    ClientCommentReadDto update(Long id, ClientCommentUpdateDto clientCommentUpdateDto);
 
-    void delete(long id);
+    void delete(Long id);
 
-    List<CommentReadDto> findAll(Integer page, Integer size);
+    List<SimpleClientCommentReadDto> findAll(Integer page, Integer size);
 
-    CommentReadDto findById(Long id);
+    ClientCommentReadDto findById(Long id);
 
-    List<CommentReadDto> findByParams(Integer page, Integer size, QueryParamsComment queryParamsComment);
+    List<SimpleClientCommentReadDto> findByParams(Integer page, Integer size, QueryParamsComment queryParamsComment);
 }

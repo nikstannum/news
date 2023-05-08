@@ -88,7 +88,7 @@ public class Logger {
         }
     }
 
-    @Pointcut("execution(ru.clevertec.web..*)")
+    @Pointcut("within(ru.clevertec.web..*) && !within(ru.clevertec.web.exc_handler..*)")
     public void request() {
     }
 
@@ -103,7 +103,7 @@ public class Logger {
                 ", with args " + Arrays.toString(jp.getArgs()));
     }
 
-    @Pointcut("execution(ru.clevertec.web..*)")
+    @Pointcut("within(ru.clevertec.web..*) && !within(ru.clevertec.web.exc_handler..*)")
     public void response() {
     }
 
@@ -125,12 +125,10 @@ public class Logger {
 
     /**
      * логирование перехваченных исключений в RestExceptionAdvice. Поинткат определен в excAdvice()
-     * @param jp // FIXME
-     * @param // FIXME
      */
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {
         Exception e = (Exception) jp.getArgs()[0];
-        log.error(Arrays.toString(e.getStackTrace()));
+        log.error(String.valueOf(e));
     }
 }

@@ -1,6 +1,8 @@
 package ru.clevertec.client.entity;
 
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,4 +16,5 @@ public class News {
     private String title;
     private String text;
     private Instant time;
+    private List<Comment> comments;
 }

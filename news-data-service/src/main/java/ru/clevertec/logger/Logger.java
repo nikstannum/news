@@ -21,7 +21,7 @@ public class Logger {
 
     }
 
-    @Pointcut("within(ru.clevertec.api.NewsController)")
+    @Pointcut("within(ru.clevertec.api..*) && !within(ru.clevertec.api.exc_handler.RestExceptionAdvice)")
     public void request() {
     }
 
@@ -37,7 +37,7 @@ public class Logger {
                 ", with args " + Arrays.toString(jp.getArgs()));
     }
 
-    @Pointcut("within(ru.clevertec.api.NewsController)")
+    @Pointcut("within(ru.clevertec.api..*) && !within(ru.clevertec.api.exc_handler..*)")
     public void response() {
     }
 
@@ -61,8 +61,6 @@ public class Logger {
     /**
      * логирование перехваченных исключений в RestExceptionAdvice. Поинткат определен в excAdvice()
      *
-     * @param jp // FIXME
-     * @param // FIXME
      */
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {

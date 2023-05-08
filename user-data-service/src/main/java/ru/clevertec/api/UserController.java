@@ -29,7 +29,6 @@ import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.exception.ValidationException;
-import ru.clevertec.logger.LogInvocation;
 
 @RestController
 @RequestMapping("/api/users")

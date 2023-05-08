@@ -3,20 +3,27 @@ package ru.clevertec.service.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import ru.clevertec.client.dto.NewsCreateDto;
+import ru.clevertec.client.dto.NewsReadDto;
+import ru.clevertec.client.dto.NewsUpdateDto;
+import ru.clevertec.client.dto.SimpleNewsReadDto;
 import ru.clevertec.client.entity.News;
-import ru.clevertec.service.dto.NewsCreateUpdateDto;
-import ru.clevertec.service.dto.NewsReadDto;
-import ru.clevertec.service.dto.SimpleNewsReadDto;
+import ru.clevertec.service.dto.ClientNewsCreateDto;
+import ru.clevertec.service.dto.ClientNewsReadDto;
+import ru.clevertec.service.dto.ClientNewsUpdateDto;
+import ru.clevertec.service.dto.ClientSimpleNewsReadDto;
 
 @Mapper
 public interface NewsMapper {
 
-    @Mapping(source = "time", target = "createTime")
-    NewsReadDto toDto(News news);
+    News toNews(SimpleNewsReadDto simpleNewsReadDto);
 
-    @Mappings({@Mapping(source = "userId", target = "authorId"),
-            @Mapping(source = "time", target = "createTime")})
-    SimpleNewsReadDto toSimpleNewsReadDto(News news);
+    ClientSimpleNewsReadDto toClientNewsReadDto(News news);
 
-    News toNews(NewsCreateUpdateDto newsCreateDto);
+    NewsCreateDto toNewsCreateDto (ClientNewsCreateDto clientNewsCreateDto);
+
+    ClientNewsReadDto toClientNewsReadDto(NewsReadDto newsReadDto);
+
+    NewsUpdateDto toNewsUpdateDto(ClientNewsUpdateDto clientNewsUpdateDto);
+
 }

@@ -7,10 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class Comment {
     private Long id;
-    private Long newsId;
     private Long userId;
     private String text;
     private Instant createTime;

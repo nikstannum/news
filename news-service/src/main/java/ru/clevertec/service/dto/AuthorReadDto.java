@@ -6,9 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class AuthorReadDto {
-    private String email;
     private String firstName;
     private String lastName;
 }

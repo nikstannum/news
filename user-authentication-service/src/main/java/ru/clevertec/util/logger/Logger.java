@@ -125,8 +125,6 @@ public class Logger {
 
     /**
      * логирование перехваченных исключений в RestExceptionAdvice. Поинткат определен в excAdvice()
-     * @param jp // FIXME
-     * @param // FIXME
      */
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {

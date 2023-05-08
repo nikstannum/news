@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  postgres-users:
+    image: 'postgres:14-alpine'
+    container_name: 'users-postgres'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=users
+    volumes:
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+  postgres-news:
+    image: 'postgres:14-alpine'
+    container_name: 'news-postgres'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=news
+    volumes:
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+  postgres-comments:
+    image: 'postgres:14-alpine'
+    container_name: 'comments-postgres'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=comments
+    volumes:
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5434:5432"
+  eureka-server:
+    build: ./eureka-server
+    container_name: 'eureka-server'
+    ports:
+      - 8079:8079
+  user-data-service:
+    build: ./user-data-service
+    container_name: 'user-data-service'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/users
+    ports:
+      - 8081:8081
+    depends_on:
+      - postgres-users
+  user-service:
+    build: ./user-service
+    container_name: 'user-service'
+    ports:
+      - 8090:8090
+  user-auth-service:
+    build: ./user-authentication-service
+    container_name: 'user-auth-service'
+    ports:
+      - 8091:8091
+  news-data-service:
+    build: ./news-data-service
+    container_name: 'news-data-service'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/news
+    ports:
+      - 8082:8082
+    depends_on:
+      - postgres-news
+  comments-data-service:
+    build: ./comment-data-service
+    container_name: 'comments-data-service'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/comments
+    ports:
+      - 8083:8083
+    depends_on:
+      - postgres-comments

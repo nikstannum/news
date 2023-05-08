@@ -1,22 +1,23 @@
 package ru.clevertec.service;
 
 import java.util.List;
-import ru.clevertec.service.dto.NewsCreateUpdateDto;
-import ru.clevertec.service.dto.NewsReadDto;
+import ru.clevertec.service.dto.ClientNewsCreateDto;
+import ru.clevertec.service.dto.ClientNewsReadDto;
+import ru.clevertec.service.dto.ClientNewsUpdateDto;
+import ru.clevertec.service.dto.ClientSimpleNewsReadDto;
 import ru.clevertec.service.dto.QueryParamsNews;
-import ru.clevertec.service.dto.SimpleNewsReadDto;
 
 public interface NewsService {
 
-    NewsReadDto findById(Long id, Integer page, Integer size);
+    ClientNewsReadDto findById(Long id, Integer page, Integer size);
 
-    List<SimpleNewsReadDto> findAll(Integer page, Integer size);
+    List<ClientSimpleNewsReadDto> findAll(Integer page, Integer size);
 
-    List<SimpleNewsReadDto> findByParams(Integer page, Integer size, String keyWord, QueryParamsNews params);
+    List<ClientSimpleNewsReadDto> findByParams(Integer page, Integer size, String keyWord, QueryParamsNews params);
 
-    NewsReadDto create(NewsCreateUpdateDto news);
+    ClientNewsReadDto create(ClientNewsCreateDto news);
 
-    NewsReadDto update(Long id, NewsCreateUpdateDto news);
+    ClientNewsReadDto update(Long id, ClientNewsUpdateDto news);
 
     void delete(Long id);
 }

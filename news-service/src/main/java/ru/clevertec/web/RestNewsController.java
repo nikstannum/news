@@ -22,10 +22,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.service.NewsService;
-import ru.clevertec.service.dto.NewsCreateUpdateDto;
-import ru.clevertec.service.dto.NewsReadDto;
+import ru.clevertec.service.dto.ClientNewsCreateDto;
+import ru.clevertec.service.dto.ClientNewsReadDto;
+import ru.clevertec.service.dto.ClientNewsUpdateDto;
+import ru.clevertec.service.dto.ClientSimpleNewsReadDto;
 import ru.clevertec.service.dto.QueryParamsNews;
-import ru.clevertec.service.dto.SimpleNewsReadDto;
 import ru.clevertec.service.exception.ValidationException;
 
 @RestController
@@ -37,45 +38,45 @@ public class RestNewsController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<SimpleNewsReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
+    public List<ClientSimpleNewsReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
         return newsService.findAll(page, size);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Cacheable(value = "News", key = "#id")
-    public NewsReadDto getById(@PathVariable Long id,
-                               @RequestParam(required = false) Integer page,
-                               @RequestParam(required = false) Integer size) {
+    public ClientNewsReadDto getById(@PathVariable Long id,
+                                     @RequestParam(required = false) Integer page,
+                                     @RequestParam(required = false) Integer size) {
         return newsService.findById(id, page, size);
     }
 
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public List<SimpleNewsReadDto> getByParams(@RequestParam Integer page,
-                                               @RequestParam Integer size,
-                                               @RequestParam(value = "keyword", required = false) String keyWord,
-                                               @RequestBody QueryParamsNews params) {
+    public List<ClientSimpleNewsReadDto> getByParams(@RequestParam Integer page,
+                                                     @RequestParam Integer size,
+                                                     @RequestParam(value = "keyword", required = false) String keyWord,
+                                                     @RequestBody QueryParamsNews params) {
         return newsService.findByParams(page, size, keyWord, params);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @CachePut(value = "News", key = "#id")
-    public NewsReadDto update(@PathVariable Long id, @RequestBody @Valid NewsCreateUpdateDto news, Errors errors) {
+    public ClientNewsReadDto update(@PathVariable Long id, @RequestBody @Valid ClientNewsUpdateDto news, Errors errors) {
         checkErrors(errors);
         return newsService.update(id, news);
     }
 
     @PostMapping
-    public ResponseEntity<NewsReadDto> create(@RequestBody @Valid NewsCreateUpdateDto news, Errors errors) {
+    public ResponseEntity<ClientNewsReadDto> create(@RequestBody @Valid ClientNewsCreateDto news, Errors errors) {
         checkErrors(errors);
-        NewsReadDto created = process(news);
+        ClientNewsReadDto created = process(news);
         return buildResponseCreated(created);
     }
 
     @CachePut(value = "News", key = "#id")
-    private NewsReadDto process(NewsCreateUpdateDto dto) {
+    private ClientNewsReadDto process(ClientNewsCreateDto dto) {
         return newsService.create(dto);
     }
 
@@ -85,13 +86,13 @@ public class RestNewsController {
         }
     }
 
-    private ResponseEntity<NewsReadDto> buildResponseCreated(NewsReadDto created) {
+    private ResponseEntity<ClientNewsReadDto> buildResponseCreated(ClientNewsReadDto created) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(getLocation(created))
                 .body(created);
     }
 
-    private URI getLocation(NewsReadDto created) {
+    private URI getLocation(ClientNewsReadDto created) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path("/v1/news/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();

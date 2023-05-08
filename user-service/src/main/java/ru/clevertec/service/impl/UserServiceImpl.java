@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @LogInvocation
     public UserReadDto create(UserCreateUpdateDto dto) {
         User user = mapper.convert(dto);
-        user.setRole(UserRole.SUBSCRIBER); // FIXME если регистрирует админ - менять роль должен иметь возможность
+        user.setRole(UserRole.SUBSCRIBER); // FIXME устанавливать роль должен уметь только АДМИН
         ResponseEntity<User> createdResponse = userClient.create(user);
         User createdUser = createdResponse.getBody();
         return mapper.convert(createdUser);

@@ -76,7 +76,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
     private String extractJsonError(Response response) throws IOException {
         Reader reader = null;
-        String result = "";
+        String result;
         try {
             reader = response.body().asReader(StandardCharsets.UTF_8);
             result = IOUtils.toString(reader);
