@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.ClientUserReadDto;
 
 @Component
 @Aspect
@@ -32,7 +32,7 @@ public class CacheAdvice {
     private Object post(ProceedingJoinPoint jp) throws Throwable {
         Object value = jp.proceed();
         Object target = jp.getTarget();
-        UserReadDto user = (UserReadDto) value;
+        ClientUserReadDto user = (ClientUserReadDto) value;
         cache.put(user.getId(), target, value);
         return value;
     }

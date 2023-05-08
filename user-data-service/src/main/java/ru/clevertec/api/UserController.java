@@ -4,11 +4,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -23,36 +19,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.clevertec.data.User;
-import ru.clevertec.data.UserRepository;
+import ru.clevertec.api.dto.UserCreateDto;
+import ru.clevertec.api.dto.UserReadDto;
+import ru.clevertec.api.dto.UserSecureDto;
+import ru.clevertec.api.dto.UserUpdateDto;
 import ru.clevertec.exception.BadRequestException;
-import ru.clevertec.exception.NotFoundException;
-import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.exception.ValidationException;
+import ru.clevertec.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
-    public static final String EXC_MSG_NOT_FOUND_BY_ID = "wasn't found user with id = ";
-    public static final String EXC_MSG_NOT_FOUND_BY_EMAIL = "wasn't found user with email ";
-    public static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
-    public static final String ATTRIBUTE_ID = "id";
-    public static final String EXC_MSG_EMAIL_EXISTS = "Already exists user with email ";
+    private static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
 
-    private final UserRepository userRepository;
-
+    private final UserService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> create(@RequestBody @Valid User user, Errors errors) {
+    public ResponseEntity<UserReadDto> create(@RequestBody @Valid UserCreateDto user, Errors errors) {
         checkErrors(errors);
-        Optional<User> existingOpt = userRepository.findUserByEmail(user.getEmail());
-        if (existingOpt.isPresent()) {
-            throw new SuchEntityExistsException(EXC_MSG_EMAIL_EXISTS + user.getEmail());
-        }
-        User created = userRepository.save(user);
+        UserReadDto created = service.create(user);
         return buildResponseCreated(created);
     }
 
@@ -62,13 +50,13 @@ public class UserController {
         }
     }
 
-    private ResponseEntity<User> buildResponseCreated(User created) {
+    private ResponseEntity<UserReadDto> buildResponseCreated(UserReadDto created) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(getLocation(created))
                 .body(created);
     }
 
-    private URI getLocation(User created) {
+    private URI getLocation(UserReadDto created) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path("api/users/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
@@ -76,48 +64,47 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<User> findAll(@RequestParam Integer page, @RequestParam Integer size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
-        return userRepository.findAll(pageable).toList();
+    public List<UserReadDto> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+        return service.findAll(page, size);
     }
 
     @PutMapping("/ids")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> findUsersByIds(@RequestBody List<Long> ids) {
-        return userRepository.findAllById(ids);
+    public List<UserReadDto> findUsersByIds(@RequestBody List<Long> ids) {
+        return service.findUsersByIds(ids);
     }
-
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User findById(@PathVariable Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
+    public UserReadDto findById(@PathVariable Long id) {
+        return service.findById(id);
     }
 
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public User findByEmail(@RequestParam String email) {
-        return userRepository.findUserByEmail(email).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_EMAIL + email));
+    public UserReadDto findByEmail(@RequestParam String email) {
+        return service.findByEmail(email);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User update(@PathVariable Long id, @RequestBody @Valid User user, Errors errors) {
-        if (!Objects.equals(id, user.getId())) {
+    public UserReadDto update(@PathVariable Long id, @RequestBody @Valid UserUpdateDto userUpdateDto, Errors errors) {
+        if (!Objects.equals(id, userUpdateDto.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
         }
         checkErrors(errors);
-        Optional<User> existing = userRepository.findUserByEmail(user.getEmail());
-        if (existing.isEmpty() || existing.get().getId().equals(id)) {
-            return userRepository.save(user);
-        } else {
-            throw new SuchEntityExistsException(EXC_MSG_EMAIL_EXISTS + user.getEmail());
-        }
+        return service.update(userUpdateDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        userRepository.deleteById(id);
+        service.deleteById(id);
+    }
+
+    @PostMapping("/secure")
+    @ResponseStatus(HttpStatus.OK)
+    public UserSecureDto findUser(@RequestParam String email) {
+        return service.findUser(email);
     }
 }

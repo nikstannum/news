@@ -2,9 +2,9 @@ package ru.clevertec.service;
 
 import java.util.List;
 import ru.clevertec.data.util.QueryCommentParams;
-import ru.clevertec.dto.CommentCreateDto;
-import ru.clevertec.dto.CommentReadDto;
-import ru.clevertec.dto.CommentUpdateDto;
+import ru.clevertec.service.dto.CommentCreateDto;
+import ru.clevertec.service.dto.CommentReadDto;
+import ru.clevertec.service.dto.CommentUpdateDto;
 
 public interface CommentService {
     CommentReadDto create(CommentCreateDto comment);

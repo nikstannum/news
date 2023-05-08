@@ -17,11 +17,17 @@ import javax.crypto.SecretKey;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.clevertec.client.entity.User;
+import ru.clevertec.service.dto.UserDto;
+import ru.clevertec.service.exception.AuthenticationException;
 
 @Component
 public class JwtProvider {
 
+    public static final String EXC_MSG_TOKEN_EXPIRED = "Token expired";
+    public static final String EXC_MSG_UNSUPPORTED_TOKEN = "Unsupported token";
+    public static final String EXC_MSG_MALFORMED_TOKEN = "Malformed token";
+    public static final String EXC_MSG_INVALID_SIGNATURE = "Invalid signature";
+    public static final String EXC_MSG_INVALID_TOKEN = "Invalid token";
     @Value("${jwt.access.expiration}")
     private int accessExpiration;
     @Value("${jwt.refresh.expiration}")
@@ -36,7 +42,7 @@ public class JwtProvider {
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
     }
 
-    public String generateAccessToken(@NonNull User user) {
+    public String generateAccessToken(@NonNull UserDto user) {
         final LocalDateTime now = LocalDateTime.now();
         final Instant accessExpirationInstant = now.plusMinutes(accessExpiration).atZone(ZoneId.systemDefault()).toInstant();
         final Date accessExpiration = Date.from(accessExpirationInstant);
@@ -48,7 +54,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(@NonNull User user) {
+    public String generateRefreshToken(@NonNull UserDto user) {
         final LocalDateTime now = LocalDateTime.now();
         final Instant refreshExpirationInstant = now.plusDays(refreshExpiration).atZone(ZoneId.systemDefault()).toInstant();
         final Date refreshExpiration = Date.from(refreshExpirationInstant);
@@ -70,23 +76,17 @@ public class JwtProvider {
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException expEx) { // FIXME logging
-//            log.error("Token expired", expEx);
-            expEx.printStackTrace();
+        } catch (ExpiredJwtException expEx) {
+            throw new AuthenticationException(EXC_MSG_TOKEN_EXPIRED);
         } catch (UnsupportedJwtException unsEx) {
-//            log.error("Unsupported jwt", unsEx);
-            unsEx.printStackTrace();
+            throw new AuthenticationException(EXC_MSG_UNSUPPORTED_TOKEN);
         } catch (MalformedJwtException mjEx) {
-//            log.error("Malformed jwt", mjEx);
-            mjEx.printStackTrace();
+            throw new AuthenticationException(EXC_MSG_MALFORMED_TOKEN);
         } catch (SignatureException sEx) {
-//            log.error("Invalid signature", sEx);
-            sEx.printStackTrace();
+            throw new AuthenticationException(EXC_MSG_INVALID_SIGNATURE);
         } catch (Exception e) {
-//            log.error("invalid token", e);
-            e.printStackTrace();
+            throw new AuthenticationException(EXC_MSG_INVALID_TOKEN);
         }
-        return false;
     }
 
     public Claims getRefreshClaims(@NonNull String token) {

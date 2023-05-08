@@ -1,4 +1,4 @@
-package ru.clevertec.util.logger;
+package ru.clevertec.loger;
 
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class Logger {
     }
 
     /**
-     * логирование ошибок во всем приложении
+     * логирование брошенных ошибок в FeignErrorDecoder
      * @param e
      */
     @AfterThrowing(pointcut = "@annotation(LogInvocation) && within(ru.clevertec.client.FeignErrorDecoder)", throwing = "e")
@@ -36,59 +36,8 @@ public class Logger {
     }
 
 
-    @Pointcut("execution(* ru.clevertec..Cache.take(..))")
-    public void takeFromCache() {
-    }
 
-    /**
-     * логирование факта получения объекта из кэша. Поинткат определен в takeFromCache().
-     * @param returnValue
-     */
-    @AfterReturning(value = "takeFromCache()", returning = "returnValue")
-    private void loggingTakeFromCache(Object returnValue) {
-        if (returnValue != null) {
-            log.info("taken from cache " + returnValue);
-        } else {
-            log.error("cache returned null value");
-        }
-    }
-
-    @Pointcut("execution(* ru.clevertec..Cache.put(..))")
-    public void putIntoCache() {
-    }
-
-    /**
-     * логирование факта помещения объекта в кэш. Поинткат определен в putIntoCache()
-     * @param jp
-     */
-    @AfterReturning(value = "putIntoCache()")
-    private void loggingPutInCache(JoinPoint jp) {
-        Object value = jp.getArgs()[2];
-        if (value != null) {
-            log.info("put in cache " + value);
-        } else {
-            log.error("cache set to null");
-        }
-    }
-
-    @Pointcut("execution(* ru.clevertec..Cache.delete(..))")
-    public void deleteFromCache() {
-    }
-
-    /**
-     * логирование факта удаления объекта из кэша. Поинткат определен в deleteFromCache()
-     * @param returnValue
-     */
-    @AfterReturning(value = "deleteFromCache()", returning = "returnValue")
-    private void loggingDeleteFromCache(Object returnValue) {
-        if (returnValue != null) {
-            log.info("delete from cache " + returnValue);
-        } else {
-            log.error("the cache contained a null value");
-        }
-    }
-
-    @Pointcut("within(ru.clevertec.web.RestUserController)")
+    @Pointcut("within(ru.clevertec.web.AuthenticationController)")
     public void request() {
     }
 
@@ -103,7 +52,7 @@ public class Logger {
                 ", with args " + Arrays.toString(jp.getArgs()));
     }
 
-    @Pointcut("within(ru.clevertec.web.RestUserController)")
+    @Pointcut("within(ru.clevertec.web.AuthenticationController)")
     public void response() {
     }
 
@@ -129,6 +78,6 @@ public class Logger {
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {
         Exception e = (Exception) jp.getArgs()[0];
-        log.error(Arrays.toString(e.getStackTrace()));
+        log.error(String.valueOf(e));
     }
 }

@@ -1,4 +1,4 @@
-package ru.clevertec.security.token;
+package ru.clevertec.service.token;
 
 import lombok.Getter;
 import lombok.Setter;

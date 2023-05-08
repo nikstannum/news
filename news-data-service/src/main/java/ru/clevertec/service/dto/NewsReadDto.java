@@ -1,4 +1,4 @@
-package ru.clevertec.dto;
+package ru.clevertec.service.dto;
 
 import java.time.Instant;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ru.clevertec.util.logger;
+package ru.clevertec.loger;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

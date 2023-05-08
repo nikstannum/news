@@ -2,9 +2,9 @@ package ru.clevertec.service.mapper;
 
 import org.mapstruct.Mapper;
 import ru.clevertec.data.entity.Comment;
-import ru.clevertec.dto.CommentCreateDto;
-import ru.clevertec.dto.CommentReadDto;
-import ru.clevertec.dto.CommentUpdateDto;
+import ru.clevertec.service.dto.CommentCreateDto;
+import ru.clevertec.service.dto.CommentReadDto;
+import ru.clevertec.service.dto.CommentUpdateDto;
 
 @Mapper
 public interface CommentMapper {

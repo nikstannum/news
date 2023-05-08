@@ -1,8 +1,10 @@
 package ru.clevertec.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -22,53 +24,71 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.service.UserService;
-import ru.clevertec.service.dto.UserCreateUpdateDto;
-import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.ClientUserCreateDto;
+import ru.clevertec.service.dto.ClientUserReadDto;
+import ru.clevertec.service.dto.ClientUserUpdateDto;
+import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.ValidationException;
 
+@Tag(name = "User", description = "User management APIs")
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class RestUserController {
 
+    private static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
+
     private final UserService userService;
+
+//    @GetMapping("/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    @Cacheable(value = "User", key = "#id")
+//    public ClientUserReadDto getById(@PathVariable Long id) {
+////        String currentPrincipalEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        ClientUserReadDto userReadDto = userService.findById(id);
+////        if (currentPrincipalEmail.equals(userReadDto.getEmail())) {
+//        return userService.findById(id);
+//    }
+////        throw new RuntimeException("SOMETHING WRONG"); // FIXME
+////    }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Cacheable(value = "User", key = "#id")
-    public UserReadDto getById(@PathVariable Long id) {
-//        String currentPrincipalEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserReadDto userReadDto = userService.findById(id);
-//        if (currentPrincipalEmail.equals(userReadDto.getEmail())) {
+    public ClientUserReadDto getById(@PathVariable Long id) {
         return userService.findById(id);
     }
-//        throw new RuntimeException("SOMETHING WRONG"); // FIXME
+
+//    @GetMapping
+//    @ResponseStatus(HttpStatus.OK)
+////    @LogInvocation
+////    @PreAuthorize("hasAuthority('ADMIN')")
+//    public List<ClientUserReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
+//        return userService.findAll(page, size);
 //    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-//    @LogInvocation
-//    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<UserReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
+    public List<ClientUserReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
         return userService.findAll(page, size);
     }
 
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public UserReadDto getByEmail(@RequestParam String email) {
+    public ClientUserReadDto getByEmail(@RequestParam String email) {
         return userService.findByEmail(email);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Valid UserCreateUpdateDto dto, Errors errors) {
+    public ResponseEntity<ClientUserReadDto> create(@RequestBody @Valid ClientUserCreateDto dto, Errors errors) {
         checkErrors(errors);
-        UserReadDto created = processCreate(dto);
+        ClientUserReadDto created = processCreate(dto);
         return buildResponseCreated(created);
     }
 
     @CachePut(value = "User", key = "#id")
-    private UserReadDto processCreate(UserCreateUpdateDto dto) {
+    private ClientUserReadDto processCreate(ClientUserCreateDto dto) {
         return userService.create(dto);
     }
 
@@ -78,13 +98,13 @@ public class RestUserController {
         }
     }
 
-    private ResponseEntity<UserReadDto> buildResponseCreated(UserReadDto created) {
+    private ResponseEntity<ClientUserReadDto> buildResponseCreated(ClientUserReadDto created) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .location(getLocation(created))
                 .body(created);
     }
 
-    private URI getLocation(UserReadDto created) {
+    private URI getLocation(ClientUserReadDto created) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path("v1/users/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
@@ -93,9 +113,12 @@ public class RestUserController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @CachePut(value = "User", key = "#id")
-    public UserReadDto update(@PathVariable Long id, @RequestBody @Valid UserCreateUpdateDto user, Errors errors) {
+    public ClientUserReadDto update(@PathVariable Long id, @RequestBody @Valid ClientUserUpdateDto user, Errors errors) {
+        if (!Objects.equals(id, user.getId())) {
+            throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
+        }
         checkErrors(errors);
-        return userService.update(id, user);
+        return userService.update(user);
     }
 
     @DeleteMapping("/{id}")

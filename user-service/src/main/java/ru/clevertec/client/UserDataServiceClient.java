@@ -10,25 +10,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.clevertec.client.dto.UserCreateDto;
+import ru.clevertec.client.dto.UserReadDto;
+import ru.clevertec.client.dto.UserUpdateDto;
 import ru.clevertec.client.entity.User;
+import ru.clevertec.service.dto.ClientUserReadDto;
 
 @FeignClient(name = "user-data-service", url = "http://localhost:8081", configuration = FeignErrorDecoder.class)
 public interface UserDataServiceClient {
 
     @GetMapping("/api/users/{id}")
-    User getById(@PathVariable("id") Long id);
+    UserReadDto getById(@PathVariable("id") Long id);
 
     @GetMapping("/api/users")
-    List<User> getAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
+    List<UserReadDto> getAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
     @GetMapping("/api/users/params")
-    User getByEmail(@RequestParam("email") String email);
+    UserReadDto getByEmail(@RequestParam("email") String email);
 
     @PostMapping("/api/users")
-    ResponseEntity<User> create(@RequestBody User user);
+    ResponseEntity<UserReadDto> create(@RequestBody UserCreateDto user);
 
     @PutMapping("/api/users/{id}")
-    User update(@PathVariable("id") Long id, @RequestBody User user);
+    UserReadDto update(@PathVariable("id") Long id, @RequestBody UserUpdateDto user);
 
     @DeleteMapping("/api/users/{id}")
     void deleteById(@PathVariable("id") Long id);

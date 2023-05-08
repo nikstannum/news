@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.clevertec.exception.AppUserDataServiceException;
 import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
+import ru.clevertec.exception.SecurityException;
 import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.exception.ValidationException;
 import ru.clevertec.exception.error.ErrorDto;
@@ -52,6 +53,12 @@ public class RestExceptionAdvice {
         return rawErrors.getFieldErrors().stream().collect(Collectors.groupingBy(
                 FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage,
                         Collectors.toList())));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorDto error(SecurityException e){
+        return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
     @ExceptionHandler

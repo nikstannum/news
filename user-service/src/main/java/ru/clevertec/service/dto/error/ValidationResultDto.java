@@ -1,4 +1,4 @@
-package ru.clevertec.service.dto;
+package ru.clevertec.service.dto.error;
 
 import java.util.List;
 import java.util.Map;

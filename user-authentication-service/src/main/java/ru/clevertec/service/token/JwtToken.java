@@ -1,4 +1,4 @@
-package ru.clevertec.security.token;
+package ru.clevertec.service.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

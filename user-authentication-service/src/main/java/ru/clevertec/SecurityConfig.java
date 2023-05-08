@@ -1,4 +1,4 @@
-package ru.clevertec.security;
+package ru.clevertec;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +18,7 @@ public class SecurityConfig {
         return httpSecurity
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic().disable()
+                .formLogin().disable()
                 .csrf().disable()
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/v1/security/login", "/v1/security/token").permitAll()

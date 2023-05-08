@@ -2,10 +2,10 @@ package ru.clevertec.service;
 
 import java.util.List;
 import ru.clevertec.data.util.NewsQueryParams;
-import ru.clevertec.dto.NewsCreateDto;
-import ru.clevertec.dto.NewsReadDto;
-import ru.clevertec.dto.NewsUpdateDto;
-import ru.clevertec.dto.SimpleNewsReadDto;
+import ru.clevertec.service.dto.NewsCreateDto;
+import ru.clevertec.service.dto.NewsReadDto;
+import ru.clevertec.service.dto.NewsUpdateDto;
+import ru.clevertec.service.dto.SimpleNewsReadDto;
 
 public interface NewsService  {
     NewsReadDto create(NewsCreateDto news);

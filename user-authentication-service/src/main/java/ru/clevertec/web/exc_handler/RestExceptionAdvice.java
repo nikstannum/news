@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.clevertec.service.dto.ErrorDto;
 import ru.clevertec.service.dto.ValidationResultDto;
 import ru.clevertec.service.exception.AppUserAuthServiceException;
+import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
 
@@ -26,6 +27,12 @@ public class RestExceptionAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto error(NotFoundException e) {
+        return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto error(AuthenticationException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 

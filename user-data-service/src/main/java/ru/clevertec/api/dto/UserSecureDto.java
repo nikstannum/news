@@ -1,17 +1,16 @@
-package ru.clevertec.client.entity;
+package ru.clevertec.api.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import ru.clevertec.data.User.UserRole;
 
-@Data
-public class User {
+@Getter
+@Setter
+public class UserSecureDto {
     private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private UserRole role;
-
-    public enum UserRole {
-        ADMIN, JOURNALIST, SUBSCRIBER
-    }
 }

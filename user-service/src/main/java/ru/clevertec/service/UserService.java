@@ -1,21 +1,21 @@
 package ru.clevertec.service;
 
 import java.util.List;
-import ru.clevertec.service.dto.UserCreateUpdateDto;
-import ru.clevertec.service.dto.UserReadDto;
-import ru.clevertec.util.logger.LogInvocation;
+import ru.clevertec.service.dto.ClientUserCreateDto;
+import ru.clevertec.service.dto.ClientUserReadDto;
+import ru.clevertec.service.dto.ClientUserUpdateDto;
 
 public interface UserService {
 
-    UserReadDto findById(Long id);
+    ClientUserReadDto findById(Long id);
 
-    List<UserReadDto> findAll(Integer page, Integer size);
+    List<ClientUserReadDto> findAll(Integer page, Integer size);
 
-    UserReadDto findByEmail(String email);
+    ClientUserReadDto findByEmail(String email);
 
-    UserReadDto create(UserCreateUpdateDto dto);
+    ClientUserReadDto create(ClientUserCreateDto dto);
 
-    UserReadDto update(Long id, UserCreateUpdateDto user);
+    ClientUserReadDto update(ClientUserUpdateDto user);
 
     void delete(Long id);
 }

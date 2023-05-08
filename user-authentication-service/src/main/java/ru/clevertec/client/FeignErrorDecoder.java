@@ -12,17 +12,22 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import ru.clevertec.service.dto.ErrorDto;
 import ru.clevertec.service.dto.ValidationResultDto;
+import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
-import ru.clevertec.util.logger.LogInvocation;
+import ru.clevertec.loger.LogInvocation;
 
 @Component
 @RequiredArgsConstructor
 public class FeignErrorDecoder implements ErrorDecoder {
 
+    private static final String EXC_MSG_INVALID_LOGIN_OR_PASSWORD = "Invalid login or password";
+    private static final String MSG_INVALID_LOGIN = "Invalid login";
     private final ObjectMapper objectMapper;
 
     @Override
@@ -38,6 +43,9 @@ public class FeignErrorDecoder implements ErrorDecoder {
         String message = extractMessageErrorDto(error);
         switch (response.status()) {
             case 404 -> {
+                if (MSG_INVALID_LOGIN.equals(message)) {
+                    return new AuthenticationException(EXC_MSG_INVALID_LOGIN_OR_PASSWORD);
+                }
                 return new NotFoundException(message);
             }
             case 422 -> {

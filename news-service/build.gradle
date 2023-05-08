@@ -18,17 +18,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'redis.clients:jedis:4.3.2'
     implementation 'commons-io:commons-io:2.11.0'
-
-    implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-    testImplementation 'org.mapstruct:mapstruct:1.5.3.Final'
-    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
-    compileJava {
-        options.compilerArgs = [
-                '-Amapstruct.defaultComponentModel=spring'
-        ]
-    }
 }
 
 test {
