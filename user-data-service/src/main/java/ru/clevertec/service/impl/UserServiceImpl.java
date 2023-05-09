@@ -79,6 +79,9 @@ public class UserServiceImpl implements UserService {
         if (existing.isPresent() && !existing.get().getId().equals(userUpdateDto.getId())) {
             throw new SuchEntityExistsException(EXC_MSG_EMAIL_EXISTS + userUpdateDto.getEmail());
         }
+        if (!userRepository.existsById(userUpdateDto.getId())) {
+            throw new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + userUpdateDto.getId());
+        }
         User user = userMapper.toUser(userUpdateDto);
         User updated = userRepository.save(user);
         return userMapper.toUserReadDto(updated);

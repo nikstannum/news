@@ -4,14 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import ru.clevertec.service.dto.ClientUserReadDto;
 
-@Component
 @Aspect
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "spring.cache.type", havingValue = "NONE")
 public class CacheAdvice {
     private final Cache cache;
 

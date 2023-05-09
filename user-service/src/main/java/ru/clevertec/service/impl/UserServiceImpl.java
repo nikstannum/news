@@ -2,6 +2,9 @@ package ru.clevertec.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.UserDataServiceClient;
@@ -9,7 +12,6 @@ import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
 import ru.clevertec.client.dto.UserUpdateDto;
 import ru.clevertec.client.entity.User;
-import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.service.UserService;
 import ru.clevertec.service.dto.ClientUserCreateDto;
 import ru.clevertec.service.dto.ClientUserReadDto;
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheGet
+    @Cacheable(value = "user")
     @LogInvocation
     public ClientUserReadDto findById(Long id) {
         UserReadDto userReadDto = userClient.getById(id);
@@ -58,6 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CachePutPost
+    @CachePut(value = "user", key = "#result.id")
     @LogInvocation
     public ClientUserReadDto create(ClientUserCreateDto dto) {
         User user = mapper.toUser(dto);
@@ -69,6 +73,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CachePutPost
+    @CachePut(value = "user", key = "#clientUserUpdateDto.id")
     @LogInvocation
     public ClientUserReadDto update(ClientUserUpdateDto clientUserUpdateDto) { // FIXME роль меняет только АДМИН
         UserUpdateDto user = mapper.toUserUpdateDto(clientUserUpdateDto);
@@ -78,6 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheDelete
+    @CacheEvict(value = "user", key = "#id")
     @LogInvocation
     public void delete(Long id) {
         userClient.deleteById(id);

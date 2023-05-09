@@ -26,7 +26,7 @@ public class JwtValidator {
 
     private final SecretKey jwtAccessSecret;
 
-    public JwtValidator(@Value("${jwt.access.secret}") String jwtAccessSecret) {
+    public JwtValidator(@Value("${app.jwt.access.secret}") String jwtAccessSecret) {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
     }
 

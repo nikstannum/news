@@ -5,9 +5,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +38,6 @@ public class RestUserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "User", key = "#id")
     @PreAuthorize("hasAuthority('ADMIN') or  (#id == authentication.details)")
     public ClientUserReadDto getById(@PathVariable Long id) {
         return userService.findById(id);
@@ -65,13 +61,8 @@ public class RestUserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ClientUserReadDto> create(@RequestBody @Valid ClientUserCreateDto dto, Errors errors) {
         checkErrors(errors);
-        ClientUserReadDto created = processCreate(dto);
+        ClientUserReadDto created = userService.create(dto);
         return buildResponseCreated(created);
-    }
-
-    @CachePut(value = "User", key = "#id")
-    private ClientUserReadDto processCreate(ClientUserCreateDto dto) {
-        return userService.create(dto);
     }
 
     private void checkErrors(Errors errors) {
@@ -94,7 +85,6 @@ public class RestUserController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value = "User", key = "#id")
     @PreAuthorize("hasAuthority('ADMIN') or " +
             "(#id == authentication.details and #user.role == authentication.role)")
     public ClientUserReadDto update(@PathVariable Long id, @RequestBody @Valid ClientUserUpdateDto user, Errors errors) {
@@ -107,7 +97,6 @@ public class RestUserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value = "User", key = "#id")
     @PreAuthorize("hasAuthority('ADMIN') or (#id == authentication.details)")
     public void delete(@PathVariable Long id) {
         userService.delete(id);

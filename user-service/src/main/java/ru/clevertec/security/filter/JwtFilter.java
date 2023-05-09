@@ -21,6 +21,7 @@ import ru.clevertec.security.utils.JwtAuthenticationGenerator;
 public class JwtFilter extends GenericFilterBean {
 
     private static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER_ = "Bearer ";
 
     private final JwtValidator validator;
 
@@ -38,7 +39,7 @@ public class JwtFilter extends GenericFilterBean {
 
     private String getTokenFromRequest(HttpServletRequest request) {
         final String bearer = request.getHeader(AUTHORIZATION);
-        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
+        if (StringUtils.hasText(bearer) && bearer.startsWith(BEARER_)) {
             return bearer.substring(7);
         }
         return null;
