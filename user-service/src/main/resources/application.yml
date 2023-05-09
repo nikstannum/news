@@ -8,10 +8,11 @@ spring:
   application:
     name: user-service
   cache:
-    type: NONE
+    type: redis
     redis:
       cache-null-values: false
-      time-to-live: 3600
+      time-to-live: 60
+
 server:
   port: 8090
 jwt:

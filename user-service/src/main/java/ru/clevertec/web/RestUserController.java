@@ -1,6 +1,5 @@
 package ru.clevertec.web;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +30,6 @@ import ru.clevertec.service.dto.ClientUserUpdateDto;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.ValidationException;
 
-@Tag(name = "User", description = "User management APIs")
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
@@ -40,41 +39,24 @@ public class RestUserController {
 
     private final UserService userService;
 
-//    @GetMapping("/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    @Cacheable(value = "User", key = "#id")
-//    public ClientUserReadDto getById(@PathVariable Long id) {
-////        String currentPrincipalEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        ClientUserReadDto userReadDto = userService.findById(id);
-////        if (currentPrincipalEmail.equals(userReadDto.getEmail())) {
-//        return userService.findById(id);
-//    }
-////        throw new RuntimeException("SOMETHING WRONG"); // FIXME
-////    }
-
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Cacheable(value = "User", key = "#id")
+    @PreAuthorize("hasAuthority('ADMIN') or  (#id == authentication.details)")
     public ClientUserReadDto getById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-////    @LogInvocation
-////    @PreAuthorize("hasAuthority('ADMIN')")
-//    public List<ClientUserReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
-//        return userService.findAll(page, size);
-//    }
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<ClientUserReadDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
         return userService.findAll(page, size);
     }
 
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN') or (#email == authentication.principal)")
     public ClientUserReadDto getByEmail(@RequestParam String email) {
         return userService.findByEmail(email);
     }
@@ -113,6 +95,8 @@ public class RestUserController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @CachePut(value = "User", key = "#id")
+    @PreAuthorize("hasAuthority('ADMIN') or " +
+            "(#id == authentication.details and #user.role == authentication.role)")
     public ClientUserReadDto update(@PathVariable Long id, @RequestBody @Valid ClientUserUpdateDto user, Errors errors) {
         if (!Objects.equals(id, user.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
@@ -124,6 +108,7 @@ public class RestUserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(value = "User", key = "#id")
+    @PreAuthorize("hasAuthority('ADMIN') or (#id == authentication.details)")
     public void delete(@PathVariable Long id) {
         userService.delete(id);
     }

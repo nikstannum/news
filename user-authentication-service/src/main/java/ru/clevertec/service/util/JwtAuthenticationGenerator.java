@@ -13,6 +13,7 @@ public final class JwtAuthenticationGenerator {
         UserRole role = UserRole.valueOf(roleStr);
         jwtInfoToken.setRole(role);
         jwtInfoToken.setEmail(claims.get("email", String.class));
+        jwtInfoToken.setId(claims.get("id", Long.class));
         return jwtInfoToken;
     }
 }

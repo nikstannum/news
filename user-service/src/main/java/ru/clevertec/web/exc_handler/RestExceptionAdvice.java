@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.clevertec.service.dto.error.ErrorDto;
 import ru.clevertec.service.dto.error.ValidationResultDto;
 import ru.clevertec.service.exception.AppNewsServiceException;
+import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.SuchEntityExistsException;
@@ -44,6 +46,12 @@ public class RestExceptionAdvice {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto error(AuthenticationException e) {
+        return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ValidationResultDto error(ValidationException e) {
         Map<String, List<String>> errors;
@@ -59,6 +67,12 @@ public class RestExceptionAdvice {
         return rawErrors.getFieldErrors().stream().collect(Collectors.groupingBy(
                 FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage,
                         Collectors.toList())));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDto error(AccessDeniedException e) {
+        return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
     @ExceptionHandler

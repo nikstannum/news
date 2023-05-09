@@ -1,4 +1,4 @@
-package ru.clevertec.service.util;
+package ru.clevertec.security.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
