@@ -10,7 +10,7 @@ import ru.clevertec.service.dto.SimpleClientCommentReadDto;
 public interface CommentService {
     ClientCommentReadDto create(ClientCommentCreateDto clientCommentCreateDto);
 
-    ClientCommentReadDto update(Long id, ClientCommentUpdateDto clientCommentUpdateDto);
+    ClientCommentReadDto update(ClientCommentUpdateDto clientCommentUpdateDto);
 
     void delete(Long id);
 

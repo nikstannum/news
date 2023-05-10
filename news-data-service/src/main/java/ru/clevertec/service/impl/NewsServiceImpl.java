@@ -36,7 +36,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsReadDto create(NewsCreateDto newsCreateDto) {
-        News news = newsMapper.toNews(newsCreateDto);
+        News news = newsMapper.toNew(newsCreateDto);
         News createdDto = newsRepository.save(news);
         return newsMapper.toNewsReadDto(createdDto);
     }

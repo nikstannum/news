@@ -13,15 +13,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 import ru.clevertec.security.utils.JwtAuthentication;
-import ru.clevertec.security.utils.JwtValidator;
 import ru.clevertec.security.utils.JwtAuthenticationGenerator;
+import ru.clevertec.security.utils.JwtValidator;
 
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
 
     private static final String AUTHORIZATION = "Authorization";
-    public static final String BEARER_ = "Bearer ";
+    private static final String BEARER_ = "Bearer ";
+    private static final int BEGIN_INDEX = 7;
 
     private final JwtValidator validator;
 
@@ -40,7 +41,7 @@ public class JwtFilter extends GenericFilterBean {
     private String getTokenFromRequest(HttpServletRequest request) {
         final String bearer = request.getHeader(AUTHORIZATION);
         if (StringUtils.hasText(bearer) && bearer.startsWith(BEARER_)) {
-            return bearer.substring(7);
+            return bearer.substring(BEGIN_INDEX);
         }
         return null;
     }

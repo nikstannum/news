@@ -8,12 +8,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import ru.clevertec.util.cache.Cache;
 
-@Component
-@ConditionalOnProperty(name = "custom.cache.type", havingValue = "LRU")
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
-    @Value("${custom.cache.size}")
+    @Value("${app.cache.size}")
     private int size;
     private final LinkedList<String> keyList;
 

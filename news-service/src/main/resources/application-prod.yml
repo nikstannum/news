@@ -1,12 +1,16 @@
-jwt:
-  access:
-    secret:
-    expiration:
-  refresh:
-    secret:
-    expiration:
-custom:
+app:
   cache:
-    type: LRU
+    redis:
+      time-to-live-news: 60
+      time-to-live-comment: 30
+    enable: true
+    type: LFU
     size: 1000
-    time-clear: 3600
+    time-to-live: 3600
+  jwt:
+    access:
+      secret:
+      expiration:
+    refresh:
+      secret:
+      expiration:

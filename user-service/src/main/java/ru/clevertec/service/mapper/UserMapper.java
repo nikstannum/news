@@ -23,4 +23,6 @@ public interface UserMapper {
     ClientUserReadDto toClientUserReadDto(UserReadDto userReadDto);
 
     UserUpdateDto toUserUpdateDto(ClientUserUpdateDto clientUserUpdateDto);
+
+    UserCreateDto toUserCreateDto(ClientUserCreateDto clientUserCreateDto);
 }

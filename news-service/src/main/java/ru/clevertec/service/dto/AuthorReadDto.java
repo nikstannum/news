@@ -1,12 +1,12 @@
 package ru.clevertec.service.dto;
 
+import java.io.Serializable;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthorReadDto {
+public class AuthorReadDto implements Serializable {
     private String firstName;
     private String lastName;
 }

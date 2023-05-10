@@ -6,12 +6,12 @@ import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
 
-@Mapper
+@Mapper(uses = CommentMapper.class)
 public interface NewsMapper {
 
     NewsReadDto toNewsReadDto(News news);
 
     SimpleNewsReadDto toSimpleNewsReadDto(News news);
 
-    News toNews(NewsCreateDto newsCreateDto);
+    News toNew(NewsCreateDto newsCreateDto);
 }

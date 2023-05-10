@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientNewsReadDto;
 
-@Component
 @Aspect
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "NONE")

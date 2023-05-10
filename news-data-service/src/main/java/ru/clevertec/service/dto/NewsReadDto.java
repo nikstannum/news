@@ -15,5 +15,5 @@ public class NewsReadDto {
     private String title;
     private String text;
     private Instant time;
-    private List<Comment> comments;
+    private List<CommentReadDto> comments;
 }

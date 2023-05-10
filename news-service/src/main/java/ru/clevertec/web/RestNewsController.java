@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,6 @@ public class RestNewsController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "News", key = "#id")
     public ClientNewsReadDto getById(@PathVariable Long id,
                                      @RequestParam(required = false) Integer page,
                                      @RequestParam(required = false) Integer size) {
@@ -62,13 +62,14 @@ public class RestNewsController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value = "News", key = "#id")
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('JOURNALIST') and (#news.email == authentication.principal))")
     public ClientNewsReadDto update(@PathVariable Long id, @RequestBody @Valid ClientNewsUpdateDto news, Errors errors) {
         checkErrors(errors);
         return newsService.update(id, news);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('JOURNALIST') and (#news.email == authentication.principal))")
     public ResponseEntity<ClientNewsReadDto> create(@RequestBody @Valid ClientNewsCreateDto news, Errors errors) {
         checkErrors(errors);
         ClientNewsReadDto created = process(news);
@@ -100,8 +101,8 @@ public class RestNewsController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value = "News", key = "#id")
-    public void deleteByID(@PathVariable Long id) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'JOURNALIST')")
+    public void deleteById(@PathVariable Long id) {
         newsService.delete(id);
     }
 }

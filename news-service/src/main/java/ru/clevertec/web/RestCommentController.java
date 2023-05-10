@@ -3,9 +3,11 @@ package ru.clevertec.web;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
 import ru.clevertec.service.dto.SimpleClientCommentReadDto;
+import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.ValidationException;
 import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.QueryParamsComment;
@@ -31,9 +34,12 @@ import ru.clevertec.service.dto.QueryParamsComment;
 @RequiredArgsConstructor
 public class RestCommentController {
 
+    private static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
+
     private final CommentService service;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('SUBSCRIBER') and (#comment.email == authentication.principal))")
     public ResponseEntity<ClientCommentReadDto> create(@RequestBody @Valid ClientCommentCreateDto comment, Errors errors) {
         checkErrors(errors);
         ClientCommentReadDto created = service.create(comment);
@@ -61,13 +67,18 @@ public class RestCommentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    ClientCommentReadDto update(@PathVariable Long id, @RequestBody @Valid ClientCommentUpdateDto commentUpdateDto, Errors errors) {
+    @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('SUBSCRIBER') and (#comment.email == authentication.principal))")
+    ClientCommentReadDto update(@PathVariable Long id, @RequestBody @Valid ClientCommentUpdateDto comment, Errors errors) {
         checkErrors(errors);
-        return service.update(id, commentUpdateDto);
+        if (!Objects.equals(id, comment.getId())) {
+            throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
+        }
+        return service.update(comment);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUBSCRIBER')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

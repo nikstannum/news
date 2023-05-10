@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +52,12 @@ public class RestExceptionAdvice {
         return rawErrors.getFieldErrors().stream().collect(Collectors.groupingBy(
                 FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage,
                         Collectors.toList())));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDto error(AccessDeniedException e) {
+        return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
     @ExceptionHandler

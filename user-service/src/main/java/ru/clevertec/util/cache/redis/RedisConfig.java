@@ -17,6 +17,7 @@ public class RedisConfig {
     @Value("${spring.cache.redis.time-to-live}")
     private Long time;
 
+
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
         return (builder) -> builder

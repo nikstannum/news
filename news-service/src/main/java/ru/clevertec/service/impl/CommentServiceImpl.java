@@ -2,14 +2,17 @@ package ru.clevertec.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.NewsDataServiceClient;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.CommentCreateDto;
 import ru.clevertec.client.dto.CommentReadDto;
 import ru.clevertec.client.dto.CommentUpdateDto;
-import ru.clevertec.client.dto.NewsReadDto;
 import ru.clevertec.client.dto.UserDto;
 import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.AuthorReadDto;
@@ -18,13 +21,19 @@ import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
 import ru.clevertec.service.dto.QueryParamsComment;
 import ru.clevertec.service.dto.SimpleClientCommentReadDto;
+import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.AuthorMapper;
 import ru.clevertec.service.mapper.CommentMapper;
+import ru.clevertec.util.cache.CacheDelete;
+import ru.clevertec.util.cache.CacheGet;
+import ru.clevertec.util.cache.CachePutPost;
+import ru.clevertec.util.logger.LogInvocation;
 
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
+    private static final String EXC_MSG_SOMEONE_ELSE_COMMENT = "You can only delete your own comments";
     private final UserDataServiceClient userClient;
     private final NewsDataServiceClient newsClient;
     private final CommentMapper commentMapper;
@@ -32,6 +41,9 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
+    @CachePutPost
+    @CachePut(value = "comment", key = "#result.id")
+    @LogInvocation
     public ClientCommentReadDto create(ClientCommentCreateDto clientCommentCreateDto) {
         String email = clientCommentCreateDto.getEmail();
         UserDto userDto = userClient.getByEmail(email);
@@ -47,12 +59,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ClientCommentReadDto update(Long id, ClientCommentUpdateDto clientCommentUpdateDto) {
+    @CachePutPost
+    @CachePut(value = "comment", key = "#clientCommentUpdateDto.id")
+    @LogInvocation
+    public ClientCommentReadDto update(ClientCommentUpdateDto clientCommentUpdateDto) {
         UserDto userDto = userClient.getByEmail(clientCommentUpdateDto.getEmail());
         Long userId = userDto.getId();
         CommentUpdateDto commentUpdateDto = commentMapper.toCommentUpdateDto(clientCommentUpdateDto);
         commentUpdateDto.setUserId(userId);
-        CommentReadDto commentReadDto = newsClient.updateComment(id, commentUpdateDto);
+        CommentReadDto commentReadDto = newsClient.updateComment(clientCommentUpdateDto.getId(), commentUpdateDto);
         ClientCommentReadDto clientCommentReadDto = commentMapper.toClientCommentReadDto(commentReadDto);
         AuthorReadDto author = authorMapper.toDto(userDto);
         clientCommentReadDto.setAuthor(author);
@@ -60,11 +75,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @CacheDelete
+    @CacheEvict(value = "comment", key = "#id")
+    @LogInvocation
     public void delete(Long id) {
+        CommentReadDto comment = newsClient.getCommentById(id);
+        Long authorId = comment.getUserId();
+        Long authenticationId = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        if (!authenticationId.equals(authorId)) {
+            throw new AuthenticationException(EXC_MSG_SOMEONE_ELSE_COMMENT);
+        }
         newsClient.deleteCommentById(id);
     }
 
     @Override
+    @LogInvocation
     public List<SimpleClientCommentReadDto> findAll(Integer page, Integer size) {
         List<CommentReadDto> commentReadDtoList = newsClient.getAllComments(page, size);
         return commentReadDtoList.stream()
@@ -73,6 +98,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @CacheGet
+    @Cacheable(value = "comment")
+    @LogInvocation
     public ClientCommentReadDto findById(Long id) {
         CommentReadDto commentReadDto = newsClient.getCommentById(id);
         ClientCommentReadDto clientCommentReadDto = commentMapper.toClientCommentReadDto(commentReadDto);

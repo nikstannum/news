@@ -13,15 +13,13 @@ import org.springframework.stereotype.Component;
 import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheElm;
 
-@Component
-@ConditionalOnProperty(name = "custom.cache.type", havingValue = "LFU")
 public class LFUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
     private final TreeMap<CacheElm, String> sortedMap;
-    @Value("${custom.cache.size}")
+    @Value("${app.cache.size}")
     private int cacheSize;
-    @Value("${custom.cache.time-clear}")
+    @Value("${app.cache.time-to-live}")
     private Integer clearTime;
 
     public LFUCacheImpl() {

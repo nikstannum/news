@@ -35,18 +35,14 @@ public class UserServiceImpl implements UserService {
     @LogInvocation
     public ClientUserReadDto findById(Long id) {
         UserReadDto userReadDto = userClient.getById(id);
-        User user = mapper.toUser(userReadDto);
-        return mapper.toClientUserReadDto(user);
+        return mapper.toClientUserReadDto(userReadDto);
     }
 
     @Override
     @LogInvocation
     public List<ClientUserReadDto> findAll(Integer page, Integer size) {
         List<UserReadDto> list = userClient.getAll(page, size);
-        List<User> users = list.stream()
-                .map(mapper::toUser)
-                .toList();
-        return users.stream()
+        return list.stream()
                 .map(mapper::toClientUserReadDto)
                 .toList();
     }
@@ -55,8 +51,7 @@ public class UserServiceImpl implements UserService {
     @LogInvocation
     public ClientUserReadDto findByEmail(String email) {
         UserReadDto userReadDto = userClient.getByEmail(email);
-        User user = mapper.toUser(userReadDto);
-        return mapper.toClientUserReadDto(user);
+        return mapper.toClientUserReadDto(userReadDto);
     }
 
     @Override
@@ -64,8 +59,7 @@ public class UserServiceImpl implements UserService {
     @CachePut(value = "user", key = "#result.id")
     @LogInvocation
     public ClientUserReadDto create(ClientUserCreateDto dto) {
-        User user = mapper.toUser(dto);
-        UserCreateDto createDto = mapper.toUserCreateDto(user);
+        UserCreateDto createDto = mapper.toUserCreateDto(dto);
         ResponseEntity<UserReadDto> createdResponse = userClient.create(createDto);
         UserReadDto createdUserReadDto = createdResponse.getBody();
         return mapper.toClientUserReadDto(createdUserReadDto);
