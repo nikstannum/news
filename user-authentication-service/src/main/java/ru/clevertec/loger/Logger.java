@@ -28,6 +28,7 @@ public class Logger {
 
     /**
      * логирование брошенных ошибок в FeignErrorDecoder
+     *
      * @param e
      */
     @AfterThrowing(pointcut = "@annotation(LogInvocation) && within(ru.clevertec.client.FeignErrorDecoder)", throwing = "e")
@@ -36,13 +37,13 @@ public class Logger {
     }
 
 
-
     @Pointcut("within(ru.clevertec.web.AuthenticationController)")
     public void request() {
     }
 
     /**
      * логирование запросов к контроллерам. Поинткат определен в request()
+     *
      * @param jp
      */
     @Before("request()")
@@ -58,6 +59,7 @@ public class Logger {
 
     /**
      * логирование ответов от контроллера. Поинткат определен в response()
+     *
      * @param jp
      * @param returnValue
      */

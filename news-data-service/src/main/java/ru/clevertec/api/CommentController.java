@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.data.util.QueryCommentParams;
+import ru.clevertec.exception.BadRequestException;
+import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.CommentCreateDto;
 import ru.clevertec.service.dto.CommentReadDto;
 import ru.clevertec.service.dto.CommentUpdateDto;
-import ru.clevertec.exception.BadRequestException;
-import ru.clevertec.service.CommentService;
 
 @RestController
 @RequestMapping("/api/comments")

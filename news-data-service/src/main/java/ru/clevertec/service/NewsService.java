@@ -7,7 +7,7 @@ import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
 
-public interface NewsService  {
+public interface NewsService {
     NewsReadDto create(NewsCreateDto news);
 
     List<SimpleNewsReadDto> findAll(Integer page, Integer size);

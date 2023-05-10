@@ -105,6 +105,6 @@ public class UserController {
     @PostMapping("/secure")
     @ResponseStatus(HttpStatus.OK)
     public UserSecureDto findUser(@RequestParam String email) {
-        return service.findUser(email);
+        return service.findSecureUser(email);
     }
 }

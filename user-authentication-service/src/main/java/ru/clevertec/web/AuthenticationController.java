@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.clevertec.service.token.JwtToken;
-import ru.clevertec.service.token.RefreshJwtToken;
 import ru.clevertec.service.AuthenticationService;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.exception.ValidationException;
+import ru.clevertec.service.token.JwtToken;
+import ru.clevertec.service.token.RefreshJwtToken;
 
 @RestController
 @RequestMapping("/v1/security")

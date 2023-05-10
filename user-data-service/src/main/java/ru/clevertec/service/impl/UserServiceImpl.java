@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserSecureDto findUser(String email) {
+    public UserSecureDto findSecureUser(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow(() -> new SecurityException(EXC_MSG_INVALID_LOGIN));
         return userMapper.toUserSecurityDto(user);
     }

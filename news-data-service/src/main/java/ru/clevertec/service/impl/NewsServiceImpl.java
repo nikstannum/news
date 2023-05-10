@@ -14,12 +14,12 @@ import ru.clevertec.data.entity.Comment;
 import ru.clevertec.data.entity.News;
 import ru.clevertec.data.util.NewsQueryParams;
 import ru.clevertec.data.util.NewsSpecificationBuilder;
+import ru.clevertec.exception.NotFoundException;
+import ru.clevertec.service.NewsService;
 import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
-import ru.clevertec.exception.NotFoundException;
-import ru.clevertec.service.NewsService;
 import ru.clevertec.service.mapper.NewsMapper;
 
 @Service

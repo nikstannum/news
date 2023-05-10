@@ -60,7 +60,6 @@ public class Logger {
 
     /**
      * логирование перехваченных исключений в RestExceptionAdvice. Поинткат определен в excAdvice()
-     *
      */
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {

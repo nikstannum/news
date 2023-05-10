@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ValidationResultDto extends ErrorDto{
+public class ValidationResultDto extends ErrorDto {
     private static final String DEFAULT_ERROR_TYPE = "Validation Error";
     private static final String DEFAULT_ERROR_MESSAGE = "Sent data violates validation constraints";
     private Map<String, List<String>> messages;

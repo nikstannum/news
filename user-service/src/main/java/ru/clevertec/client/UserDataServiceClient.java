@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
 import ru.clevertec.client.dto.UserUpdateDto;
-import ru.clevertec.client.entity.User;
-import ru.clevertec.service.dto.ClientUserReadDto;
 
 @FeignClient(name = "user-data-service", url = "http://localhost:8081", configuration = FeignErrorDecoder.class)
 public interface UserDataServiceClient {

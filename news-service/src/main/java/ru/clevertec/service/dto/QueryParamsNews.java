@@ -1,7 +1,6 @@
 package ru.clevertec.service.dto;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

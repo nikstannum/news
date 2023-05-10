@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import ru.clevertec.client.entity.Comment;
 
 @Getter
 @Setter

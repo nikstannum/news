@@ -1,6 +1,6 @@
 package ru.clevertec.exception;
 
-public class SecurityException extends AppUserDataServiceException{
+public class SecurityException extends AppUserDataServiceException {
     public SecurityException() {
     }
 

@@ -1,6 +1,6 @@
 package ru.clevertec.service.exception;
 
-public class NotFoundException extends AppNewsServiceException{
+public class NotFoundException extends AppNewsServiceException {
     public NotFoundException() {
     }
 

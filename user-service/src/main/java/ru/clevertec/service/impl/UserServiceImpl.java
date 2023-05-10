@@ -11,7 +11,6 @@ import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
 import ru.clevertec.client.dto.UserUpdateDto;
-import ru.clevertec.client.entity.User;
 import ru.clevertec.service.UserService;
 import ru.clevertec.service.dto.ClientUserCreateDto;
 import ru.clevertec.service.dto.ClientUserReadDto;

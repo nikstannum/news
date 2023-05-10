@@ -28,13 +28,12 @@ public class JwtProvider {
     private static final String EXC_MSG_MALFORMED_TOKEN = "Malformed token";
     private static final String EXC_MSG_INVALID_SIGNATURE = "Invalid signature";
     private static final String EXC_MSG_INVALID_TOKEN = "Invalid token";
+    private final SecretKey jwtAccessSecret;
+    private final SecretKey jwtRefreshSecret;
     @Value("${jwt.access.expiration}")
     private int accessExpiration;
     @Value("${jwt.refresh.expiration}")
     private int refreshExpiration;
-
-    private final SecretKey jwtAccessSecret;
-    private final SecretKey jwtRefreshSecret;
 
     public JwtProvider(@Value("${jwt.access.secret}") String jwtAccessSecret,
                        @Value("${jwt.refresh.secret}") String jwtRefreshSecret) {

@@ -4,16 +4,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 import ru.clevertec.util.cache.Cache;
 
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
+    private final LinkedList<String> keyList;
     @Value("${app.cache.size}")
     private int size;
-    private final LinkedList<String> keyList;
 
     public LRUCacheImpl() {
         this.map = new HashMap<>();

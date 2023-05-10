@@ -1,6 +1,6 @@
 package ru.clevertec.exception;
 
-public class AppUserDataServiceException extends RuntimeException{
+public class AppUserDataServiceException extends RuntimeException {
     public AppUserDataServiceException() {
     }
 

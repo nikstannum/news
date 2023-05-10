@@ -1,6 +1,5 @@
 package ru.clevertec.client.entity;
 
-import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.List;
 import lombok.Getter;

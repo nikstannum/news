@@ -12,15 +12,13 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import ru.clevertec.loger.LogInvocation;
 import ru.clevertec.service.dto.ErrorDto;
 import ru.clevertec.service.dto.ValidationResultDto;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
-import ru.clevertec.loger.LogInvocation;
 
 @Component
 @RequiredArgsConstructor

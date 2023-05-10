@@ -21,5 +21,5 @@ public interface UserService {
 
     void deleteById(Long id);
 
-    UserSecureDto findUser(String email);
+    UserSecureDto findSecureUser(String email);
 }

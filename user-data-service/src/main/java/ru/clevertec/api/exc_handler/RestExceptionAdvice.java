@@ -57,7 +57,7 @@ public class RestExceptionAdvice {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDto error(SecurityException e){
+    public ErrorDto error(SecurityException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 

@@ -9,9 +9,9 @@ import ru.clevertec.util.cache.Cache;
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
+    private final LinkedList<String> keyList;
     @Value("${app.cache.size}")
     private int size;
-    private final LinkedList<String> keyList;
 
     public LRUCacheImpl() {
         this.map = new HashMap<>();

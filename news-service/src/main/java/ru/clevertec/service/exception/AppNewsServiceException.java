@@ -1,6 +1,6 @@
 package ru.clevertec.service.exception;
 
-public class AppNewsServiceException extends RuntimeException{
+public class AppNewsServiceException extends RuntimeException {
     public AppNewsServiceException() {
     }
 

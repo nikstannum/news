@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.data.util.NewsQueryParams;
+import ru.clevertec.exception.BadRequestException;
+import ru.clevertec.exception.ValidationException;
+import ru.clevertec.service.NewsService;
 import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
-import ru.clevertec.exception.BadRequestException;
-import ru.clevertec.exception.ValidationException;
-import ru.clevertec.service.NewsService;
 
 @RestController
 @RequestMapping("/api/news")

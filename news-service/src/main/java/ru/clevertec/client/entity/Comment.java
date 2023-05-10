@@ -2,7 +2,6 @@ package ru.clevertec.client.entity;
 
 import java.time.Instant;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

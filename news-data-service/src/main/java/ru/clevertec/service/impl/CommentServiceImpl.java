@@ -13,11 +13,11 @@ import ru.clevertec.data.NewsRepository;
 import ru.clevertec.data.entity.Comment;
 import ru.clevertec.data.util.CommentSpecificationBuilder;
 import ru.clevertec.data.util.QueryCommentParams;
+import ru.clevertec.exception.NotFoundException;
+import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.CommentCreateDto;
 import ru.clevertec.service.dto.CommentReadDto;
 import ru.clevertec.service.dto.CommentUpdateDto;
-import ru.clevertec.exception.NotFoundException;
-import ru.clevertec.service.CommentService;
 import ru.clevertec.service.mapper.CommentMapper;
 
 @Service

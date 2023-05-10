@@ -28,6 +28,7 @@ public class Logger {
 
     /**
      * логирование ошибок во всем приложении
+     *
      * @param e
      */
     @AfterThrowing(pointcut = "@annotation(LogInvocation) && within(ru.clevertec.client.FeignErrorDecoder)", throwing = "e")
@@ -42,6 +43,7 @@ public class Logger {
 
     /**
      * логирование факта получения объекта из кэша. Поинткат определен в takeFromCache().
+     *
      * @param returnValue
      */
     @AfterReturning(value = "takeFromCache()", returning = "returnValue")
@@ -59,6 +61,7 @@ public class Logger {
 
     /**
      * логирование факта помещения объекта в кэш. Поинткат определен в putIntoCache()
+     *
      * @param jp
      */
     @AfterReturning(value = "putIntoCache()")
@@ -77,6 +80,7 @@ public class Logger {
 
     /**
      * логирование факта удаления объекта из кэша. Поинткат определен в deleteFromCache()
+     *
      * @param returnValue
      */
     @AfterReturning(value = "deleteFromCache()", returning = "returnValue")
@@ -94,6 +98,7 @@ public class Logger {
 
     /**
      * логирование запросов к контроллерам. Поинткат определен в request()
+     *
      * @param jp
      */
     @Before("request()")
@@ -109,6 +114,7 @@ public class Logger {
 
     /**
      * логирование ответов от контроллера. Поинткат определен в response()
+     *
      * @param jp
      * @param returnValue
      */

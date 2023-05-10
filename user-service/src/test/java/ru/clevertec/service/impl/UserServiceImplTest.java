@@ -15,7 +15,6 @@ import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
 import ru.clevertec.client.dto.UserUpdateDto;
-import ru.clevertec.client.entity.User;
 import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.service.dto.ClientUserCreateDto;
 import ru.clevertec.service.dto.ClientUserReadDto;
@@ -31,6 +30,8 @@ class UserServiceImplTest {
     public static final String LAST_NAME = "lastName";
     public static final String TEST_EMAIL = "test@test.ru";
     public static final String TEST_PASSWORD = "testPassword";
+    @Captor
+    ArgumentCaptor<Long> captor;
     @Mock
     private UserDataServiceClient client;
     @Mock
@@ -40,16 +41,6 @@ class UserServiceImplTest {
 
     UserReadDto getStandardUserReadDto(Long id) {
         UserReadDto user = new UserReadDto();
-        user.setId(id);
-        user.setFirstName(FIRST_NAME);
-        user.setLastName(LAST_NAME);
-        user.setEmail(TEST_EMAIL);
-        user.setRole(UserRole.SUBSCRIBER);
-        return user;
-    }
-
-    User getStandardUser(Long id) {
-        User user = new User();
         user.setId(id);
         user.setFirstName(FIRST_NAME);
         user.setLastName(LAST_NAME);
@@ -174,9 +165,6 @@ class UserServiceImplTest {
 
         assertThat(actual).isEqualTo(expected);
     }
-
-    @Captor
-    ArgumentCaptor<Long> captor;
 
     @Test
     void checkDeleteShouldCapture() {

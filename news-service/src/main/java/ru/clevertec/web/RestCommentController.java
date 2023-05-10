@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
+import ru.clevertec.service.dto.QueryParamsComment;
 import ru.clevertec.service.dto.SimpleClientCommentReadDto;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.ValidationException;
-import ru.clevertec.service.CommentService;
-import ru.clevertec.service.dto.QueryParamsComment;
 
 @RestController
 @RequestMapping("/v1/comments")
@@ -98,8 +98,8 @@ public class RestCommentController {
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
     public List<SimpleClientCommentReadDto> getByParams(@RequestParam Integer page,
-                                                  @RequestParam Integer size,
-                                                  @RequestBody QueryParamsComment queryParamsComment) {
+                                                        @RequestParam Integer size,
+                                                        @RequestBody QueryParamsComment queryParamsComment) {
         return service.findByParams(page, size, queryParamsComment);
     }
 
