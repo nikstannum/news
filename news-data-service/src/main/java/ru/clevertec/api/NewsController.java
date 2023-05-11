@@ -29,7 +29,7 @@ import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
 
 @RestController
-@RequestMapping("/api/news")
+@RequestMapping("/v1/news")
 @RequiredArgsConstructor
 public class NewsController {
 

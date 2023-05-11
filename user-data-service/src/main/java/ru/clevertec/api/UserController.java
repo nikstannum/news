@@ -28,7 +28,7 @@ import ru.clevertec.exception.ValidationException;
 import ru.clevertec.service.UserService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 

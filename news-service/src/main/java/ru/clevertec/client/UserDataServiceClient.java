@@ -12,12 +12,12 @@ import ru.clevertec.client.dto.UserDto;
 @FeignClient(name = "user-data-service", url = "http://localhost:8081")
 public interface UserDataServiceClient {
 
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/v1/users/{id}")
     UserDto getById(@PathVariable("id") Long id);
 
-    @GetMapping("/api/users/params")
+    @GetMapping("/v1/users/params")
     UserDto getByEmail(@RequestParam("email") String email);
 
-    @PutMapping("/api/users/ids")
+    @PutMapping("/v1/users/ids")
     List<UserDto> getAllUsersByIds(@RequestBody List<Long> ids);
 }

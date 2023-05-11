@@ -24,47 +24,47 @@ import ru.clevertec.service.dto.QueryParamsNews;
 @FeignClient(name = "news-data-service", url = "http://localhost:8082")
 public interface NewsDataServiceClient {
     // news
-    @GetMapping("/api/news")
+    @GetMapping("/v1/news")
     List<SimpleNewsReadDto> getAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
-    @GetMapping("/api/news/{id}")
+    @GetMapping("/v1/news/{id}")
     NewsReadDto getById(@PathVariable("id") Long id, @RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
-    @GetMapping("/api/news/params")
+    @GetMapping("/v1/news/params")
     List<SimpleNewsReadDto> getByParams(@RequestParam("page") Integer page,
                                         @RequestParam("size") Integer size,
                                         @RequestParam(value = "keyword", required = false) String keyWord,
                                         @SpringQueryMap QueryParamsNews queryParams);
 
-    @PostMapping("/api/news")
+    @PostMapping("/v1/news")
     ResponseEntity<NewsReadDto> create(@RequestBody NewsCreateDto news);
 
-    @PutMapping("/api/news/{id}")
+    @PutMapping("/v1/news/{id}")
     NewsReadDto update(@PathVariable("id") Long id, @RequestBody NewsUpdateDto news);
 
-    @DeleteMapping("/api/news/{id}")
+    @DeleteMapping("/v1/news/{id}")
     void deleteById(@PathVariable("id") Long id);
 
 
     // comments
-    @GetMapping("/api/comments")
+    @GetMapping("/v1/comments")
     List<CommentReadDto> getAllComments(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
-    @GetMapping("/api/comments/{id}")
+    @GetMapping("/v1/comments/{id}")
     CommentReadDto getCommentById(@PathVariable("id") Long id);
 
-    @GetMapping("/api/comments/params")
+    @GetMapping("/v1/comments/params")
     List<CommentReadDto> getCommentByParams(@RequestParam("page") Integer page,
                                             @RequestParam("size") Integer size,
                                             @SpringQueryMap QueryParamsComment queryParams);
 
-    @PostMapping("/api/comments")
+    @PostMapping("/v1/comments")
     ResponseEntity<CommentReadDto> createComment(@RequestBody CommentCreateDto comment);
 
-    @PutMapping("/api/comments/{id}")
+    @PutMapping("/v1/comments/{id}")
     CommentReadDto updateComment(@PathVariable("id") Long id, @RequestBody CommentUpdateDto comment);
 
-    @DeleteMapping("/api/comments/{id}")
+    @DeleteMapping("/v1/comments/{id}")
     void deleteCommentById(@PathVariable("id") Long id);
 
 }

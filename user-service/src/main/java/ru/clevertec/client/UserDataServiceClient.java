@@ -17,21 +17,21 @@ import ru.clevertec.client.dto.UserUpdateDto;
 @FeignClient(name = "user-data-service", url = "http://localhost:8081", configuration = FeignErrorDecoder.class)
 public interface UserDataServiceClient {
 
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/v1/users/{id}")
     UserReadDto getById(@PathVariable("id") Long id);
 
-    @GetMapping("/api/users")
+    @GetMapping("/v1/users")
     List<UserReadDto> getAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
-    @GetMapping("/api/users/params")
+    @GetMapping("/v1/users/params")
     UserReadDto getByEmail(@RequestParam("email") String email);
 
-    @PostMapping("/api/users")
+    @PostMapping("/v1/users")
     ResponseEntity<UserReadDto> create(@RequestBody UserCreateDto user);
 
-    @PutMapping("/api/users/{id}")
+    @PutMapping("/v1/users/{id}")
     UserReadDto update(@PathVariable("id") Long id, @RequestBody UserUpdateDto user);
 
-    @DeleteMapping("/api/users/{id}")
+    @DeleteMapping("/v1/users/{id}")
     void deleteById(@PathVariable("id") Long id);
 }

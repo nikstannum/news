@@ -9,6 +9,6 @@ import ru.clevertec.service.dto.UserDto;
 @FeignClient(name = "user-data-service", url = "http://localhost:8081")
 public interface UserDataServiceClient {
 
-    @PostMapping("/api/users/secure")
+    @PostMapping("/v1/users/secure")
     UserDto getByEmail(@RequestParam("email") String email);
 }

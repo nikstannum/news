@@ -10,7 +10,6 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import javax.crypto.SecretKey;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.clevertec.service.exception.AuthenticationException;
@@ -31,11 +30,11 @@ public class JwtValidator {
     }
 
 
-    public boolean validateAccessToken(@NonNull String accessToken) {
+    public boolean validateAccessToken(String accessToken) {
         return validateToken(accessToken, jwtAccessSecret);
     }
 
-    private boolean validateToken(@NonNull String token, @NonNull Key secret) {
+    private boolean validateToken(String token, Key secret) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secret)
@@ -55,11 +54,11 @@ public class JwtValidator {
         }
     }
 
-    public Claims getAccessClaims(@NonNull String token) {
+    public Claims getAccessClaims(String token) {
         return getClaims(token, jwtAccessSecret);
     }
 
-    private Claims getClaims(@NonNull String token, @NonNull Key secret) {
+    private Claims getClaims(String token, Key secret) {
         return Jwts.parserBuilder()
                 .setSigningKey(secret)
                 .build()

@@ -28,7 +28,7 @@ import ru.clevertec.service.dto.CommentReadDto;
 import ru.clevertec.service.dto.CommentUpdateDto;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/v1/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
