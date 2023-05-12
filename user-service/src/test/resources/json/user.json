@@ -12,5 +12,12 @@
     "lastName": "Scholz",
     "email": "scholz@yandex.ru",
     "role": "JOURNALIST"
+  },
+  {
+    "id": 3,
+    "firstName": "Andrew",
+    "lastName": "Petrov",
+    "email": "andrpetrov@yandex.ru",
+    "role": "SUBSCRIBER"
   }
 ]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "author": {
+      "firstName": "Fedor",
+      "lastName": "Fedorov"
+    },
+    "text": "new comment",
+    "createTime": "2023-05-12T08:33:03.728Z"
+  },
+  {
+    "id": 2,
+    "author": {
+      "firstName": "Sasha",
+      "lastName": "Ivanov"
+    },
+    "text": "new comment from Sasha",
+    "createTime": "2023-05-12T08:33:03.728Z"
+  }
+]

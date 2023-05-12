@@ -1,11 +1,14 @@
 package ru.clevertec.service.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.NewsDataServiceClient;
@@ -14,6 +17,7 @@ import ru.clevertec.client.dto.CommentCreateDto;
 import ru.clevertec.client.dto.CommentReadDto;
 import ru.clevertec.client.dto.CommentUpdateDto;
 import ru.clevertec.client.dto.UserDto;
+import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.AuthorReadDto;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
@@ -82,7 +86,8 @@ public class CommentServiceImpl implements CommentService {
         CommentReadDto comment = newsClient.getCommentById(id);
         Long authorId = comment.getUserId();
         Long authenticationId = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (!authenticationId.equals(authorId)) {
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        if (!authenticationId.equals(authorId) || !authorities.contains(UserRole.ADMIN)) {
             throw new AuthenticationException(EXC_MSG_SOMEONE_ELSE_COMMENT);
         }
         newsClient.deleteCommentById(id);

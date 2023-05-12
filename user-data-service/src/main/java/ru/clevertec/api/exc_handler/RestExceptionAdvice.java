@@ -31,7 +31,7 @@ public class RestExceptionAdvice {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto error(BadRequestException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
