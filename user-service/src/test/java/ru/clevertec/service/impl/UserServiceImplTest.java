@@ -7,10 +7,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
@@ -22,6 +22,8 @@ import ru.clevertec.service.dto.ClientUserUpdateDto;
 import ru.clevertec.service.mapper.UserMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -36,6 +38,8 @@ class UserServiceImplTest {
     private UserDataServiceClient client;
     @Mock
     private UserMapper mapper;
+    @Mock
+    private PasswordEncoder encoder;
     @InjectMocks
     private UserServiceImpl service;
 
@@ -62,9 +66,9 @@ class UserServiceImplTest {
     @Test
     void checkFindByIdShouldReturnEquals() {
         UserReadDto userReadDto = getStandardUserReadDto(1L);
-        Mockito.doReturn(userReadDto).when(client).getById(1L);
+        doReturn(userReadDto).when(client).getById(1L);
         ClientUserReadDto expected = getStandardClientUserReadDto(1L);
-        Mockito.doReturn(expected).when(mapper).toClientUserReadDto(userReadDto);
+        doReturn(expected).when(mapper).toClientUserReadDto(userReadDto);
 
         ClientUserReadDto actual = service.findById(1L);
 
@@ -74,7 +78,7 @@ class UserServiceImplTest {
     @Test
     void checkFindAllShouldHasSize2() {
         List<UserReadDto> expected = List.of(getStandardUserReadDto(1L), getStandardUserReadDto(2L));
-        Mockito.doReturn(expected).when(client).getAll(1, 2);
+        doReturn(expected).when(client).getAll(1, 2);
 
         List<ClientUserReadDto> actual = service.findAll(1, 2);
 
@@ -84,9 +88,9 @@ class UserServiceImplTest {
     @Test
     void findByEmailShouldReturnEquals() {
         UserReadDto userReadDto = getStandardUserReadDto(1L);
-        Mockito.doReturn(userReadDto).when(client).getByEmail(TEST_EMAIL);
+        doReturn(userReadDto).when(client).getByEmail(TEST_EMAIL);
         ClientUserReadDto expected = getStandardClientUserReadDto(1L);
-        Mockito.doReturn(expected).when(mapper).toClientUserReadDto(userReadDto);
+        doReturn(expected).when(mapper).toClientUserReadDto(userReadDto);
 
         ClientUserReadDto actual = service.findByEmail(TEST_EMAIL);
 
@@ -97,12 +101,15 @@ class UserServiceImplTest {
     void checkCreateShouldReturnEquals() {
         ClientUserCreateDto clientUserCreateDto = getStandardClientUserCreateDto();
         UserCreateDto userCreateDto = getStandardUserCreateDto();
-        Mockito.doReturn(userCreateDto).when(mapper).toUserCreateDto(clientUserCreateDto);
+        doReturn(userCreateDto).when(mapper).toUserCreateDto(clientUserCreateDto);
+        String password = userCreateDto.getPassword();
+        doReturn(password).when(encoder).encode(password);
+
         UserReadDto userReadDto = getStandardUserReadDto(1L);
         ResponseEntity<UserReadDto> response = ResponseEntity.status(HttpStatus.CREATED).body(userReadDto);
-        Mockito.doReturn(response).when(client).create(userCreateDto);
+        doReturn(response).when(client).create(userCreateDto);
         ClientUserReadDto clientUserReadDto = getStandardClientUserReadDto(1L);
-        Mockito.doReturn(clientUserReadDto).when(mapper).toClientUserReadDto(userReadDto);
+        doReturn(clientUserReadDto).when(mapper).toClientUserReadDto(userReadDto);
         ClientUserReadDto expected = getStandardClientUserReadDto(1L);
 
         ClientUserReadDto actual = service.create(clientUserCreateDto);
@@ -154,11 +161,15 @@ class UserServiceImplTest {
     void checkUpdateShouldReturnEquals() {
         ClientUserUpdateDto clientUserUpdateDto = getStandardClientUserUpdateDto(1L);
         UserUpdateDto userUpdateDto = getStandardUserUpdateDto(1L);
-        Mockito.doReturn(userUpdateDto).when(mapper).toUserUpdateDto(clientUserUpdateDto);
+        doReturn(userUpdateDto).when(mapper).toUserUpdateDto(clientUserUpdateDto);
+
+        String password = userUpdateDto.getPassword();
+        doReturn(password).when(encoder).encode(password);
+
         UserReadDto userReadDto = getStandardUserReadDto(1L);
-        Mockito.doReturn(userReadDto).when(client).update(1L, userUpdateDto);
+        doReturn(userReadDto).when(client).update(1L, userUpdateDto);
         ClientUserReadDto clientUserReadDto = getStandardClientUserReadDto(1L);
-        Mockito.doReturn(clientUserReadDto).when(mapper).toClientUserReadDto(userReadDto);
+        doReturn(clientUserReadDto).when(mapper).toClientUserReadDto(userReadDto);
         ClientUserReadDto expected = getStandardClientUserReadDto(1L);
 
         ClientUserReadDto actual = service.update(clientUserUpdateDto);
@@ -169,7 +180,7 @@ class UserServiceImplTest {
     @Test
     void checkDeleteShouldCapture() {
         service.delete(1L);
-        Mockito.verify(client).deleteById(captor.capture());
+        verify(client).deleteById(captor.capture());
         Long captured = captor.getValue();
         assertThat(captured).isEqualTo(1L);
     }

@@ -32,6 +32,7 @@ public class CommentSpecificationBuilder {
         };
     }
 
+
     private Specification<Comment> getUserIdSpecification(QueryCommentParams queryParams) {
         return (root, query, cb) -> {
             Long userId = queryParams.getUser_id();

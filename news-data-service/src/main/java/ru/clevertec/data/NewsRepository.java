@@ -8,6 +8,6 @@ import ru.clevertec.data.entity.News;
 
 public interface NewsRepository extends JpaRepository<News, Long>, JpaSpecificationExecutor<News> {
 
-    Page<News> findByTitleOrTextContains(String titleKeyWord, String textKeyWord, Pageable pageable);
+    Page<News> findByTitleContainsOrTextContains(String titleKeyWord, String textKeyWord, Pageable pageable);
 
 }

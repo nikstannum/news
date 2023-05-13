@@ -47,7 +47,7 @@ public class News {
     @Column(name = "create_time", insertable = false, updatable = false)
     private Instant time;
 
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE , fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id")
     private List<Comment> comments;
 

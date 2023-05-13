@@ -2,10 +2,12 @@ package ru.clevertec.web;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.clevertec.service.AuthenticationService;
 import ru.clevertec.service.dto.LoginDto;
@@ -21,6 +23,7 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
     public JwtToken login(@RequestBody @Valid LoginDto loginDto, Errors errors) {
         checkErrors(errors);
         return service.login(loginDto);
@@ -33,11 +36,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/token")
+    @ResponseStatus(HttpStatus.OK)
     public JwtToken getNewAccessToken(@RequestBody RefreshJwtToken request) {
         return service.getAccessToken(request.getRefreshToken());
     }
 
     @PostMapping("/refresh")
+    @ResponseStatus(HttpStatus.OK)
     public JwtToken getNewRefreshToken(@RequestBody RefreshJwtToken request) {
         return service.refresh(request.getRefreshToken());
     }

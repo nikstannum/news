@@ -39,6 +39,9 @@ public class Comment implements Serializable {
     @Column(name = "create_time", insertable = false, updatable = false)
     private Instant createTime;
 
+    @Column(name = "news_id")
+    private Long newsId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

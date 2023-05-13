@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.data.CommentRepository;
 import ru.clevertec.data.NewsRepository;
 import ru.clevertec.data.entity.Comment;
@@ -24,6 +25,7 @@ import ru.clevertec.service.mapper.NewsMapper;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NewsServiceImpl implements NewsService {
 
     private static final String ATTRIBUTE_ID = "id";
@@ -36,7 +38,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsReadDto create(NewsCreateDto newsCreateDto) {
-        News news = newsMapper.toNew(newsCreateDto);
+        News news = newsMapper.toNews(newsCreateDto);
         News createdDto = newsRepository.save(news);
         return newsMapper.toNewsReadDto(createdDto);
     }
@@ -61,7 +63,7 @@ public class NewsServiceImpl implements NewsService {
     public List<SimpleNewsReadDto> findByParams(Integer page, Integer size, String keyWord, NewsQueryParams params) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         if (keyWord != null) {
-            Page<News> newsPage = newsRepository.findByTitleOrTextContains(keyWord, keyWord, pageable);
+            Page<News> newsPage = newsRepository.findByTitleContainsOrTextContains(keyWord, keyWord, pageable);
             return newsPage.map(newsMapper::toSimpleNewsReadDto).toList();
         }
         Specification<News> specification = newsSpecificationBuilder.getSpecificationSelectNewsByParams(params);

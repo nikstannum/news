@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.UserCreateDto;
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserDataServiceClient userClient;
     private final UserMapper mapper;
+    private final PasswordEncoder encoder;
 
     @Override
     @CacheGet
@@ -59,6 +61,9 @@ public class UserServiceImpl implements UserService {
     @LogInvocation
     public ClientUserReadDto create(ClientUserCreateDto dto) {
         UserCreateDto createDto = mapper.toUserCreateDto(dto);
+        String password = createDto.getPassword();
+        String hashedPassword = encoder.encode(password);
+        createDto.setPassword(hashedPassword);
         ResponseEntity<UserReadDto> createdResponse = userClient.create(createDto);
         UserReadDto createdUserReadDto = createdResponse.getBody();
         return mapper.toClientUserReadDto(createdUserReadDto);
@@ -68,8 +73,11 @@ public class UserServiceImpl implements UserService {
     @CachePutPost
     @CachePut(value = "user", key = "#clientUserUpdateDto.id")
     @LogInvocation
-    public ClientUserReadDto update(ClientUserUpdateDto clientUserUpdateDto) { // FIXME роль меняет только АДМИН
+    public ClientUserReadDto update(ClientUserUpdateDto clientUserUpdateDto) {
         UserUpdateDto user = mapper.toUserUpdateDto(clientUserUpdateDto);
+        String password = user.getPassword();
+        String hashedPassword = encoder.encode(password);
+        user.setPassword(hashedPassword);
         UserReadDto updated = userClient.update(user.getId(), user);
         return mapper.toClientUserReadDto(updated);
     }

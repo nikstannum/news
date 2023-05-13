@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.clevertec.data.CommentRepository;
 import ru.clevertec.data.NewsRepository;
 import ru.clevertec.data.entity.Comment;
@@ -22,6 +23,7 @@ import ru.clevertec.service.mapper.CommentMapper;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentServiceImpl implements CommentService {
 
     private static final String ATTRIBUTE_ID = "id";

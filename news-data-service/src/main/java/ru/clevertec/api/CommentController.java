@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.data.util.QueryCommentParams;
 import ru.clevertec.exception.BadRequestException;
+import ru.clevertec.exception.ValidationException;
 import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.CommentCreateDto;
 import ru.clevertec.service.dto.CommentReadDto;
@@ -37,13 +39,20 @@ public class CommentController {
     private final CommentService service;
 
     @PostMapping
-    public ResponseEntity<CommentReadDto> create(@RequestBody @Valid CommentCreateDto comment) {
+    public ResponseEntity<CommentReadDto> create(@RequestBody @Valid CommentCreateDto comment, Errors errors) {
+        checkErrors(errors);
         CommentReadDto created = createComment(comment);
         return buildResponseCreated(created);
     }
 
+    private void checkErrors(Errors errors) {
+        if (errors.hasErrors()) {
+            throw new ValidationException(errors);
+        }
+    }
+
     @CachePut(value = "Comment", key = "#comment.id")
-    public CommentReadDto createComment(CommentCreateDto comment) {
+    private CommentReadDto createComment(CommentCreateDto comment) {
         return service.create(comment);
     }
 
@@ -82,10 +91,11 @@ public class CommentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentReadDto update(@PathVariable Long id, @RequestBody CommentUpdateDto comment) {
+    public CommentReadDto update(@PathVariable Long id, @RequestBody @Valid CommentUpdateDto comment, Errors errors) {
         if (!Objects.equals(id, comment.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
         }
+        checkErrors(errors);
         comment.setId(id);
         return service.update(comment);
     }

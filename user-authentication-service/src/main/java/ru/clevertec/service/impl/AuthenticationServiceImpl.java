@@ -1,7 +1,6 @@
 package ru.clevertec.service.impl;
 
 import io.jsonwebtoken.Claims;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper mapper;
 
     @Override
-    public JwtToken login(@NonNull LoginDto loginDto) {
+    public JwtToken login(LoginDto loginDto) {
         UserDto userDto = client.getByEmail(loginDto.getEmail());
         User user = mapper.toUser(userDto);
         String password = loginDto.getPassword();
@@ -34,8 +33,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (!user.getPassword().equals(hashedPassword)) {
             throw new AuthenticationException(INVALID_PASSWORD);
         }
-        String accessToken = provider.generateAccessToken(userDto);
-        String refreshToken = provider.generateRefreshToken(userDto);
+        String accessToken = provider.generateAccessToken(user);
+        String refreshToken = provider.generateRefreshToken(user);
         return new JwtToken(accessToken, refreshToken);
     }
 
@@ -44,7 +43,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (provider.validateRefreshToken(refreshToken)) {
             Claims claims = provider.getRefreshClaims(refreshToken);
             String login = claims.getSubject();
-            UserDto user = client.getByEmail(login);
+            UserDto userDto = client.getByEmail(login);
+            User user = mapper.toUser(userDto);
             String accessToken = provider.generateAccessToken(user);
             return new JwtToken(accessToken, null);
         }
@@ -56,7 +56,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (provider.validateRefreshToken(refreshToken)) {
             Claims claims = provider.getRefreshClaims(refreshToken);
             String login = claims.getSubject();
-            UserDto user = client.getByEmail(login);
+            UserDto userDto = client.getByEmail(login);
+            User user = mapper.toUser(userDto);
             String accessToken = provider.generateAccessToken(user);
             String newRefreshToken = provider.generateRefreshToken(user);
             return new JwtToken(accessToken, newRefreshToken);

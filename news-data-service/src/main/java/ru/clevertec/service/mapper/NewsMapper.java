@@ -13,5 +13,6 @@ public interface NewsMapper {
 
     SimpleNewsReadDto toSimpleNewsReadDto(News news);
 
-    News toNew(NewsCreateDto newsCreateDto);
+    News toNews(NewsCreateDto newsCreateDto);
+
 }
