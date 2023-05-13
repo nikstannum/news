@@ -70,7 +70,7 @@ public class NewsServiceImpl implements NewsService {
         for (News news : newsList) {
             UserDto user = userMap.get(news.getUserId());
             if (user != null) {
-                AuthorReadDto author = authorMapper.toDto(user);
+                AuthorReadDto author = authorMapper.toAuthor(user);
                 ClientSimpleNewsReadDto clientSimpleNewsReadDto = newsMapper.toClientNewsReadDto(news);
                 clientSimpleNewsReadDto.setAuthor(author);
                 clientList.add(clientSimpleNewsReadDto);
@@ -96,7 +96,7 @@ public class NewsServiceImpl implements NewsService {
             mapNewsCommentsAuthor.put(userDto.getId(), userDto);
         }
         UserDto newsAuthorUserDto = mapNewsCommentsAuthor.remove(newsReadDto.getUserId());
-        AuthorReadDto newsAuthor = authorMapper.toDto(newsAuthorUserDto);
+        AuthorReadDto newsAuthor = authorMapper.toAuthor(newsAuthorUserDto);
         ClientNewsReadDto news = newsMapper.toClientNewsReadDto(newsReadDto);
         news.setAuthor(newsAuthor);
 
@@ -111,7 +111,7 @@ public class NewsServiceImpl implements NewsService {
             Long authorCommentId = commentReadDto.getUserId();
             ClientCommentReadDto comment = commentMapper.toClientCommentReadDto(commentReadDto);
             UserDto commentAuthorUserDto = mapNewsCommentsAuthor.get(authorCommentId);
-            AuthorReadDto author = authorMapper.toDto(commentAuthorUserDto);
+            AuthorReadDto author = authorMapper.toAuthor(commentAuthorUserDto);
             comment.setAuthor(author);
             comments.add(comment);
         }
@@ -137,7 +137,7 @@ public class NewsServiceImpl implements NewsService {
         ResponseEntity<NewsReadDto> newsReadDtoResponseEntity = newsClient.create(newsCreateDto);
         NewsReadDto createdNewsReadDto = newsReadDtoResponseEntity.getBody();
         ClientNewsReadDto clientNewsReadDto = newsMapper.toClientNewsReadDto(createdNewsReadDto);
-        AuthorReadDto author = authorMapper.toDto(userDto);
+        AuthorReadDto author = authorMapper.toAuthor(userDto);
         clientNewsReadDto.setAuthor(author);
         return clientNewsReadDto;
     }
@@ -154,7 +154,7 @@ public class NewsServiceImpl implements NewsService {
         newsUpdateDto.setUserId(userId);
         NewsReadDto newsReadDto = newsClient.update(id, newsUpdateDto);
         ClientNewsReadDto clientNewsReadDto = newsMapper.toClientNewsReadDto(newsReadDto);
-        AuthorReadDto author = authorMapper.toDto(userDto);
+        AuthorReadDto author = authorMapper.toAuthor(userDto);
         clientNewsReadDto.setAuthor(author);
         return clientNewsReadDto;
     }

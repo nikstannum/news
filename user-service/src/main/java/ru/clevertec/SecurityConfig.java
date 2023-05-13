@@ -14,12 +14,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.clevertec.security.filter.JwtFilter;
 
+/**
+ * Security configuration for microservice
+ */
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -33,6 +35,9 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/v1/users").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/v3/api-docs").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -7,5 +7,5 @@ import ru.clevertec.service.dto.AuthorReadDto;
 @Mapper
 public interface AuthorMapper {
 
-    AuthorReadDto toDto(UserDto user);
+    AuthorReadDto toAuthor(UserDto user);
 }

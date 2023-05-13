@@ -1,7 +1,6 @@
 package ru.clevertec.service.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -57,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
         ResponseEntity<CommentReadDto> commentReadDtoResponseEntity = newsClient.createComment(commentCreateDto);
         CommentReadDto commentReadDto = commentReadDtoResponseEntity.getBody();
         ClientCommentReadDto comment = commentMapper.toClientCommentReadDto(commentReadDto);
-        AuthorReadDto author = authorMapper.toDto(userDto);
+        AuthorReadDto author = authorMapper.toAuthor(userDto);
         comment.setAuthor(author);
         return comment;
     }
@@ -73,7 +72,7 @@ public class CommentServiceImpl implements CommentService {
         commentUpdateDto.setUserId(userId);
         CommentReadDto commentReadDto = newsClient.updateComment(clientCommentUpdateDto.getId(), commentUpdateDto);
         ClientCommentReadDto clientCommentReadDto = commentMapper.toClientCommentReadDto(commentReadDto);
-        AuthorReadDto author = authorMapper.toDto(userDto);
+        AuthorReadDto author = authorMapper.toAuthor(userDto);
         clientCommentReadDto.setAuthor(author);
         return clientCommentReadDto;
     }
@@ -111,7 +110,7 @@ public class CommentServiceImpl implements CommentService {
         ClientCommentReadDto clientCommentReadDto = commentMapper.toClientCommentReadDto(commentReadDto);
         Long userId = commentReadDto.getUserId();
         UserDto userDto = userClient.getById(userId);
-        AuthorReadDto author = authorMapper.toDto(userDto);
+        AuthorReadDto author = authorMapper.toAuthor(userDto);
         clientCommentReadDto.setAuthor(author);
         return clientCommentReadDto;
     }

@@ -1,5 +1,12 @@
 package ru.clevertec.api;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -27,6 +34,7 @@ import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.ValidationException;
 import ru.clevertec.service.UserService;
 
+@Tag(name = "UserController", description = "Rest API for managing users on a non-public microservice.")
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
@@ -36,9 +44,17 @@ public class UserController {
 
     private final UserService service;
 
+    @ApiOperation(value = "Create user.", response = UserReadDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created", content = @Content(mediaType = "application/json", schema =
+            @Schema(implementation = UserReadDto.class))),
+            @ApiResponse(responseCode = "409", description = "Already registered user with this email")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserReadDto> create(@RequestBody @Valid UserCreateDto user, Errors errors) {
+    public ResponseEntity<UserReadDto> create(@Parameter(description = "User data", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = UserCreateDto.class)))
+                                              @RequestBody @Valid UserCreateDto user, Errors errors) {
         checkErrors(errors);
         UserReadDto created = service.create(user);
         return buildResponseCreated(created);
@@ -62,33 +78,65 @@ public class UserController {
                 .toUri();
     }
 
+    @ApiOperation(value = "Get all users.", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of users")
+    })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserReadDto> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+    public List<UserReadDto> findAll(@Parameter(description = "Page number") @RequestParam Integer page,
+                                     @Parameter(description = "Page size") @RequestParam Integer size) {
         return service.findAll(page, size);
     }
 
+    @ApiOperation(value = "Get users by their IDs", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of users")
+    })
     @PutMapping("/ids")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserReadDto> findUsersByIds(@RequestBody List<Long> ids) {
+    public List<UserReadDto> findUsersByIds(@Parameter(description = "Users IDs") @RequestBody List<Long> ids) {
         return service.findUsersByIds(ids);
     }
 
+    @ApiOperation(value = "Get user by ID.",
+            response = UserReadDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema =
+            @Schema(implementation = UserReadDto.class))),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserReadDto findById(@PathVariable Long id) {
+    public UserReadDto findById(@Parameter(description = "user's ID") @PathVariable Long id) {
         return service.findById(id);
     }
 
+    @ApiOperation(value = "Get user by email.", response = UserReadDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema =
+            @Schema(implementation = UserReadDto.class))),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public UserReadDto findByEmail(@RequestParam String email) {
+    public UserReadDto findByEmail(@Parameter(description = "User email") @RequestParam String email) {
         return service.findByEmail(email);
     }
 
+    @ApiOperation(value = "Update user.",
+            response = UserReadDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated", content = @Content(mediaType = "application/json", schema =
+            @Schema(implementation = UserReadDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the user id in the request body"),
+            @ApiResponse(responseCode = "404", description = "User not found")})
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserReadDto update(@PathVariable Long id, @RequestBody @Valid UserUpdateDto userUpdateDto, Errors errors) {
+    public UserReadDto update(@Parameter(description = "User id") @PathVariable Long id,
+                              @Parameter(description = "User data", content = @Content(mediaType = "application/json", schema =
+                              @Schema(implementation = UserUpdateDto.class)))
+                              @RequestBody @Valid UserUpdateDto userUpdateDto, Errors errors) {
         if (!Objects.equals(id, userUpdateDto.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
         }
@@ -96,15 +144,26 @@ public class UserController {
         return service.update(userUpdateDto);
     }
 
+    @ApiOperation(value = "Delete user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "No content")
+    })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@Parameter(description = "User id") @PathVariable Long id) {
         service.deleteById(id);
     }
 
+    @ApiOperation(value = "Get user by ID. Note: the response body contains the hashed password",
+            response = UserReadDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema =
+            @Schema(implementation = UserSecureDto.class))),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PostMapping("/secure")
     @ResponseStatus(HttpStatus.OK)
-    public UserSecureDto findUser(@RequestParam String email) {
+    public UserSecureDto findUser(@Parameter(description = "User email") @RequestParam String email) {
         return service.findSecureUser(email);
     }
 }
