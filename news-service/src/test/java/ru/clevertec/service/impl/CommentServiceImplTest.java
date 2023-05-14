@@ -42,10 +42,10 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class CommentServiceImplTest {
 
-    public static final String EMAIL = "email@email.com";
-    public static final String FIRST_NAME = "firstName";
-    public static final String LAST_NAME = "lastName";
-    public static final String TEXT = "text";
+    private static final String EMAIL = "email@email.com";
+    private static final String FIRST_NAME = "firstName";
+    private static final String LAST_NAME = "lastName";
+    private static final String TEXT = "text";
     @Mock
     private UserDataServiceClient userClient;
     @Mock
