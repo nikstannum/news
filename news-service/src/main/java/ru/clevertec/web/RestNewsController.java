@@ -3,6 +3,7 @@ package ru.clevertec.web;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,14 @@ import ru.clevertec.service.dto.ClientNewsReadDto;
 import ru.clevertec.service.dto.ClientNewsUpdateDto;
 import ru.clevertec.service.dto.ClientSimpleNewsReadDto;
 import ru.clevertec.service.dto.QueryParamsNews;
+import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.ValidationException;
 
 @RestController
 @RequestMapping("/v1/news")
 @RequiredArgsConstructor
 public class RestNewsController {
+    private static final String EXC_MSG_ID_NOT_MATCH = "Incoming id in body doesn't match path";
 
     private final NewsService newsService;
 
@@ -62,6 +65,9 @@ public class RestNewsController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('JOURNALIST') and (#news.email == authentication.principal))")
     public ClientNewsReadDto update(@PathVariable Long id, @RequestBody @Valid ClientNewsUpdateDto news, Errors errors) {
+        if (!Objects.equals(id, news.getId())) {
+            throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
+        }
         checkErrors(errors);
         return newsService.update(id, news);
     }
@@ -70,12 +76,12 @@ public class RestNewsController {
     @PreAuthorize("hasAuthority('ADMIN') or (hasAuthority('JOURNALIST') and (#news.email == authentication.principal))")
     public ResponseEntity<ClientNewsReadDto> create(@RequestBody @Valid ClientNewsCreateDto news, Errors errors) {
         checkErrors(errors);
-        ClientNewsReadDto created = process(news);
+        ClientNewsReadDto created = processCreate(news);
         return buildResponseCreated(created);
     }
 
     @CachePut(value = "News", key = "#id")
-    private ClientNewsReadDto process(ClientNewsCreateDto dto) {
+    private ClientNewsReadDto processCreate(ClientNewsCreateDto dto) {
         return newsService.create(dto);
     }
 

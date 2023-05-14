@@ -102,6 +102,4 @@ public class RestCommentController {
                                                         @RequestBody QueryParamsComment queryParamsComment) {
         return service.findByParams(page, size, queryParamsComment);
     }
-
-
 }

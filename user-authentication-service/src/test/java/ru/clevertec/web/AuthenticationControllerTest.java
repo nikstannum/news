@@ -28,7 +28,6 @@ import ru.clevertec.service.util.JwtValidator;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -125,7 +124,7 @@ class AuthenticationControllerTest {
         String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
 
         stubFor(post(urlPathEqualTo(BASE_USER_URL + "/secure"))
-                .withQueryParam("email",  equalTo(EMAIL))
+                .withQueryParam("email", equalTo(EMAIL))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(responseFromClient)));
