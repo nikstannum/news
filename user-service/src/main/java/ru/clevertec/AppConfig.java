@@ -1,14 +1,17 @@
 package ru.clevertec;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheAdvice;
 import ru.clevertec.util.cache.impl.LFUCacheImpl;
 import ru.clevertec.util.cache.impl.LRUCacheImpl;
+import ru.clevertec.web.interceptor.RequestInterceptor;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -18,9 +21,12 @@ import springfox.documentation.spring.web.plugins.Docket;
  * Class with configuration for microservice excluding security management
  */
 @Configuration
-public class AppConfig {
-    @Autowired
-    private Environment environment;
+@RequiredArgsConstructor
+public class AppConfig implements WebMvcConfigurer {
+
+
+    private final Environment environment;
+    private final RequestInterceptor interceptor;
 
     @Bean
     public Docket api() {
@@ -29,6 +35,11 @@ public class AppConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(interceptor);
     }
 
     @Bean

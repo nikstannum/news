@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.clevertec.client.entity.User;
 import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.service.JwtProvider;
+import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.token.RefreshJwtToken;
 import ru.clevertec.service.util.JwtValidator;
@@ -27,9 +28,10 @@ import ru.clevertec.service.util.JwtValidator;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
@@ -42,9 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
 class AuthenticationControllerTest {
-    private static final String PATH_TO_USER_JSON = "src/test/resources/json/user.json";
-    private static final String PATH_TO_USER_CREATE_JSON = "src/test/resources/json/user_create.json";
-    private static final String PATH_TO_USER_UPDATE_JSON = "src/test/resources/json/user_update.json";
     private static final String LOCALHOST = "localhost";
     private static final String BASE_USER_URL = "/v1/users";
     private static final String BASE_SECURITY_URL = "/v1/security";
@@ -57,7 +56,8 @@ class AuthenticationControllerTest {
     private static final String LAST_NAME = "lastName";
     private static final String EMAIL = "email@email.com";
     private static final String PASSWORD = "password";
-    private static final String INVALID_PASSWORD = "invalidPassword";
+    private static final String ACCESS_TOKEN = "accessToken";
+    private static final String REFRESH_TOKEN = "refreshToken";
 
     @Autowired
     private AuthenticationController controller;
@@ -118,95 +118,111 @@ class AuthenticationControllerTest {
         user.setRole(UserRole.ADMIN);
         return user;
     }
-//    @Test
-//    void login() throws Exception {
-//        UserDto userDto = getStandardUserDto();
-//        String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
-//        stubFor(post(urlEqualTo(BASE_USER_URL + "/secure"))
-//                .withQueryParam("email", equalTo(EMAIL))
-//                .willReturn(aResponse()
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody(responseFromClient)));
-//
-//        doReturn(PASSWORD).when(encoder).encode(PASSWORD);
-//        String accessToken = "accessToken";
-//        User user = getStandardUser();
-//        doReturn(accessToken).when(provider).generateAccessToken(user);
-//        LoginDto loginDto = new LoginDto();
-//        loginDto.setEmail(EMAIL);
-//        loginDto.setPassword(PASSWORD);
-//        String requestBody = OBJECT_MAPPER.writeValueAsString(loginDto);
-//        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/login")
-//                        .contentType(APPLICATION_JSON)
-//                        .content(requestBody))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-//                .andExpect(jsonPath("$.accessToken", is("accessToken")));
-//    }
 
-//    @Test
-//    void getNewAccessToken() throws Exception {
-//        doReturn(true).when(provider).validateRefreshToken(any());
-//        Claims claims = Jwts.claims();
-//        claims.setSubject(EMAIL);
-//        doReturn(claims).when(provider).getRefreshClaims(any());
-//
-//        UserDto userDto = getStandardUserDto();
-//        String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
-//        stubFor(post(urlEqualTo(BASE_USER_URL + "/secure"))
-//                .withQueryParam("email", equalTo(EMAIL))
-//                .willReturn(aResponse()
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody(responseFromClient)));
-//
-//        User user = getStandardUser();
-//        String accessToken = "accessToken";
-//        doReturn(accessToken).when(provider).generateAccessToken(user);
-//
-//
-//        RefreshJwtToken refreshJwtToken = new RefreshJwtToken();
-//        refreshJwtToken.setRefreshToken("refresh");
-//        String requestBody = OBJECT_MAPPER.writeValueAsString(refreshJwtToken);
-//        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/token")
-//                        .contentType(APPLICATION_JSON)
-//                        .content(requestBody))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-//                .andExpect(jsonPath("$.accessToken", is("accessToken")));
-//    }
+    @Test
+    void checkLoginShouldSuccessLoginAndAccessTokenEquals() throws Exception {
+        UserDto userDto = getStandardUserDto();
+        String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
 
-//    @Test
-//    void getNewRefreshToken() throws Exception {
-//        doReturn(true).when(provider).validateRefreshToken(any());
-//
-//        Claims claims = Jwts.claims();
-//        claims.setSubject(EMAIL);
-//        doReturn(claims).when(provider).getRefreshClaims(any());
-//
-//        UserDto userDto = getStandardUserDto();
-//        String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
-//        stubFor(post(urlEqualTo(BASE_USER_URL + "/secure"))
-//                .withQueryParam("email", equalTo(EMAIL))
-//                .willReturn(aResponse()
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody(responseFromClient)));
-//
-//        User user = getStandardUser();
-//        String accessToken = "accessToken";
-//        doReturn(accessToken).when(provider).generateAccessToken(user);
-//        String refreshToken = "refreshToken";
-//        doReturn(refreshToken).when(provider).generateRefreshToken(user);
-//
-//        RefreshJwtToken refreshJwtToken = new RefreshJwtToken();
-//        refreshJwtToken.setRefreshToken("refresh");
-//        String requestBody = OBJECT_MAPPER.writeValueAsString(refreshJwtToken);
-//        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/token")
-//                        .header(HEADER_AUTHORIZATION, STUB_TOKEN)
-//                        .contentType(APPLICATION_JSON)
-//                        .content(requestBody))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-//                .andExpect(jsonPath("$.accessToken", is("accessToken")))
-//                .andExpect(jsonPath("$.refreshToken", is("refreshToken")));
-//    }
+        stubFor(post(urlPathEqualTo(BASE_USER_URL + "/secure"))
+                .withQueryParam("email",  equalTo(EMAIL))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(responseFromClient)));
+
+        doReturn(PASSWORD).when(encoder).encode(PASSWORD);
+
+        User user = getStandardUser();
+        doReturn(ACCESS_TOKEN).when(provider).generateAccessToken(user);
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail(EMAIL);
+        loginDto.setPassword(PASSWORD);
+        String requestBody = OBJECT_MAPPER.writeValueAsString(loginDto);
+
+        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/login")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
+                .andExpect(jsonPath("$.accessToken", is(ACCESS_TOKEN)));
+    }
+
+    @Test
+    void checkLoginShouldThrowValidationExcAndStatus422() throws Exception {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail(EMAIL);
+        loginDto.setPassword("short");
+        String requestBody = OBJECT_MAPPER.writeValueAsString(loginDto);
+
+        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/login")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void checkGetNewAccessTokenShouldReturnTokenAndSrarus200() throws Exception {
+        doReturn(true).when(provider).validateRefreshToken(any());
+        Claims claims = Jwts.claims();
+        claims.setSubject(EMAIL);
+        doReturn(claims).when(provider).getRefreshClaims(any());
+
+        UserDto userDto = getStandardUserDto();
+        String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
+
+        stubFor(post(urlPathEqualTo(BASE_USER_URL + "/secure"))
+                .withQueryParam("email", equalTo(EMAIL))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(responseFromClient)));
+
+        User user = getStandardUser();
+        doReturn(ACCESS_TOKEN).when(provider).generateAccessToken(user);
+
+
+        RefreshJwtToken refreshJwtToken = new RefreshJwtToken();
+        refreshJwtToken.setRefreshToken("refresh");
+        String requestBody = OBJECT_MAPPER.writeValueAsString(refreshJwtToken);
+        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/token")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
+                .andExpect(jsonPath("$.accessToken", is(ACCESS_TOKEN)));
+    }
+
+    @Test
+    void checkGetNewRefreshTokenShouldReturnNewAccessAndRefreshTokensAndStatus200() throws Exception {
+        doReturn(true).when(provider).validateRefreshToken(any());
+
+        Claims claims = Jwts.claims();
+        claims.setSubject(EMAIL);
+        doReturn(claims).when(provider).getRefreshClaims(any());
+
+        UserDto userDto = getStandardUserDto();
+        String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
+
+        stubFor(post(urlPathEqualTo(BASE_USER_URL + "/secure"))
+                .withQueryParam("email", equalTo(EMAIL))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(responseFromClient)));
+
+        User user = getStandardUser();
+        doReturn(ACCESS_TOKEN).when(provider).generateAccessToken(user);
+        doReturn(REFRESH_TOKEN).when(provider).generateRefreshToken(user);
+
+        RefreshJwtToken refreshJwtToken = new RefreshJwtToken();
+        refreshJwtToken.setRefreshToken("refresh");
+        String requestBody = OBJECT_MAPPER.writeValueAsString(refreshJwtToken);
+
+        mvc.perform(MockMvcRequestBuilders.post(BASE_SECURITY_URL + "/refresh")
+                        .header(HEADER_AUTHORIZATION, STUB_TOKEN)
+                        .contentType(APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
+                .andExpect(jsonPath("$.accessToken", is(ACCESS_TOKEN)))
+                .andExpect(jsonPath("$.refreshToken", is(REFRESH_TOKEN)));
+    }
 }

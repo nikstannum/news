@@ -46,7 +46,7 @@ public class RestUserController {
 
     private final UserService userService;
 
-    @ApiOperation(value = "Get user by ID. A user with administrator rights can view data about any user. Other authorized users can get " +
+        @ApiOperation(value = "Get user by ID. A user with administrator rights can view data about any user. Other authorized users can get " +
             "information only about themselves",
             response = ClientUserReadDto.class)
     @ApiResponses(value = {
@@ -63,7 +63,7 @@ public class RestUserController {
         return userService.findById(id);
     }
 
-    @ApiOperation(value = "Get all users. The endpoint is only accessible to the administrator", response = List.class)
+        @ApiOperation(value = "Get all users. The endpoint is only accessible to the administrator", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of users"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -73,7 +73,7 @@ public class RestUserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
     public List<ClientUserReadDto> getAll(@Parameter(description = "Page number") @RequestParam Integer page,
-                                          @Parameter(description = "Page size") @RequestParam Integer size) {
+             @Parameter(description = "Page size") @RequestParam Integer size) {
         return userService.findAll(page, size);
     }
 

@@ -1,5 +1,6 @@
 package ru.clevertec.web;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -7,6 +8,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import java.io.File;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,17 +22,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.clevertec.client.dto.NewsCreateDto;
 import ru.clevertec.client.dto.NewsReadDto;
+import ru.clevertec.client.dto.SimpleNewsReadDto;
 import ru.clevertec.client.dto.UserDto;
+import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.security.JwtValidator;
 import ru.clevertec.service.dto.ClientNewsCreateDto;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
@@ -107,42 +114,42 @@ class RestNewsControllerTest {
     }
 
 
-//    @Test
-//    void getAll() throws Exception {
-//
-//        List<SimpleNewsReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_SIMPLE_NEWS), new TypeReference<>() {
-//        });
-//        String responseFromNewsServer = OBJECT_MAPPER.writeValueAsString(list);
-//
-//        stubFor(get(urlEqualTo(BASE_NEWS_URL + "?page=1&size=2"))
-//                .withPort(NEWS_PORT)
-//                .willReturn(aResponse()
-//                        .withStatus(200)
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody(responseFromNewsServer)));
-//
-//
-//        UserDto userDto = new UserDto();
-//        userDto.setId(1L);
-//        userDto.setFirstName("Ivan");
-//        userDto.setLastName("Ivanov");
-//        userDto.setEmail("ivanov@gmail.com");
-//        userDto.setUserRole(UserRole.ADMIN);
-//
-//        stubFor(put(urlEqualTo(BASE_USER_URL + "/ids"))
-//                .withPort(USER_PORT)
-//
-//                .willReturn(aResponse()
-//                        .withStatus(200)
-//                        .withHeader("Content-Type", "application/json")
-//                        .withBody(OBJECT_MAPPER.writeValueAsString(userDto))));
-//
-//        mvc.perform(MockMvcRequestBuilders.get(BASE_NEWS_URL + "?page=1&size=2").header(HEADER_AUTHORIZATION, STUB_TOKEN))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-//                .andExpect(jsonPath("$", hasSize(list.size())));
-//
-//    }
+    @Test
+    void getAll() throws Exception {
+
+        List<SimpleNewsReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_SIMPLE_NEWS), new TypeReference<>() {
+        });
+        String responseFromNewsServer = OBJECT_MAPPER.writeValueAsString(list);
+
+        stubFor(get(urlEqualTo(BASE_NEWS_URL + "?page=1&size=2"))
+                .withPort(NEWS_PORT)
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(responseFromNewsServer)));
+
+
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setFirstName("Ivan");
+        userDto.setLastName("Ivanov");
+        userDto.setEmail("ivanov@gmail.com");
+        userDto.setUserRole(UserRole.ADMIN);
+
+        stubFor(put(urlEqualTo(BASE_USER_URL + "/ids"))
+                .withPort(USER_PORT)
+
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(OBJECT_MAPPER.writeValueAsString(userDto))));
+
+        mvc.perform(MockMvcRequestBuilders.get(BASE_NEWS_URL + "?page=1&size=2").header(HEADER_AUTHORIZATION, STUB_TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(list.size())));
+
+    }
 
     @Test
     void getById() {
