@@ -1,7 +1,8 @@
 package ru.clevertec.web;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,6 +32,8 @@ import ru.clevertec.service.UserService;
 import ru.clevertec.service.dto.ClientUserCreateDto;
 import ru.clevertec.service.dto.ClientUserReadDto;
 import ru.clevertec.service.dto.ClientUserUpdateDto;
+import ru.clevertec.service.dto.error.ErrorDto;
+import ru.clevertec.service.dto.error.ValidationResultDto;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.ValidationException;
 
@@ -46,65 +49,20 @@ public class RestUserController {
 
     private final UserService userService;
 
-        @ApiOperation(value = "Get user by ID. A user with administrator rights can view data about any user. Other authorized users can get " +
-            "information only about themselves",
-            response = ClientUserReadDto.class)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema =
-            @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ADMIN') or  (#id == authentication.details)")
-    public ClientUserReadDto getById(@Parameter(description = "user's ID") @PathVariable Long id) {
-        return userService.findById(id);
-    }
 
-        @ApiOperation(value = "Get all users. The endpoint is only accessible to the administrator", response = List.class)
+    @Operation(description = "Create user. Default role - subscriber.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of users"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden")
-    })
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<ClientUserReadDto> getAll(@Parameter(description = "Page number") @RequestParam Integer page,
-             @Parameter(description = "Page size") @RequestParam Integer size) {
-        return userService.findAll(page, size);
-    }
+            @ApiResponse(responseCode = "201", description = "User created",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ClientUserReadDto.class))),
+            @ApiResponse(responseCode = "409", description = "Already registered user with this email"),
+            @ApiResponse(responseCode = "422", description = "Unprocessable entity",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationResultDto.class)))})
 
-    @ApiOperation(value = "Get user by email. A user with administrator rights can view data about any user. Other authorized users can get " +
-            "information only about themselves", response = ClientUserReadDto.class)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema =
-            @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @GetMapping("/params")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ADMIN') or (#email == authentication.principal)")
-    public ClientUserReadDto getByEmail(@Parameter(description = "User email") @RequestParam String email) {
-        return userService.findByEmail(email);
-    }
-
-    @ApiOperation(value = "Create user. Default role - subscriber.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created", content = @Content(mediaType = "application/json", schema =
-            @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "409", description = "Already registered user with this email")
-    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ClientUserReadDto> create(@Parameter(description = "User data",
-            content = @Content(mediaType = "application/json", schema =
-            @Schema(implementation = ClientUserCreateDto.class)))
-                                                    @RequestBody @Valid ClientUserCreateDto dto,
+    public ResponseEntity<ClientUserReadDto> create(@RequestBody @Valid ClientUserCreateDto dto,
                                                     Errors errors) {
         checkErrors(errors);
         ClientUserReadDto created = userService.create(dto);
@@ -129,23 +87,82 @@ public class RestUserController {
                 .toUri();
     }
 
-    @ApiOperation(value = "Update user. The admin has the authority to change the user's role. Other authorized users can change information about " +
-            "themselves without restrictions, except for their role",
-            response = ClientUserReadDto.class)
+
+    @Operation(description = "Get user by ID. A user with administrator rights can view data about any user. Other authorized users can get " +
+            "information only about themselves")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User updated", content = @Content(mediaType = "application/json", schema =
-            @Schema(implementation = ClientUserReadDto.class))),
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ClientUserReadDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN') or  (#id == authentication.details)")
+    public ClientUserReadDto getById(@Parameter(description = "user's ID") @PathVariable Long id) {
+        return userService.findById(id);
+    }
+
+
+    @Operation(description = "Get all users. The endpoint is only accessible to the administrator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ClientUserReadDto.class)))}),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")})
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<ClientUserReadDto> getAll(@Parameter(description = "Page number") @RequestParam Integer page,
+                                          @Parameter(description = "Page size") @RequestParam Integer size) {
+        return userService.findAll(page, size);
+    }
+
+
+    @Operation(description = "Get user by email. A user with administrator rights can view data about any user. Other authorized users can get " +
+            "information only about themselves")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ClientUserReadDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
+
+    @GetMapping("/params")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN') or (#email == authentication.principal)")
+    public ClientUserReadDto getByEmail(@Parameter(description = "User email") @RequestParam String email) {
+        return userService.findByEmail(email);
+    }
+
+
+    @Operation(description = "Update user. The admin has the authority to change the user's role. Other authorized users can change information about " +
+            "themselves without restrictions, except for their role")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ClientUserReadDto.class))),
             @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the user id in the request body"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "User not found")})
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "422", description = "Unprocessable entity",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationResultDto.class)))})
+
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN') or " +
             "(#id == authentication.details and #user.role == authentication.role)")
     public ClientUserReadDto update(@Parameter(description = "User id") @PathVariable Long id,
-                                    @Parameter(description = "User data", content = @Content(mediaType = "application/json", schema =
-                                    @Schema(implementation = ClientUserUpdateDto.class))) @RequestBody @Valid ClientUserUpdateDto user,
+                                    @RequestBody @Valid ClientUserUpdateDto user,
                                     Errors errors) {
         if (!Objects.equals(id, user.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
@@ -154,13 +171,14 @@ public class RestUserController {
         return userService.update(user);
     }
 
-    @ApiOperation(value = "Delete user. The endpoint is accessible without restrictions for the administrator. An authorized user can only delete " +
+
+    @Operation(description = "Delete user. The endpoint is accessible without restrictions for the administrator. An authorized user can only delete " +
             "himself")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            })
+            @ApiResponse(responseCode = "403", description = "Forbidden")})
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADMIN') or (#id == authentication.details)")

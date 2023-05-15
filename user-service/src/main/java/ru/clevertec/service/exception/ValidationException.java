@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Getter;
 import org.springframework.validation.Errors;
 
-public class ValidationException extends AppNewsServiceException {
+public class ValidationException extends AppUserServiceException {
     @Getter
     private Errors errors;
 

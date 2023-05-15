@@ -129,7 +129,7 @@ class AuthenticationControllerTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody(responseFromClient)));
 
-        doReturn(PASSWORD).when(encoder).encode(PASSWORD);
+        doReturn(true).when(encoder).matches(any(), any());
 
         User user = getStandardUser();
         doReturn(ACCESS_TOKEN).when(provider).generateAccessToken(user);

@@ -9,10 +9,6 @@ import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheAdvice;
 import ru.clevertec.util.cache.impl.LFUCacheImpl;
 import ru.clevertec.util.cache.impl.LRUCacheImpl;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
 public class AppConfig {
@@ -36,14 +32,5 @@ public class AppConfig {
     @ConditionalOnProperty(name = "app.cache.enable", havingValue = "true")
     public CacheAdvice cacheAdvice(Cache cache) {
         return new CacheAdvice(cache);
-    }
-
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
     }
 }

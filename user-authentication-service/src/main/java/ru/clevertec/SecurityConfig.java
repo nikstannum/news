@@ -18,6 +18,13 @@ import ru.clevertec.service.filter.JwtFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private static final String[] DOCUMENTATION = {
+            "/v3/api-docs/**",
+            "/v3/api-docs.yaml",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
+    };
+
     private final JwtFilter jwtFilter;
 
     @Bean
@@ -30,6 +37,7 @@ public class SecurityConfig {
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/v1/security/login", "/v1/security/token").permitAll()
+                                .requestMatchers(DOCUMENTATION).permitAll()
                                 .anyRequest().authenticated().and()
                 ).build();
     }

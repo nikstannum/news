@@ -1,5 +1,10 @@
 package ru.clevertec.web.exc_handler;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,13 +18,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.clevertec.service.dto.error.ErrorDto;
 import ru.clevertec.service.dto.error.ValidationResultDto;
-import ru.clevertec.service.exception.AppNewsServiceException;
+import ru.clevertec.service.exception.AppUserServiceException;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.SuchEntityExistsException;
 import ru.clevertec.service.exception.ValidationException;
 
+@Tag(name = "RestExceptionAdvice", description = "Class for handling exceptions")
 @RestControllerAdvice("ru.clevertec")
 public class RestExceptionAdvice {
 
@@ -27,30 +33,54 @@ public class RestExceptionAdvice {
     private static final String MSG_CLIENT_ERROR = "Client error";
     private static final String DEFAULT_MSG = "Unknown error";
 
+    @Operation(summary = "Handling BadRequestException exception",
+            description = "This method handles BadRequestException exception")
+    @ApiResponse(responseCode = "400", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto error(BadRequestException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
+
+    @Operation(summary = "Handling NotFoundException exception",
+            description = "This method handles NotFoundException exception")
+    @ApiResponse(responseCode = "404", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto error(NotFoundException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
+
+    @Operation(summary = "Handling SuchEntityExistsException exception",
+            description = "This method handles SuchEntityExistsException exception")
+    @ApiResponse(responseCode = "409", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorDto error(SuchEntityExistsException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
+
+    @Operation(summary = "Handling AuthenticationException exception",
+            description = "This method handles AuthenticationException exception")
+    @ApiResponse(responseCode = "401", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorDto error(AuthenticationException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
+
+    @Operation(summary = "Handling AuthenticationException exception",
+            description = "This method handles ValidationException exception")
+    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ValidationResultDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ValidationResultDto error(ValidationException e) {
@@ -69,18 +99,33 @@ public class RestExceptionAdvice {
                         Collectors.toList())));
     }
 
+
+    @Operation(summary = "Handling AccessDeniedException exception",
+            description = "This method handles AccessDeniedException exception")
+    @ApiResponse(responseCode = "403", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDto error(AccessDeniedException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 
+
+    @Operation(summary = "Handling AppUserServiceException exception",
+            description = "This method handles AppUserServiceException exception")
+    @ApiResponse(responseCode = "500", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDto error(AppNewsServiceException e) {
+    public ErrorDto error(AppUserServiceException e) {
         return new ErrorDto(MSG_SERVER_ERROR, e.getMessage());
     }
 
+
+    @Operation(summary = "Handling all other exceptions",
+            description = "This method handles all other exceptions")
+    @ApiResponse(responseCode = "500", content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto error(Exception e) {

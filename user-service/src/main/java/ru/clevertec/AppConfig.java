@@ -12,10 +12,6 @@ import ru.clevertec.util.cache.CacheAdvice;
 import ru.clevertec.util.cache.impl.LFUCacheImpl;
 import ru.clevertec.util.cache.impl.LRUCacheImpl;
 import ru.clevertec.web.interceptor.RequestInterceptor;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
 
 /**
  * Class with configuration for microservice excluding security management
@@ -27,15 +23,6 @@ public class AppConfig implements WebMvcConfigurer {
 
     private final Environment environment;
     private final RequestInterceptor interceptor;
-
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

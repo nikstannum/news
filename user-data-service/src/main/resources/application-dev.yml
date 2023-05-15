@@ -6,7 +6,7 @@ spring:
   jpa:
     show-sql: true
   liquibase:
-    enabled: false
+    enabled: true
     clear-checksums: true
     drop-first: true
 

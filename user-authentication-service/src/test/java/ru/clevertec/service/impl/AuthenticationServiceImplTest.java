@@ -31,7 +31,6 @@ class AuthenticationServiceImplTest {
     private static final String LAST_NAME = "lastName";
     private static final String EMAIL = "email@email.com";
     private static final String PASSWORD = "password";
-    private static final String INVALID_PASSWORD = "invalidPassword";
     @Mock
     private UserDataServiceClient client;
     @Mock
@@ -49,7 +48,7 @@ class AuthenticationServiceImplTest {
         doReturn(userDto).when(client).getByEmail(EMAIL);
         User user = getStandardUser();
         doReturn(user).when(mapper).toUser(userDto);
-        doReturn(PASSWORD).when(encoder).encode(PASSWORD);
+        doReturn(true).when(encoder).matches(any(), any());
         String accessToken = "accessToken";
         doReturn(accessToken).when(provider).generateAccessToken(user);
         String refreshToken = "refreshToken";
@@ -92,7 +91,7 @@ class AuthenticationServiceImplTest {
         doReturn(userDto).when(client).getByEmail(EMAIL);
         User user = getStandardUser();
         doReturn(user).when(mapper).toUser(userDto);
-        doReturn(INVALID_PASSWORD).when(encoder).encode(PASSWORD);
+        doReturn(false).when(encoder).matches(any(), any());
 
         LoginDto loginDto = new LoginDto();
         loginDto.setEmail(EMAIL);

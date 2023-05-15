@@ -1,5 +1,13 @@
 package ru.clevertec.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -22,12 +30,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.clevertec.data.util.NewsQueryParams;
 import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.ValidationException;
+import ru.clevertec.exception.error.ErrorDto;
+import ru.clevertec.exception.error.ValidationResultDto;
 import ru.clevertec.service.NewsService;
 import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
 
+@Tag(name = "NewsController", description = "Rest api for news management on a non-public microservice.")
 @RestController
 @RequestMapping("/v1/news")
 @RequiredArgsConstructor
@@ -37,6 +48,15 @@ public class NewsController {
 
     private final NewsService service;
 
+
+    @Operation(description = "Create news.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "News created",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = NewsReadDto.class))),
+            @ApiResponse(responseCode = "422", description = "Unprocessable entity",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationResultDto.class)))})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<NewsReadDto> create(@RequestBody @Valid NewsCreateDto news, Errors errors) {
@@ -58,36 +78,74 @@ public class NewsController {
     }
 
     private URI getLocation(NewsReadDto created) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path("api/news/{id}")
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("v1/news/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
     }
 
+
+    @Operation(description = "Get all news. News list output is paginated.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = SimpleNewsReadDto.class)))})})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<SimpleNewsReadDto> findAll(@RequestParam Integer page, @RequestParam Integer size) {
+    public List<SimpleNewsReadDto> findAll(@Parameter(description = "Page number") @RequestParam Integer page,
+                                           @Parameter(description = "Page size") @RequestParam Integer size) {
         return service.findAll(page, size);
     }
 
+
+    @Operation(description = "Get news by ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = NewsReadDto.class))),
+            @ApiResponse(responseCode = "404", description = "News not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public NewsReadDto findById(@PathVariable Long id, @RequestParam Integer page, @RequestParam Integer size) {
+    public NewsReadDto findById(@Parameter(description = "news ID") @PathVariable Long id,
+                                @Parameter(description = "Page number") @RequestParam Integer page,
+                                @Parameter(description = "Page size") @RequestParam Integer size) {
         return service.findById(id, page, size);
     }
 
 
+    @Operation(description = "The operation of receiving news based on the passed parameters. News list output is paginated. " +
+            "The keyword parameter is optional. If this parameter is available, the search is carried out " +
+            "by the specified keyword contained in the headline of the news or in the text of the news.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = SimpleNewsReadDto.class)))})})
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public List<SimpleNewsReadDto> findByParams(@RequestParam Integer page,
-                                                @RequestParam Integer size,
+    public List<SimpleNewsReadDto> findByParams(@Parameter(description = "Page number") @RequestParam Integer page,
+                                                @Parameter(description = "Page size") @RequestParam Integer size,
+                                                @Parameter(description = "Keyword search")
                                                 @RequestParam(value = "keyword", required = false) String keyWord,
                                                 NewsQueryParams params) {
         return service.findByParams(page, size, keyWord, params);
     }
 
+
+    @Operation(description = "Update news.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = NewsReadDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the news id in the request body"),
+            @ApiResponse(responseCode = "404", description = "News not found"),
+            @ApiResponse(responseCode = "422", description = "Unprocessable entity",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationResultDto.class)))})
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public NewsReadDto update(@PathVariable Long id, @RequestBody @Valid NewsUpdateDto news, Errors errors) {
+    public NewsReadDto update(@Parameter(description = "News id") @PathVariable Long id,
+                              @RequestBody @Valid NewsUpdateDto news, Errors errors) {
         if (!Objects.equals(id, news.getId())) {
             throw new BadRequestException(EXC_MSG_ID_NOT_MATCH);
         }
@@ -95,9 +153,11 @@ public class NewsController {
         return service.update(news);
     }
 
+    @Operation(description = "Delete news.")
+    @ApiResponse(responseCode = "204", description = "No content")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@Parameter(description = "News id") @PathVariable Long id) {
         service.deleteById(id);
     }
 }

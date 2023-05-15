@@ -29,8 +29,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserDto userDto = client.getByEmail(loginDto.getEmail());
         User user = mapper.toUser(userDto);
         String password = loginDto.getPassword();
-        String hashedPassword = passwordEncoder.encode(password);
-        if (!user.getPassword().equals(hashedPassword)) {
+        boolean validPassword = passwordEncoder.matches(password, user.getPassword());
+        if (!validPassword) {
             throw new AuthenticationException(INVALID_PASSWORD);
         }
         String accessToken = provider.generateAccessToken(user);
