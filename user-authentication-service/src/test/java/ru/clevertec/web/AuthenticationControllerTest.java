@@ -57,20 +57,17 @@ class AuthenticationControllerTest {
     private static final String PASSWORD = "password";
     private static final String ACCESS_TOKEN = "accessToken";
     private static final String REFRESH_TOKEN = "refreshToken";
-
+    private static WireMockServer server;
     @Autowired
     private AuthenticationController controller;
-
     @Autowired
     private MockMvc mvc;
     @MockBean
     private JwtValidator validator;
-
     @MockBean
     private JwtProvider provider;
     @MockBean
     private PasswordEncoder encoder;
-    private static WireMockServer server;
 
     @BeforeAll
     static void beforeAll() {

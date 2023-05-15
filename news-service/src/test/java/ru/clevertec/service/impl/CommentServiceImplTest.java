@@ -46,6 +46,8 @@ class CommentServiceImplTest {
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
     private static final String TEXT = "text";
+    @Captor
+    ArgumentCaptor<Long> captor;
     @Mock
     private UserDataServiceClient userClient;
     @Mock
@@ -66,7 +68,6 @@ class CommentServiceImplTest {
         user.setUserRole(UserRole.SUBSCRIBER);
         return user;
     }
-
 
     @Test
     void checkCreteShouldReturnEquals() {
@@ -142,9 +143,6 @@ class CommentServiceImplTest {
 
         assertThat(actual).isEqualTo(expected);
     }
-
-    @Captor
-    ArgumentCaptor<Long> captor;
 
     @Test
     void checkDeleteShouldCaptured() {

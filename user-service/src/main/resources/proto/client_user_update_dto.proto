@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "ru.clevertec.service.dto";
+option java_outer_classname = "ClientUserUpdateDtoProto";
+
+import "user_role.proto";
+
+message ClientUserUpdateDto {
+  int64 id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  string password = 5;
+  ru.clevertec.client.entity.UserRole role = 6;
+}

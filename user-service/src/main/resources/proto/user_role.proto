@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ru.clevertec.client.entity;
+
+option java_multiple_files = true;
+
+enum UserRole {
+  ADMIN = 0;
+  JOURNALIST = 1;
+  SUBSCRIBER = 2;
+}

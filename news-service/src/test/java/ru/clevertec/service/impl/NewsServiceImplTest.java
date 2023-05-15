@@ -42,7 +42,6 @@ import ru.clevertec.service.mapper.NewsMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -54,6 +53,8 @@ class NewsServiceImplTest {
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
     private static final String EMAIL = "email@email.com";
+    @Captor
+    ArgumentCaptor<Long> captor;
     @Mock
     private NewsDataServiceClient newsClient;
     @Mock
@@ -274,9 +275,6 @@ class NewsServiceImplTest {
 
         assertThat(actual).isEqualTo(expected);
     }
-
-    @Captor
-    ArgumentCaptor<Long> captor;
 
     @Test
     void checkDeleteShouldCaptured() {

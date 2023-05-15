@@ -49,17 +49,17 @@ public class RestUserController {
 
     private final UserService userService;
 
-
     @Operation(description = "Create user. Default role - subscriber.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "409", description = "Already registered user with this email"),
+            @ApiResponse(responseCode = "409", description = "Already registered user with this email",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "422", description = "Unprocessable entity",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ValidationResultDto.class)))})
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ClientUserReadDto> create(@RequestBody @Valid ClientUserCreateDto dto,
@@ -94,8 +94,12 @@ public class RestUserController {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDto.class)))})
@@ -112,8 +116,12 @@ public class RestUserController {
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = {@Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = ClientUserReadDto.class)))}),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden")})
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -129,8 +137,12 @@ public class RestUserController {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDto.class)))})
@@ -149,14 +161,21 @@ public class RestUserController {
             @ApiResponse(responseCode = "200", description = "User updated",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientUserReadDto.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the user id in the request body"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the user id in the request body",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "422", description = "Unprocessable entity",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ValidationResultDto.class)))})
-
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN') or " +
@@ -176,8 +195,12 @@ public class RestUserController {
             "himself")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden")})
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -16,18 +16,19 @@ import ru.clevertec.data.User.UserRole;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.SecurityException;
 import ru.clevertec.exception.SuchEntityExistsException;
+import ru.clevertec.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserServiceImplIntegrationTest extends BaseIntegrationTest {
+    public static final String NOT_EXISTS_EMAIL = "notexistsemail@gmail.com";
+    public static final String EXISTS_EMAIL = "fedorov@gmail.com";
     private static final String PASSWORD = "password";
     private static final String TEST_EMAIL = "test@test.ru";
     private static final String LAST_NAME = "lastName";
     private static final String FIRST_NAME = "firstName";
-    public static final String NOT_EXISTS_EMAIL = "notexistsemail@gmail.com";
-    public static final String EXISTS_EMAIL = "fedorov@gmail.com";
     @Autowired
-    private UserServiceImpl service;
+    private UserService service;
     @Autowired
     private EntityManager manager;
 
@@ -64,7 +65,7 @@ class UserServiceImplIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void findUsersByIdsShouldReturnSize2() {
-        int expectedSize =2;
+        int expectedSize = 2;
         List<Long> ids = List.of(1L, 2L);
         List<UserReadDto> actual = service.findUsersByIds(ids);
 

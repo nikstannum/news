@@ -72,15 +72,14 @@ class RestNewsControllerTest {
     private static final String LAST_NAME = "lastName";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final String TITLE = "title";
-
+    private static WireMockServer userServer;
+    private static WireMockServer newsServer;
     @Autowired
     private RestCommentController controller;
     @Autowired
     private MockMvc mvc;
     @MockBean
     private JwtValidator validator;
-    private static WireMockServer userServer;
-    private static WireMockServer newsServer;
 
     @BeforeAll
     static void beforeAll() {

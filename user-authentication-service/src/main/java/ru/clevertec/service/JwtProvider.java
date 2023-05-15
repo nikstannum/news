@@ -18,7 +18,6 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.clevertec.client.entity.User;
-import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.exception.AuthenticationException;
 
 @Component

@@ -12,17 +12,10 @@ import ru.clevertec.service.dto.ClientUserUpdateDto;
 @Mapper
 public interface UserMapper {
 
-    User toUser(UserReadDto userReadDto);
-
-    User toUser(ClientUserCreateDto clientUserCreateDto);
-
-    ClientUserReadDto toClientUserReadDto(User user);
-
-    UserCreateDto toUserCreateDto(User user);
-
     ClientUserReadDto toClientUserReadDto(UserReadDto userReadDto);
 
     UserUpdateDto toUserUpdateDto(ClientUserUpdateDto clientUserUpdateDto);
 
     UserCreateDto toUserCreateDto(ClientUserCreateDto clientUserCreateDto);
+
 }

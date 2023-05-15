@@ -60,8 +60,12 @@ public class RestCommentController {
             @ApiResponse(responseCode = "201", description = "Comment created",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientCommentReadDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "422", description = "Unprocessable entity",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ValidationResultDto.class)))})
@@ -99,9 +103,13 @@ public class RestCommentController {
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientCommentReadDto.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the comment id in the request body"),
+            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the comment id in the request body",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "404", description = "Comment not found"),
             @ApiResponse(responseCode = "422", description = "Unprocessable entity",
                     content = @Content(mediaType = "application/json",
@@ -125,7 +133,9 @@ public class RestCommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden")})
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('SUBSCRIBER')")

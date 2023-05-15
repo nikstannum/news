@@ -1,10 +1,5 @@
 package ru.clevertec.api.exc_handler;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +16,6 @@ import ru.clevertec.exception.ValidationException;
 import ru.clevertec.exception.error.ErrorDto;
 import ru.clevertec.exception.error.ValidationResultDto;
 
-@Tag(name = "RestExceptionAdvice", description = "Class for handling exceptions")
 @RestControllerAdvice("ru.clevertec")
 public class RestExceptionAdvice {
     private static final String MSG_SERVER_ERROR = "Server error";
@@ -29,10 +23,6 @@ public class RestExceptionAdvice {
     private static final String DEFAULT_MSG = "Unknown error";
 
 
-    @Operation(summary = "Handling BadRequestException exception",
-            description = "This method handles BadRequestException exception")
-    @ApiResponse(responseCode = "400", content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto error(BadRequestException e) {
@@ -40,10 +30,6 @@ public class RestExceptionAdvice {
     }
 
 
-    @Operation(summary = "Handling NotFoundException exception",
-            description = "This method handles NotFoundException exception")
-    @ApiResponse(responseCode = "404", content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorDto error(NotFoundException e) {
@@ -51,10 +37,6 @@ public class RestExceptionAdvice {
     }
 
 
-    @Operation(summary = "Handling AuthenticationException exception",
-            description = "This method handles ValidationException exception")
-    @ApiResponse(responseCode = "422", content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ValidationResultDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ValidationResultDto error(ValidationException e) {
@@ -69,10 +51,6 @@ public class RestExceptionAdvice {
     }
 
 
-    @Operation(summary = "Handling AppNewsServiceException exception",
-            description = "This method handles AppNewsServiceException exception")
-    @ApiResponse(responseCode = "500", content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto error(AppNewsDataServiceException e) {
@@ -80,10 +58,6 @@ public class RestExceptionAdvice {
     }
 
 
-    @Operation(summary = "Handling all other exceptions",
-            description = "This method handles all other exceptions")
-    @ApiResponse(responseCode = "500", content = @Content(mediaType = "application/json",
-            schema = @Schema(implementation = ErrorDto.class)))
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto error(Exception e) {

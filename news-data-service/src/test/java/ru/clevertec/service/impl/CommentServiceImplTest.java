@@ -36,6 +36,8 @@ import static org.mockito.Mockito.doReturn;
 class CommentServiceImplTest {
     private static final String SOME_COMMENT_TEXT = "some text";
     private static final String ATTRIBUTE_ID = "id";
+    @Captor
+    ArgumentCaptor<Long> captor;
     @Mock
     private CommentRepository commentRepository;
     @Mock
@@ -169,8 +171,6 @@ class CommentServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> service.update(dto));
     }
 
-    @Captor
-    ArgumentCaptor<Long> captor;
     @Test
     void checkDeleteByIdShouldCapture() {
         service.deleteById(1L);

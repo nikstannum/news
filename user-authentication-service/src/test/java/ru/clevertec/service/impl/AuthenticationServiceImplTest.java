@@ -20,8 +20,9 @@ import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.UserMapper;
 import ru.clevertec.service.token.JwtToken;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceImplTest {

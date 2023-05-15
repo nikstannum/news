@@ -42,6 +42,8 @@ class NewsServiceImplTest {
     private static final String TITLE = "title";
     private static final String TEXT = "text";
     private static final String ATTRIBUTE_ID = "id";
+    @Captor
+    ArgumentCaptor<Long> captor;
     @Mock
     private NewsMapper mapper;
     @Mock
@@ -79,7 +81,6 @@ class NewsServiceImplTest {
         news.setText(TEXT);
         return news;
     }
-
 
     private News getStandardNews(Long id) {
         News news = new News();
@@ -149,7 +150,6 @@ class NewsServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> service.findById(1L, 1, 2));
     }
 
-
     @Test
     void checkFindByParamsWithKeyWordShouldReturnSize2() {
         Pageable pageable = PageRequest.of(0, 2, Direction.ASC, ATTRIBUTE_ID);
@@ -198,7 +198,7 @@ class NewsServiceImplTest {
         newsUpd.setText("new text");
         doReturn(newsUpd).when(newsRepository).save(news);
 
-        Pageable pageable = PageRequest.of(0, 10, Direction.ASC,ATTRIBUTE_ID);
+        Pageable pageable = PageRequest.of(0, 10, Direction.ASC, ATTRIBUTE_ID);
         Comment comment1 = getStandardComment(1L);
         Comment comment2 = getStandardComment(2L);
         List<Comment> list = List.of(comment1, comment2);
@@ -230,8 +230,6 @@ class NewsServiceImplTest {
         Assertions.assertThrows(NotFoundException.class, () -> service.update(dto));
     }
 
-    @Captor
-    ArgumentCaptor<Long> captor;
     @Test
     void checkDeleteByIdShouldCapture() {
         service.deleteById(1L);

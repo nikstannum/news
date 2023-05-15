@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ru.clevertec.service.dto.error;
+
+option java_package = "ru.clevertec.service.dto.error";
+option java_outer_classname = "ErrorDtoProto";
+
+message Error {
+  string errorType = 1;
+  string errorMessage = 2;
+}

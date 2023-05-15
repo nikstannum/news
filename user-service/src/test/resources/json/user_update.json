@@ -1,8 +1,0 @@
-{
-  "id": 3,
-  "firstName": "Andrew",
-  "lastName": "Petrov",
-  "email": "andrpetrov@yandex.ru",
-  "password": "hardpassword",
-  "role": "JOURNALIST"
-}

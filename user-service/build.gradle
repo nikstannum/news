@@ -1,6 +1,7 @@
 group 'ru.clevertec'
 version '0.0.1-SNAPSHOT'
 
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.1"
@@ -29,4 +30,29 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.17.3"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+sourceSets {
+    main {
+        proto {
+            srcDir 'src/main/resources/proto'
+        }
+        java {
+            srcDir 'build/generated/source/proto/main/java'
+        }
+    }
 }

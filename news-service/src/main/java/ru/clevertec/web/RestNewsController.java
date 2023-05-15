@@ -105,10 +105,16 @@ public class RestNewsController {
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientNewsReadDto.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the news id in the request body"),
+            @ApiResponse(responseCode = "400", description = "Bad request if URI path variable doesn't match the news id in the request body",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "News not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
+            @ApiResponse(responseCode = "404", description = "News not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "422", description = "Unprocessable entity",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ValidationResultDto.class)))})
@@ -133,7 +139,9 @@ public class RestNewsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ClientNewsReadDto.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "422", description = "Unprocessable entity",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ValidationResultDto.class)))})
@@ -174,7 +182,9 @@ public class RestNewsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden")})
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('ADMIN', 'JOURNALIST')")

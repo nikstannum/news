@@ -1,12 +1,11 @@
 package ru.clevertec.web;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,26 +15,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.MethodMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
+import ru.clevertec.client.dto.UserUpdateDto;
 import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.security.utils.JwtValidator;
 import ru.clevertec.service.dto.ClientUserCreateDto;
-import ru.clevertec.service.dto.ClientUserUpdateDto;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.any;
@@ -50,35 +53,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("dev")
 public class RestUserControllerTest {
 
-    private static final String PATH_TO_USER_JSON = "src/test/resources/json/user.json";
-    private static final String PATH_TO_USER_CREATE_JSON = "src/test/resources/json/user_create.json";
-    private static final String PATH_TO_USER_UPDATE_JSON = "src/test/resources/json/user_update.json";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
+    public static final String EMAIL = "email@email.com";
+    public static final String PASSWORD = "password";
     private static final String LOCALHOST = "localhost";
     private static final String BASE_URL = "/v1/users";
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String STUB_TOKEN = "Bearer token";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
+    private static WireMockServer server;
     @Autowired
     private RestUserController controller;
     @Autowired
     private MockMvc mvc;
     @MockBean
     private JwtValidator validator;
-    private static WireMockServer server;
+    @MockBean
+    private PasswordEncoder encoder;
 
     @BeforeAll
     static void beforeAll() {
         WireMockConfiguration config = new WireMockConfiguration();
+        config.containerThreads(50);
         config.port(8081);
         server = new WireMockServer(config);
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         server.start();
-        configureFor(LOCALHOST, 8081);
+        Thread.sleep(500);
         doReturn(true).when(validator).validateAccessToken(any());
+        doReturn(PASSWORD).when(encoder).encode(PASSWORD);
         Claims claims = Jwts.claims();
         claims.put("id", 1L);
         claims.put("role", "ADMIN");
@@ -87,59 +94,79 @@ public class RestUserControllerTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws InterruptedException {
         server.stop();
+        Thread.sleep(500);
     }
 
     @Test
     public void checkFindByIdShouldReturnUserAndStatus200() throws Exception {
-        List<UserReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_JSON), new TypeReference<>() {
-        });
-        UserReadDto user = list.get(0);
-        String userStr = OBJECT_MAPPER.writeValueAsString(user);
-        stubFor(get(urlEqualTo(BASE_URL + "/1"))
+        UserReadDto userReadDto = getUserReadDto();
+        configureFor(LOCALHOST, 8081);
+        stubFor(get(urlPathEqualTo(BASE_URL + "/1"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(userStr)));
+                        .withBody(OBJECT_MAPPER.writeValueAsString(userReadDto))));
 
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/{id}", 1L).header(HEADER_AUTHORIZATION, STUB_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.firstName", is("Nick")));
+                .andExpect(jsonPath("$.firstName", is(FIRST_NAME)));
+    }
+
+    private UserReadDto getUserReadDto() {
+        UserReadDto dto = new UserReadDto();
+        dto.setId(1L);
+        dto.setFirstName(FIRST_NAME);
+        dto.setLastName(LAST_NAME);
+        dto.setEmail(EMAIL);
+        dto.setRole(UserRole.ADMIN);
+        return dto;
     }
 
     @Test
     public void checkGetByIdShouldReturnErrorMessageAndStatus404() throws Exception {
-        stubFor(get(urlEqualTo(BASE_URL + "/3"))
+        configureFor(LOCALHOST, 8081);
+        stubFor(get(urlPathEqualTo(BASE_URL + "/5"))
                 .willReturn(aResponse()
                         .withBody("""
                                 {
                                    "errorType":"Client error",
-                                   "errorMessage":"Not found user with id = 1"
+                                   "errorMessage":"Not found user with id = 5"
                                 }
                                 """
                         )
                         .withStatus(404)));
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/{id}", 3L).header(HEADER_AUTHORIZATION, STUB_TOKEN))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/{id}", 5)
+                        .header(HEADER_AUTHORIZATION, STUB_TOKEN))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
                 .andExpect(jsonPath("$.errorType", is("Client error")))
-                .andExpect(jsonPath("$.errorMessage", is("Not found user with id = 1")));
+                .andExpect(jsonPath("$.errorMessage", is("Not found user with id = 5")));
     }
 
     @Test
     public void checkGetAllShouldReturnTwoUsersAndStatus200() throws Exception {
-        List<UserReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_JSON), new TypeReference<>() {
-        });
-        String body = OBJECT_MAPPER.writeValueAsString(list);
-        stubFor(get(urlEqualTo(BASE_URL + "?page=1&size=2"))
+        UserReadDto user1 = getUserReadDto();
+        UserReadDto user2 = getUserReadDto();
+        user2.setId(2L);
+        List<UserReadDto> list = Arrays.asList(user1, user2);
+
+        configureFor(LOCALHOST, 8081);
+        stubFor(get(urlPathEqualTo(BASE_URL))
+                .withQueryParam("page", equalTo("1"))
+                .withQueryParam("size", equalTo("2"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(body)
+                        .withBody(OBJECT_MAPPER.writeValueAsString(list))
                         .withStatus(200)));
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?page=1&size=2").header(HEADER_AUTHORIZATION, STUB_TOKEN))
+
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL)
+                        .param("page", "1")
+                        .param("size", "2")
+                        .header(HEADER_AUTHORIZATION, STUB_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(list.size())));
@@ -147,54 +174,60 @@ public class RestUserControllerTest {
 
     @Test
     public void checkFindByEmailShouldReturnUserAndStatus200() throws Exception {
-        List<UserReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_JSON), new TypeReference<>() {
-        });
-        UserReadDto user = list.get(0);
-        String userStr = OBJECT_MAPPER.writeValueAsString(user);
-        stubFor(get(urlEqualTo(BASE_URL + "/params?email=johnson%40gmail.us"))
+        UserReadDto userReadDto = getUserReadDto();
+        configureFor(LOCALHOST, 8081);
+        stubFor(get(urlPathEqualTo(BASE_URL + "/params"))
+                .withQueryParam("email", equalTo("johnson@gmail.us"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(userStr)));
+                        .withBody(OBJECT_MAPPER.writeValueAsString(userReadDto))));
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/params?email=johnson@gmail.us").header(HEADER_AUTHORIZATION, STUB_TOKEN))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/params")
+                        .param("email", "johnson@gmail.us")
+                        .header(HEADER_AUTHORIZATION, STUB_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.firstName", is("Nick")));
+                .andExpect(jsonPath("$.firstName", is(FIRST_NAME)));
     }
 
     @Test
     public void checkCreateShouldReturnUserAndStatus201() throws Exception {
-        ClientUserCreateDto clientUserCreateDto = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_CREATE_JSON), ClientUserCreateDto.class);
-        String requestBody = OBJECT_MAPPER.writeValueAsString(clientUserCreateDto);
-        List<UserReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_JSON), new TypeReference<>() {
-        });
-        UserReadDto userReadDto = list.get(2);
-        String response = OBJECT_MAPPER.writeValueAsString(userReadDto);
+        UserCreateDto dto = new UserCreateDto();
+        dto.setFirstName(FIRST_NAME);
+        dto.setLastName(LAST_NAME);
+        dto.setEmail(EMAIL);
+        dto.setPassword(PASSWORD);
 
-        stubFor(post(urlEqualTo(BASE_URL))
-                .withRequestBody(equalToJson(requestBody))
+        UserReadDto userReadDto = getUserReadDto();
+
+        configureFor(LOCALHOST, 8081);
+        stubFor(post(urlPathEqualTo(BASE_URL))
+                .withRequestBody(equalToJson(OBJECT_MAPPER.writeValueAsString(dto)))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(response)));
+                        .withBody(OBJECT_MAPPER.writeValueAsString(userReadDto))));
 
         mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .header(HEADER_AUTHORIZATION, STUB_TOKEN)
                         .contentType(APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(OBJECT_MAPPER.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.role", is("SUBSCRIBER")));
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.role", is("ADMIN")));
     }
 
     @Test
     public void checkCreateShouldThrowSuchEntityExistsExc() throws Exception {
-        ClientUserCreateDto clientUserCreateDto = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_CREATE_JSON), ClientUserCreateDto.class);
-        String requestBody = OBJECT_MAPPER.writeValueAsString(clientUserCreateDto);
-
-        stubFor(post(urlEqualTo(BASE_URL))
-                .withRequestBody(equalToJson(requestBody))
+        UserCreateDto dto = new UserCreateDto();
+        dto.setFirstName(FIRST_NAME);
+        dto.setLastName(LAST_NAME);
+        dto.setPassword(PASSWORD);
+        dto.setEmail(EMAIL);
+        configureFor(LOCALHOST, 8081);
+        stubFor(post(urlPathEqualTo(BASE_URL))
+                .withRequestBody(equalToJson(OBJECT_MAPPER.writeValueAsString(dto)))
                 .willReturn(aResponse()
                         .withStatus(409)
                         .withBody("""
@@ -205,10 +238,15 @@ public class RestUserControllerTest {
                                 """
                         )));
 
+        ClientUserCreateDto clientUserCreateDto = new ClientUserCreateDto();
+        clientUserCreateDto.setFirstName(FIRST_NAME);
+        clientUserCreateDto.setLastName(LAST_NAME);
+        clientUserCreateDto.setEmail(EMAIL);
+        clientUserCreateDto.setPassword(PASSWORD);
         mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .header(HEADER_AUTHORIZATION, STUB_TOKEN)
                         .contentType(APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(OBJECT_MAPPER.writeValueAsString(clientUserCreateDto)))
                 .andExpect(status().isConflict())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
                 .andExpect(jsonPath("$.errorType", is("Client error")))
@@ -218,33 +256,37 @@ public class RestUserControllerTest {
     @Test
     @DirtiesContext(methodMode = MethodMode.BEFORE_METHOD)
     public void checkUpdateShouldReturnUserAndStatus200() throws Exception {
-        ClientUserUpdateDto clientUserUpdateDto = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_UPDATE_JSON), ClientUserUpdateDto.class);
-        String requestBody = OBJECT_MAPPER.writeValueAsString(clientUserUpdateDto);
-        List<UserReadDto> list = OBJECT_MAPPER.readValue(new File(PATH_TO_USER_JSON), new TypeReference<>() {
-        });
-        UserReadDto userReadDto = list.get(2);
-        userReadDto.setRole(UserRole.JOURNALIST);
-        String response = OBJECT_MAPPER.writeValueAsString(userReadDto);
+        UserUpdateDto dto = new UserUpdateDto();
+        dto.setId(1L);
+        dto.setFirstName(FIRST_NAME);
+        dto.setLastName(LAST_NAME);
+        dto.setEmail(EMAIL);
+        dto.setPassword(PASSWORD);
+        dto.setRole(UserRole.ADMIN);
 
-        stubFor(put(urlEqualTo(BASE_URL + "/3"))
-                .withRequestBody(equalToJson(requestBody))
+        UserReadDto userReadDto = getUserReadDto();
+
+        configureFor(LOCALHOST, 8081);
+        stubFor(put(urlPathEqualTo(BASE_URL + "/1"))
+                .withRequestBody(equalToJson(OBJECT_MAPPER.writeValueAsString(dto)))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody(response)));
+                        .withBody(OBJECT_MAPPER.writeValueAsString(userReadDto))));
 
-        mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/{id}", 3L)
+        mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/{id}", 1)
                         .header(HEADER_AUTHORIZATION, STUB_TOKEN)
                         .contentType(APPLICATION_JSON)
-                        .content(requestBody))
+                        .content(OBJECT_MAPPER.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.role", is("JOURNALIST")));
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.role", is("ADMIN")));
     }
 
     @Test
     public void checkDeleteShouldReturnStatus204() throws Exception {
+        configureFor(LOCALHOST, 8081);
         stubFor(delete(urlEqualTo(BASE_URL + "/3"))
                 .willReturn(aResponse()
                         .withStatus(204)));

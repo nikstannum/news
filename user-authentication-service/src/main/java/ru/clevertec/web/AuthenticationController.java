@@ -81,7 +81,9 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "401", description = "User passed invalid refresh token. The detailed reason is given in the message.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDto.class))),
-            @ApiResponse(responseCode = "403", description = "The user has not been authorized.")})
+            @ApiResponse(responseCode = "403", description = "The user has not been authorized.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)))})
     @PostMapping("/refresh")
     @ResponseStatus(HttpStatus.OK)
     public JwtToken getNewRefreshToken(@RequestBody RefreshJwtToken request) {
