@@ -5,6 +5,9 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class for presenting information about errors related to the invalidity of the entered data
+ */
 @Getter
 @Setter
 public class ValidationResultDto extends ErrorDto {

@@ -37,8 +37,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/v1/security/login", "/v1/security/token").permitAll()
                                 .requestMatchers(DOCUMENTATION).permitAll()
-                                .anyRequest().authenticated().and()
-                ).build();
+                                .anyRequest().authenticated().and())
+                .build();
     }
 
     @Bean

@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.clevertec.data.User.UserRole;
 
+/**
+ * Class for creating DTO objects for exchanging data with public services (user-service, news-service)
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

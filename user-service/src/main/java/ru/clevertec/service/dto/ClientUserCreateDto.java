@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Web interface entity for user create
+ */
 @Getter
 @Setter
 public class ClientUserCreateDto {

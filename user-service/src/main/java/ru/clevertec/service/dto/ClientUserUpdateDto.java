@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.clevertec.client.entity.User.UserRole;
 
+/**
+ * Web interface entity for user update
+ */
 @Getter
 @Setter
 public class ClientUserUpdateDto {

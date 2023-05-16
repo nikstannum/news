@@ -14,6 +14,9 @@ import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
 import ru.clevertec.client.dto.UserUpdateDto;
 
+/**
+ * Client for sending requests to a non-public user-data service
+ */
 @FeignClient(name = "user-data-service", url = "http://localhost:8081", configuration = FeignErrorDecoder.class)
 public interface UserDataServiceClient {
 

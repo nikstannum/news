@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Class for creating objects containing credentials
+ */
 @Setter
 @Getter
 public class LoginDto {

@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.clevertec.client.entity.User;
 import ru.clevertec.client.entity.User.UserRole;
-import ru.clevertec.service.JwtProvider;
+import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.token.RefreshJwtToken;
@@ -158,10 +158,10 @@ class AuthenticationControllerTest {
 
     @Test
     void checkGetNewAccessTokenShouldReturnTokenAndSrarus200() throws Exception {
-        doReturn(true).when(provider).validateRefreshToken(any());
+        doReturn(true).when(validator).validateRefreshToken(any());
         Claims claims = Jwts.claims();
         claims.setSubject(EMAIL);
-        doReturn(claims).when(provider).getRefreshClaims(any());
+        doReturn(claims).when(validator).getRefreshClaims(any());
 
         UserDto userDto = getStandardUserDto();
         String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);
@@ -189,11 +189,11 @@ class AuthenticationControllerTest {
 
     @Test
     void checkGetNewRefreshTokenShouldReturnNewAccessAndRefreshTokensAndStatus200() throws Exception {
-        doReturn(true).when(provider).validateRefreshToken(any());
+        doReturn(true).when(validator).validateRefreshToken(any());
 
         Claims claims = Jwts.claims();
         claims.setSubject(EMAIL);
-        doReturn(claims).when(provider).getRefreshClaims(any());
+        doReturn(claims).when(validator).getRefreshClaims(any());
 
         UserDto userDto = getStandardUserDto();
         String responseFromClient = OBJECT_MAPPER.writeValueAsString(userDto);

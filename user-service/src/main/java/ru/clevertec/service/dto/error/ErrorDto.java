@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Main class for providing error information
+ */
 @Setter
 @Getter
 @NoArgsConstructor

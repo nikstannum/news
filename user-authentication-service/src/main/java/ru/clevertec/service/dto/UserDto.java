@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.clevertec.client.entity.User.UserRole;
 
+/**
+ * DTO for interacting with a non-public user-data-service
+ */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -20,6 +20,10 @@ import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.SuchEntityExistsException;
 import ru.clevertec.service.exception.ValidationException;
 
+/**
+ * Class for handling exceptions that occur during application operation.
+ */
+
 @RestControllerAdvice("ru.clevertec")
 public class RestExceptionAdvice {
 

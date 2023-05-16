@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+/**
+ * Main class for providing error information
+ */
 @Setter
 @Getter
 @NoArgsConstructor

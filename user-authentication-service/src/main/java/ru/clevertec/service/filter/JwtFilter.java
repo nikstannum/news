@@ -16,6 +16,9 @@ import ru.clevertec.service.util.JwtAuthentication;
 import ru.clevertec.service.util.JwtAuthenticationGenerator;
 import ru.clevertec.service.util.JwtValidator;
 
+/**
+ * Filter requests from system users. When a valid token is transferred, the user is authenticated and empowered.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
@@ -25,9 +28,19 @@ public class JwtFilter extends GenericFilterBean {
 
     private final JwtValidator validator;
 
+    /**
+     * Method for filtering requests in a filter embedded in a filter chain.
+     *
+     * @param request  The request to process
+     * @param response The response associated with the request
+     * @param chain    Provides access to the next filter in the chain for this filter to pass the request and response
+     *                 to for further processing
+     * @throws IOException      if an I/O related error has occurred during the processing
+     * @throws ServletException if an exception has occurred that interferes with the filterChain's normal operation
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-        final String token = getTokenFromRequest((HttpServletRequest) request);
+        String token = getTokenFromRequest((HttpServletRequest) request);
         if (token != null && validator.validateAccessToken(token)) {
             Claims claims = validator.getAccessClaims(token);
             JwtAuthentication authentication = JwtAuthenticationGenerator.generate(claims);

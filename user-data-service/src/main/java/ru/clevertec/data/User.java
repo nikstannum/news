@@ -14,6 +14,9 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 import ru.clevertec.data.converter.UserRoleConverter;
 
+/**
+ * Class for working with the user entity.
+ */
 @Entity
 @Table(name = "users")
 @Getter

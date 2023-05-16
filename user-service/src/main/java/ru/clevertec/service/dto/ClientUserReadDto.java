@@ -8,6 +8,9 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.clevertec.client.entity.User.UserRole;
 
+/**
+ * Web interface entity for user read
+ */
 @Getter
 @Setter
 @NoArgsConstructor

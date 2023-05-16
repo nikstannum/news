@@ -13,12 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.entity.User;
 import ru.clevertec.client.entity.User.UserRole;
-import ru.clevertec.service.JwtProvider;
+import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.UserMapper;
 import ru.clevertec.service.token.JwtToken;
+import ru.clevertec.service.util.JwtValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -40,6 +41,8 @@ class AuthenticationServiceImplTest {
     private PasswordEncoder encoder;
     @Mock
     private JwtProvider provider;
+    @Mock
+    private JwtValidator validator;
     @InjectMocks
     private AuthenticationServiceImpl service;
 
@@ -103,10 +106,10 @@ class AuthenticationServiceImplTest {
 
     @Test
     void checkGetAccessTokenShouldReturnEquals() {
-        doReturn(true).when(provider).validateRefreshToken(Mockito.any());
+        doReturn(true).when(validator).validateRefreshToken(Mockito.any());
         Claims claims = Jwts.claims();
         claims.setSubject(EMAIL);
-        doReturn(claims).when(provider).getRefreshClaims(any());
+        doReturn(claims).when(validator).getRefreshClaims(any());
         UserDto userDto = getStandardUserDto();
         doReturn(userDto).when(client).getByEmail(EMAIL);
         User user = getStandardUser();
@@ -122,17 +125,17 @@ class AuthenticationServiceImplTest {
 
     @Test
     void checkGetAccessTokenShouldAccessTokenNull() {
-        doReturn(false).when(provider).validateRefreshToken(Mockito.any());
+        doReturn(false).when(validator).validateRefreshToken(Mockito.any());
         JwtToken actual = service.getAccessToken("refresh");
         assertThat(actual.getAccessToken()).isNull();
     }
 
     @Test
     void checkRefreshShouldReturnEquals() {
-        doReturn(true).when(provider).validateRefreshToken(Mockito.any());
+        doReturn(true).when(validator).validateRefreshToken(Mockito.any());
         Claims claims = Jwts.claims();
         claims.setSubject(EMAIL);
-        doReturn(claims).when(provider).getRefreshClaims(any());
+        doReturn(claims).when(validator).getRefreshClaims(any());
         UserDto userDto = getStandardUserDto();
         doReturn(userDto).when(client).getByEmail(EMAIL);
         User user = getStandardUser();
@@ -150,7 +153,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     void checkRefreshShouldRThrowAuthenticationExc() {
-        doReturn(false).when(provider).validateRefreshToken(Mockito.any());
+        doReturn(false).when(validator).validateRefreshToken(Mockito.any());
         Assertions.assertThrows(AuthenticationException.class, () -> service.refresh("refresh"));
     }
 }

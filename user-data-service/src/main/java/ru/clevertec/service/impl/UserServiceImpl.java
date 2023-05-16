@@ -21,6 +21,9 @@ import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.service.UserService;
 import ru.clevertec.service.mapper.UserMapper;
 
+/**
+ * Implementation of the {@link ru.clevertec.service.UserService} interface
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

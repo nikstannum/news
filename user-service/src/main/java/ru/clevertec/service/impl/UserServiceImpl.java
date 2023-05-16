@@ -22,6 +22,9 @@ import ru.clevertec.util.cache.CacheGet;
 import ru.clevertec.util.cache.CachePutPost;
 import ru.clevertec.util.logger.LogInvocation;
 
+/**
+ * Implementation of the {@link ru.clevertec.service.UserService} interface
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.clevertec.service.dto.UserDto;
 
+/**
+ * Client for sending requests to a non-public user-data service
+ */
 @FeignClient(name = "user-data-service", url = "http://localhost:8081")
 public interface UserDataServiceClient {
 

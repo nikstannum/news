@@ -9,6 +9,9 @@ import static ru.clevertec.data.User.UserRole.ADMIN;
 import static ru.clevertec.data.User.UserRole.JOURNALIST;
 import static ru.clevertec.data.User.UserRole.SUBSCRIBER;
 
+/**
+ * Class for converting a user's role to a numeric representation for storage in the database and vice versa
+ */
 @Component
 public class UserRoleConverter implements AttributeConverter<UserRole, Integer> {
     @Override
