@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * the essence of the web interface contained in the comments or news as the author of these items
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

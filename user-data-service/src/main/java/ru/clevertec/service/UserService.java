@@ -1,10 +1,10 @@
 package ru.clevertec.service;
 
 import java.util.List;
-import ru.clevertec.api.dto.UserCreateDto;
-import ru.clevertec.api.dto.UserReadDto;
-import ru.clevertec.api.dto.UserSecureDto;
-import ru.clevertec.api.dto.UserUpdateDto;
+import ru.clevertec.service.dto.UserCreateDto;
+import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.UserSecureDto;
+import ru.clevertec.service.dto.UserUpdateDto;
 
 /**
  * The main interface of the business logic of the non-public microservice user-data-service.

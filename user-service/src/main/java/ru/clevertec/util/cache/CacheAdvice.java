@@ -20,7 +20,7 @@ public class CacheAdvice {
      *
      * @param jp join point for advice
      * @return Object placed in the cache ({@link ru.clevertec.service.dto.ClientUserReadDto})
-     * @throws Throwable
+     * @throws Throwable if the invoked proceed throws anything
      */
     @Around("@annotation(CacheGet)")
     private Object get(ProceedingJoinPoint jp) throws Throwable {
@@ -36,12 +36,12 @@ public class CacheAdvice {
     }
 
     /**
-     * An advice to apply when creating or updating an object. The created or updated object is passed to a non-public microservice
+     * The advice to apply when creating or updating an object. The created or updated object is passed to a non-public microservice
      * (data-user-service) for saving or updating, after which this object is placed or updated in the cache.
      *
      * @param jp join point for advice
      * @return created or updated object ({@link ru.clevertec.service.dto.ClientUserReadDto})
-     * @throws Throwable
+     * @throws Throwable if the invoked proceed throws anything
      */
     @Around("@annotation(CachePutPost)")
     private Object post(ProceedingJoinPoint jp) throws Throwable {
@@ -53,11 +53,11 @@ public class CacheAdvice {
     }
 
     /**
-     * An advice to apply when deleting an object. When deleting, the identifier of the object being deleted is passed to a non-public microservice
+     * The advice to apply when deleting an object. When deleting, the identifier of the object being deleted is passed to a non-public microservice
      * (user-data-service) for deletion. After a deletion is performed, the object is removed from the cache.
      *
      * @param jp join point for advice
-     * @throws Throwable
+     * @throws Throwable if the invoked proceed throws anything
      */
     @Around("@annotation(CacheDelete)")
     private void delete(ProceedingJoinPoint jp) throws Throwable {

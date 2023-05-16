@@ -28,8 +28,8 @@ import ru.clevertec.service.dto.AuthorReadDto;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
+import ru.clevertec.service.dto.ClientSimpleCommentReadDto;
 import ru.clevertec.service.dto.QueryParamsComment;
-import ru.clevertec.service.dto.SimpleClientCommentReadDto;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.AuthorMapper;
 import ru.clevertec.service.mapper.CommentMapper;
@@ -211,10 +211,10 @@ class CommentServiceImplTest {
         CommentReadDto comment2 = getStandardCommentReadDto();
         List<CommentReadDto> list = List.of(comment1, comment2);
         doReturn(list).when(newsClient).getAllComments(1, 2);
-        doReturn(new SimpleClientCommentReadDto()).when(commentMapper).toSimpleClientReadDto(any());
+        doReturn(new ClientSimpleCommentReadDto()).when(commentMapper).toSimpleClientReadDto(any());
         int expectedSize = 2;
 
-        List<SimpleClientCommentReadDto> actual = service.findAll(1, 2);
+        List<ClientSimpleCommentReadDto> actual = service.findAll(1, 2);
 
         assertThat(actual).hasSize(expectedSize);
 
@@ -247,10 +247,10 @@ class CommentServiceImplTest {
         params.setUser_id(1L);
         params.setText(TEXT);
         doReturn(list).when(newsClient).getCommentByParams(1, 2, params);
-        doReturn(new SimpleClientCommentReadDto()).when(commentMapper).toSimpleClientReadDto(any());
+        doReturn(new ClientSimpleCommentReadDto()).when(commentMapper).toSimpleClientReadDto(any());
         int expectedSize = 2;
 
-        List<SimpleClientCommentReadDto> actual = service.findByParams(1, 2, params);
+        List<ClientSimpleCommentReadDto> actual = service.findByParams(1, 2, params);
 
         assertThat(actual).hasSize(expectedSize);
     }

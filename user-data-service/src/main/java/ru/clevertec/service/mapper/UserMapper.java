@@ -1,10 +1,10 @@
 package ru.clevertec.service.mapper;
 
 import org.mapstruct.Mapper;
-import ru.clevertec.api.dto.UserCreateDto;
-import ru.clevertec.api.dto.UserReadDto;
-import ru.clevertec.api.dto.UserSecureDto;
-import ru.clevertec.api.dto.UserUpdateDto;
+import ru.clevertec.service.dto.UserCreateDto;
+import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.UserSecureDto;
+import ru.clevertec.service.dto.UserUpdateDto;
 import ru.clevertec.data.User;
 
 @Mapper

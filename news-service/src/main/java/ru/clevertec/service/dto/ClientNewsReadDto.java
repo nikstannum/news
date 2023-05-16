@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * the essence of the web interface when reading one news item
+ */
 @Getter
 @Setter
 @NoArgsConstructor

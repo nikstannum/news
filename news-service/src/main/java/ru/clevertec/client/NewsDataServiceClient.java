@@ -20,7 +20,9 @@ import ru.clevertec.client.dto.NewsUpdateDto;
 import ru.clevertec.client.dto.SimpleNewsReadDto;
 import ru.clevertec.service.dto.QueryParamsComment;
 import ru.clevertec.service.dto.QueryParamsNews;
-
+/**
+ * Client for sending requests to a non-public news-data service
+ */
 @FeignClient(name = "news-data-service", url = "http://localhost:8082")
 public interface NewsDataServiceClient {
     // news

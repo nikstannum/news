@@ -4,17 +4,19 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.clevertec.data.entity.Comment;
-
+/**
+ * Repository interface for interacting with the database.
+ */
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
 
-    @Query(value = """
-            SELECT c.id, c.news_id, c.user_id, c.text, c.create_time
-            FROM comments c
-            WHERE c.news_id = :id
-            """,
-            nativeQuery = true)
-    List<Comment> findByNewsId(@Param("id") Long id, Pageable pageable);
+    /**
+     * Getting comments by news ID. The list of news is displayed in paginated mode
+     *
+     * @param id news id
+     * @param pageable paginated parameters
+     * @return list of comments
+     */
+    List<Comment> findByNewsId(Long id, Pageable pageable);
 }

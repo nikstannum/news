@@ -3,6 +3,9 @@ package ru.clevertec.service.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The essence of the web interface for the formation of search criteria for comments
+ */
 @Getter
 @Setter
 public class QueryParamsComment {

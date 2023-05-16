@@ -4,6 +4,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import ru.clevertec.data.entity.Comment;
 
+/**
+ * util class to get {@link org.springframework.data.jpa.domain.Specification} for working with
+ * {@link org.springframework.data.jpa.repository.JpaSpecificationExecutor}
+ */
 @Component
 public class CommentSpecificationBuilder {
 
@@ -14,6 +18,11 @@ public class CommentSpecificationBuilder {
     public static final String ATTRIBUTE_TEXT = "text";
     private static final String COLON = ":";
 
+    /**
+     * Method for building a specification for searching comments by parameters
+     * @param queryParams parameters for searching
+     * @return the conjunction of the specifications
+     */
     public Specification<Comment> getSpecificationSelectCommentByParams(QueryCommentParams queryParams) {
         Specification<Comment> specUserId = getUserIdSpecification(queryParams);
         Specification<Comment> specNewsId = getNewsIdSpecification(queryParams);

@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * entity in the interface when receiving one comment or as part of one news item
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

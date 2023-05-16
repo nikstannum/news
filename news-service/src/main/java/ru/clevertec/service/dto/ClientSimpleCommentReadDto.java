@@ -4,9 +4,12 @@ import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * web interface entity when getting a list of comments
+ */
 @Getter
 @Setter
-public class SimpleClientCommentReadDto {
+public class ClientSimpleCommentReadDto {
 
     private Long id;
 

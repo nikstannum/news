@@ -1,4 +1,4 @@
-package ru.clevertec.security;
+package ru.clevertec;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.clevertec.security.filter.JwtFilter;
-
+/**
+ * Security configuration for microservice
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

@@ -23,7 +23,7 @@ import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
 import ru.clevertec.service.dto.QueryParamsComment;
-import ru.clevertec.service.dto.SimpleClientCommentReadDto;
+import ru.clevertec.service.dto.ClientSimpleCommentReadDto;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.AuthorMapper;
 import ru.clevertec.service.mapper.CommentMapper;
@@ -94,7 +94,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @LogInvocation
-    public List<SimpleClientCommentReadDto> findAll(Integer page, Integer size) {
+    public List<ClientSimpleCommentReadDto> findAll(Integer page, Integer size) {
         List<CommentReadDto> commentReadDtoList = newsClient.getAllComments(page, size);
         return commentReadDtoList.stream()
                 .map(commentMapper::toSimpleClientReadDto)
@@ -116,7 +116,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<SimpleClientCommentReadDto> findByParams(Integer page, Integer size, QueryParamsComment queryParamsComment) {
+    public List<ClientSimpleCommentReadDto> findByParams(Integer page, Integer size, QueryParamsComment queryParamsComment) {
         List<CommentReadDto> commentReadDto = newsClient.getCommentByParams(page, size, queryParamsComment);
         return commentReadDto.stream()
                 .map(commentMapper::toSimpleClientReadDto)

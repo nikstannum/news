@@ -9,17 +9,18 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-
+/**
+ * Class for applying end-to-end functionality for logging method calls.
+ */
 @Component
 @Aspect
 @Slf4j
 public class Logger {
     /**
-     * логирование методов на уровне ИНФО вне слоя контроллеров при успешном их выполнении
+     * Logging methods at the INFO level outside the controller layer when they are successfully executed
      *
-     * @param jp
+     * @param jp join point for advice
      */
-
     @AfterReturning("@annotation(LogInvocation) && !within(ru.clevertec.web..*)")
     private void loggingInfo(JoinPoint jp) {
         log.info("Method " + jp.getSignature().getName() + " with args " + Arrays.toString(jp.getArgs())
@@ -27,9 +28,9 @@ public class Logger {
     }
 
     /**
-     * логирование ошибок во всем приложении
+     * Exceptions logging.
      *
-     * @param e
+     * @param e thrown exception
      */
     @AfterThrowing(pointcut = "@annotation(LogInvocation) && within(ru.clevertec.client.FeignErrorDecoder)", throwing = "e")
     private void loggingError(Exception e) {
@@ -42,9 +43,9 @@ public class Logger {
     }
 
     /**
-     * логирование факта получения объекта из кэша. Поинткат определен в takeFromCache().
+     * Logging the fact of getting an object from the cache. The pointcut is defined in takeFromCache().
      *
-     * @param returnValue
+     * @param returnValue object retrieved from cache
      */
     @AfterReturning(value = "takeFromCache()", returning = "returnValue")
     private void loggingTakeFromCache(Object returnValue) {
@@ -60,9 +61,9 @@ public class Logger {
     }
 
     /**
-     * логирование факта помещения объекта в кэш. Поинткат определен в putIntoCache()
+     * Logging the fact of placing an object in the cache. Pointcut is defined in putIntoCache()
      *
-     * @param jp
+     * @param jp join point for advice
      */
     @AfterReturning(value = "putIntoCache()")
     private void loggingPutInCache(JoinPoint jp) {
@@ -79,9 +80,9 @@ public class Logger {
     }
 
     /**
-     * логирование факта удаления объекта из кэша. Поинткат определен в deleteFromCache()
+     * Logging the fact of deleting an object from the cache. The pointcut is defined in deleteFromCache()
      *
-     * @param returnValue
+     * @param returnValue object removed from the cache
      */
     @AfterReturning(value = "deleteFromCache()", returning = "returnValue")
     private void loggingDeleteFromCache(Object returnValue) {
@@ -97,9 +98,9 @@ public class Logger {
     }
 
     /**
-     * логирование запросов к контроллерам. Поинткат определен в request()
+     * Logging requests to the controller. Pointcut is defined in request()
      *
-     * @param jp
+     * @param jp join point for advice
      */
     @Before("request()")
     private void loggingRequest(JoinPoint jp) {
@@ -113,10 +114,10 @@ public class Logger {
     }
 
     /**
-     * логирование ответов от контроллера. Поинткат определен в response()
+     * Logging responses from the controller. Pointcut defined in response()
      *
-     * @param jp
-     * @param returnValue
+     * @param jp          join point for advice
+     * @param returnValue object returned from controller method
      */
     @AfterReturning(value = "response()", returning = "returnValue")
     private void loggingResponse(JoinPoint jp, Object returnValue) {
@@ -130,7 +131,7 @@ public class Logger {
     }
 
     /**
-     * логирование перехваченных исключений в RestExceptionAdvice. Поинткат определен в excAdvice()
+     * Logging of caught exceptions to RestExceptionAdvice. Pointcut is defined in excAdvice()
      */
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {

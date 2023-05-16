@@ -20,6 +20,9 @@ import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
 import ru.clevertec.util.logger.LogInvocation;
 
+/**
+ * Class for handling responses from a non-public user-data service and news-data-service that are outside the 2xx status range
+ */
 @Component
 @RequiredArgsConstructor
 public class FeignErrorDecoder implements ErrorDecoder {

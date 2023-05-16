@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * the essence of the web interface for passing the parameters of the news when it is created
+ */
 @Getter
 @Setter
 public class ClientNewsCreateDto {

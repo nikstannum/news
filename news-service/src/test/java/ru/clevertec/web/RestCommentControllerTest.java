@@ -28,7 +28,7 @@ import ru.clevertec.client.dto.CommentReadDto;
 import ru.clevertec.client.dto.CommentUpdateDto;
 import ru.clevertec.client.dto.UserDto;
 import ru.clevertec.client.entity.User.UserRole;
-import ru.clevertec.security.JwtValidator;
+import ru.clevertec.security.utils.JwtValidator;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
 import ru.clevertec.service.dto.QueryParamsComment;

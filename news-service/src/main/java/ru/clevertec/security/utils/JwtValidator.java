@@ -1,4 +1,4 @@
-package ru.clevertec.security;
+package ru.clevertec.security.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.clevertec.service.exception.AuthenticationException;
 
+/**
+ * Auxiliary class for token validation
+ */
 @Component
 public class JwtValidator {
 
@@ -30,17 +33,18 @@ public class JwtValidator {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
     }
 
-
-    public boolean validateAccessToken(@NonNull String accessToken) {
-        return validateToken(accessToken, jwtAccessSecret);
-    }
-
-    private boolean validateToken(@NonNull String token, @NonNull Key secret) {
+    /**
+     * Method for determining the validity of a token.
+     *
+     * @param accessToken access token passed by the user
+     * @return true if the token is valid
+     */
+    public boolean validateAccessToken(String accessToken) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(secret)
+                    .setSigningKey(jwtAccessSecret)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseClaimsJws(accessToken);
             return true;
         } catch (ExpiredJwtException expEx) {
             throw new AuthenticationException(EXC_MSG_TOKEN_EXPIRED);
@@ -55,13 +59,15 @@ public class JwtValidator {
         }
     }
 
-    public Claims getAccessClaims(@NonNull String token) {
-        return getClaims(token, jwtAccessSecret);
-    }
-
-    private Claims getClaims(@NonNull String token, @NonNull Key secret) {
+    /**
+     * Method for getting claims from token payload
+     *
+     * @param token access token
+     * @return a JWT claims set
+     */
+    public Claims getAccessClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secret)
+                .setSigningKey(jwtAccessSecret)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

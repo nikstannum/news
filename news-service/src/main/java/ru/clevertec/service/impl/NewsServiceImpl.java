@@ -54,6 +54,13 @@ public class NewsServiceImpl implements NewsService {
         return collectListClientSimpleNewsReadDto(simpleList);
     }
 
+    /**
+     * A list of comments is being compiled. The main logic is built around getting a list of news authors by their IDs and adding news authors
+     * ({@link ru.clevertec.service.dto.AuthorReadDto}) to the corresponding news.
+     *
+     * @param simpleList list obtained from non-public microservice news-data-service
+     * @return list of news
+     */
     private List<ClientSimpleNewsReadDto> collectListClientSimpleNewsReadDto(List<SimpleNewsReadDto> simpleList) {
         List<Long> userIds = simpleList.stream()
                 .map(SimpleNewsReadDto::getUserId)
@@ -86,25 +93,42 @@ public class NewsServiceImpl implements NewsService {
     public ClientNewsReadDto findById(Long id, Integer page, Integer size) {
         NewsReadDto newsReadDto = newsClient.getById(id, page, size);
         List<CommentReadDto> commentReadDtoList = newsReadDto.getComments();
-        List<Long> commentAndNewsAuthorsIds = new ArrayList<>(commentReadDtoList.stream()
-                .map(CommentReadDto::getUserId)
-                .toList());
-        commentAndNewsAuthorsIds.add(newsReadDto.getUserId());
-        List<UserDto> userDtoList = userClient.getAllUsersByIds(commentAndNewsAuthorsIds);
-        Map<Long, UserDto> mapNewsCommentsAuthor = new HashMap<>();
+        List<UserDto> userDtoList = getCommentsAndNewsAuthorsList(newsReadDto, commentReadDtoList);
+        Map<Long, UserDto> mapNewsCommentsAuthors = new HashMap<>();
         for (UserDto userDto : userDtoList) {
-            mapNewsCommentsAuthor.put(userDto.getId(), userDto);
+            mapNewsCommentsAuthors.put(userDto.getId(), userDto);
         }
-        UserDto newsAuthorUserDto = mapNewsCommentsAuthor.remove(newsReadDto.getUserId());
+        UserDto newsAuthorUserDto = mapNewsCommentsAuthors.remove(newsReadDto.getUserId());
         AuthorReadDto newsAuthor = authorMapper.toAuthor(newsAuthorUserDto);
         ClientNewsReadDto news = newsMapper.toClientNewsReadDto(newsReadDto);
         news.setAuthor(newsAuthor);
-
-        List<ClientCommentReadDto> comments = getClientCommentReadDtoList(commentReadDtoList, mapNewsCommentsAuthor);
+        List<ClientCommentReadDto> comments = getClientCommentReadDtoList(commentReadDtoList, mapNewsCommentsAuthors);
         news.setComments(comments);
         return news;
     }
 
+    /**
+     * getting the author of the news and the authors of the comments
+     *
+     * @param newsReadDto        unprocessed news received from a non-public microservice news-data-service
+     * @param commentReadDtoList list of raw comments received together with the news from the non-public news-data-service
+     * @return raw list of news author and news comment authors
+     */
+    private List<UserDto> getCommentsAndNewsAuthorsList(NewsReadDto newsReadDto, List<CommentReadDto> commentReadDtoList) {
+        List<Long> commentAndNewsAuthorsIds = new ArrayList<>(commentReadDtoList.stream()
+                .map(CommentReadDto::getUserId)
+                .toList());
+        commentAndNewsAuthorsIds.add(newsReadDto.getUserId());
+        return userClient.getAllUsersByIds(commentAndNewsAuthorsIds);
+    }
+
+    /**
+     * getting the processed list of comments to the news
+     *
+     * @param commentReadDtoList    list of raw comments received together with the news from the non-public news-data-service
+     * @param mapNewsCommentsAuthor unprocessed authors of comments collected in a map
+     * @return processed list of news comments
+     */
     private List<ClientCommentReadDto> getClientCommentReadDtoList(List<CommentReadDto> commentReadDtoList, Map<Long, UserDto> mapNewsCommentsAuthor) {
         List<ClientCommentReadDto> comments = new ArrayList<>();
         for (CommentReadDto commentReadDto : commentReadDtoList) {

@@ -8,13 +8,21 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+/**
+ * Class for applying end-to-end functionality for logging method calls.
+ */
 
 @Component
 @Aspect
 @Slf4j
 public class Logger {
 
-    @AfterReturning("@annotation(LogInvocation)")
+    /**
+     * Logging methods at the INFO level outside the controller layer when they are successfully executed
+     *
+     * @param jp join point for advice
+     */
+    @AfterReturning("@annotation(LogInvocation) && !within(ru.clevertec.api..*)")
     private void loggingInfo(JoinPoint jp) {
         log.info("Method " + jp.getSignature().getName() + " with args " + Arrays.toString(jp.getArgs())
                 + " on the object " + jp.getTarget() + " was called successfully.");
@@ -26,9 +34,9 @@ public class Logger {
     }
 
     /**
-     * логирование запросов к контроллерам. Поинткат определен в request()
+     * Logging requests to the controller. Pointcut is defined in request()
      *
-     * @param jp
+     * @param jp join point for advice
      */
     @Before("request()")
     private void loggingRequest(JoinPoint jp) {
@@ -42,10 +50,10 @@ public class Logger {
     }
 
     /**
-     * логирование ответов от контроллера. Поинткат определен в response()
+     * Logging responses from the controller. Pointcut defined in response()
      *
-     * @param jp
-     * @param returnValue
+     * @param jp          join point for advice
+     * @param returnValue object returned from controller method
      */
     @AfterReturning(value = "response()", returning = "returnValue")
     private void loggingResponse(JoinPoint jp, Object returnValue) {
@@ -59,7 +67,7 @@ public class Logger {
     }
 
     /**
-     * логирование перехваченных исключений в RestExceptionAdvice. Поинткат определен в excAdvice()
+     * Logging of caught exceptions to RestExceptionAdvice. Pointcut is defined in excAdvice()
      */
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {

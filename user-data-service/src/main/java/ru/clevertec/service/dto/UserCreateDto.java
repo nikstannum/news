@@ -1,20 +1,16 @@
-package ru.clevertec.api.dto;
+package ru.clevertec.service.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import ru.clevertec.data.User.UserRole;
 
 /**
  * Class for creating DTO objects for exchanging data with public service (user-service)
  */
 @Getter
 @Setter
-public class UserUpdateDto {
-    @NotNull
-    private Long id;
+public class UserCreateDto {
     @Size(max = 30, message = "Your first name is longer than 30 characters. You can use an alias.")
     private String firstName;
     @Size(max = 30, message = "Your last name is longer than 30 characters. You can use an alias.")
@@ -24,5 +20,4 @@ public class UserUpdateDto {
     private String email;
     @Size(min = 6, message = "Too short password.")
     private String password;
-    private UserRole role;
 }

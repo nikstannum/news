@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * web interface entity for passing comment parameters when it is updated
+ */
 @Getter
 @Setter
 public class ClientCommentUpdateDto {

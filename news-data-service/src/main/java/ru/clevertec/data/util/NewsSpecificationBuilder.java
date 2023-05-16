@@ -4,6 +4,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import ru.clevertec.data.entity.News;
 
+/**
+ * util class to get {@link org.springframework.data.jpa.domain.Specification} for working with
+ * {@link org.springframework.data.jpa.repository.JpaSpecificationExecutor}
+ */
 @Component
 public class NewsSpecificationBuilder {
     public static final String ATTRIBUTE_USER_ID = "userId";
@@ -13,6 +17,12 @@ public class NewsSpecificationBuilder {
     public static final String PATTERN_PERCENT = "%";
     public static final String ATTRIBUTE_TEXT = "text";
 
+    /**
+     * Method for building a specification for searching news by parameters
+     *
+     * @param queryParams parameters for searching
+     * @return the conjunction of the specifications
+     */
     public Specification<News> getSpecificationSelectNewsByParams(NewsQueryParams queryParams) {
         Specification<News> specUserId = getUserIdSpecification(queryParams);
         Specification<News> specTitle = getTitleSpecification(queryParams);

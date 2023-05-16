@@ -1,4 +1,4 @@
-package ru.clevertec.security;
+package ru.clevertec.security.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import ru.clevertec.client.entity.User.UserRole;
-
+/**
+ * Class representing the token for the authenticated principal. Implements {@link org.springframework.security.core.Authentication}.
+ */
 @Getter
 @Setter
 public class JwtAuthentication implements Authentication {
@@ -30,6 +32,11 @@ public class JwtAuthentication implements Authentication {
         return null;
     }
 
+    /**
+     * Method for getting user id authenticated in the system.
+     *
+     * @return users id
+     */
     @Override
     public Object getDetails() {
         return id;

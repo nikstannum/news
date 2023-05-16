@@ -17,7 +17,9 @@ import ru.clevertec.service.exception.AppNewsServiceException;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
-
+/**
+ * Class for handling exceptions that occur during application operation.
+ */
 @RestControllerAdvice("ru.clevertec")
 public class RestExceptionAdvice {
     private static final String MSG_SERVER_ERROR = "Server error";

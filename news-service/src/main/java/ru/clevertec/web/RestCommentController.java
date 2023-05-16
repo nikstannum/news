@@ -32,9 +32,9 @@ import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
+import ru.clevertec.service.dto.ClientSimpleCommentReadDto;
 import ru.clevertec.service.dto.ClientSimpleNewsReadDto;
 import ru.clevertec.service.dto.QueryParamsComment;
-import ru.clevertec.service.dto.SimpleClientCommentReadDto;
 import ru.clevertec.service.dto.error.ErrorDto;
 import ru.clevertec.service.dto.error.ValidationResultDto;
 import ru.clevertec.service.exception.BadRequestException;
@@ -147,10 +147,10 @@ public class RestCommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = SimpleClientCommentReadDto.class)))})})
+                            array = @ArraySchema(schema = @Schema(implementation = ClientSimpleCommentReadDto.class)))})})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<SimpleClientCommentReadDto> getAll(@Parameter(description = "Page number") @RequestParam Integer page,
+    public List<ClientSimpleCommentReadDto> getAll(@Parameter(description = "Page number") @RequestParam Integer page,
                                                    @Parameter(description = "Page size") @RequestParam Integer size) {
         return service.findAll(page, size);
     }
@@ -179,7 +179,7 @@ public class RestCommentController {
                             array = @ArraySchema(schema = @Schema(implementation = ClientSimpleNewsReadDto.class)))})})
     @GetMapping("/params")
     @ResponseStatus(HttpStatus.OK)
-    public List<SimpleClientCommentReadDto> getByParams(@Parameter(description = "Page number") @RequestParam Integer page,
+    public List<ClientSimpleCommentReadDto> getByParams(@Parameter(description = "Page number") @RequestParam Integer page,
                                                         @Parameter(description = "Page size") @RequestParam Integer size,
                                                         @RequestBody QueryParamsComment queryParamsComment) {
         return service.findByParams(page, size, queryParamsComment);

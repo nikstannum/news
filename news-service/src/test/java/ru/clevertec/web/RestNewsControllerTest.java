@@ -29,7 +29,7 @@ import ru.clevertec.client.dto.NewsUpdateDto;
 import ru.clevertec.client.dto.SimpleNewsReadDto;
 import ru.clevertec.client.dto.UserDto;
 import ru.clevertec.client.entity.User.UserRole;
-import ru.clevertec.security.JwtValidator;
+import ru.clevertec.security.utils.JwtValidator;
 import ru.clevertec.service.dto.ClientNewsCreateDto;
 import ru.clevertec.service.dto.ClientNewsUpdateDto;
 import ru.clevertec.service.dto.QueryParamsNews;

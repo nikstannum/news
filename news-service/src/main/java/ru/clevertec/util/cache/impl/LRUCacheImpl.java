@@ -6,6 +6,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.util.cache.Cache;
 
+/**
+ * Implementation of the LRU Cache.
+ */
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
@@ -18,6 +21,14 @@ public class LRUCacheImpl implements Cache {
         this.keyList = new LinkedList<>();
     }
 
+    /**
+     * Method for placing an object in the cache.
+     *
+     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})
+     *               unique identifier
+     * @param target the object on which the method is called
+     * @param value  the object itself ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})
+     */
     @Override
     public void put(Object id, Object target, Object value) {
         String compositeId = id + ":" + target;
@@ -33,6 +44,13 @@ public class LRUCacheImpl implements Cache {
         map.put(compositeId, value);
     }
 
+    /**
+     * Method for removing an object from the cache. The return value is used to log the fact that the object was removed from the cache.
+     * If a null value has entered the cache, the fact of deletion is logged at the error level.
+     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
+     * @param target the object on which the method is called
+     * @return object removed from the cache
+     */
     @Override
     public Object delete(Object id, Object target) {
         if (contains(id, target)) {
@@ -43,12 +61,24 @@ public class LRUCacheImpl implements Cache {
         return null;
     }
 
+    /**
+     *  Method for checking if an object is in the cache.
+     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
+     * @param target the object on which the method is called
+     * @return true if the object being looked up is in the cache, otherwise false
+     */
     @Override
     public boolean contains(Object id, Object target) {
         String compositeId = id + ":" + target;
         return map.containsKey(compositeId);
     }
 
+    /**
+     * Method for getting an object from the cache. Before getting an object, the fact of its presence in the cache is checked.
+     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
+     * @param target the object on which the method is called
+     * @return the object itself ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})
+     */
     @Override
     public Object take(Object id, Object target) {
         String compositeId = id + ":" + target;

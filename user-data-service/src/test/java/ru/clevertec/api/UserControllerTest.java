@@ -9,10 +9,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-import ru.clevertec.api.dto.UserCreateDto;
-import ru.clevertec.api.dto.UserReadDto;
-import ru.clevertec.api.dto.UserSecureDto;
-import ru.clevertec.api.dto.UserUpdateDto;
+import ru.clevertec.service.dto.UserCreateDto;
+import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.UserSecureDto;
+import ru.clevertec.service.dto.UserUpdateDto;
 import ru.clevertec.data.User.UserRole;
 import ru.clevertec.service.UserService;
 

@@ -8,7 +8,7 @@ import ru.clevertec.client.dto.CommentUpdateDto;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
-import ru.clevertec.service.dto.SimpleClientCommentReadDto;
+import ru.clevertec.service.dto.ClientSimpleCommentReadDto;
 
 @Mapper
 public interface CommentMapper {
@@ -20,5 +20,5 @@ public interface CommentMapper {
 
     CommentUpdateDto toCommentUpdateDto(ClientCommentUpdateDto clientCommentUpdateDto);
 
-    SimpleClientCommentReadDto toSimpleClientReadDto(CommentReadDto commentReadDto);
+    ClientSimpleCommentReadDto toSimpleClientReadDto(CommentReadDto commentReadDto);
 }
