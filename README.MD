@@ -12,12 +12,12 @@
 ![alt microservice interaction scheme](src/main/resources/static/images/app_schema.png)
 ##### There are two non-public microservices (user-data-service and news-data-service), each of which works with a separate database.
 
-##### The public microservices are the user authentication service, the user service, and the news service.
+##### The public microservices are the user-authentication-service, the user-service, and the news-service.
 
-##### The main purpose of the user service is user registration in the system.
+##### The main purpose of the user-service is user registration in the system.
 
-##### The user-authentication service is designed to receive a JWT token for users registered in the system.
+##### The user-authentication-service is designed to receive a JWT token for users registered in the system.
 
-##### News service allows you to perform operations on news and comments.
+##### News-service allows you to perform operations on news and comments.
 
 ##### Unregistered users can view news and comments without restrictions. Other operations are not available to them. A registered user, within the limits of his powers, can carry out various operations related to changes in news, comments and users themselves. The description of the powers of the various users are defined in the task.
