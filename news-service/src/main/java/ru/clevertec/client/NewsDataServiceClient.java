@@ -23,7 +23,7 @@ import ru.clevertec.service.dto.QueryParamsNews;
 /**
  * Client for sending requests to a non-public news-data service
  */
-@FeignClient(name = "news-data-service", url = "http://localhost:8082")
+@FeignClient(name = "news-data-service", configuration = FeignErrorDecoder.class)
 public interface NewsDataServiceClient {
     // news
     @GetMapping("/v1/news")
@@ -33,8 +33,8 @@ public interface NewsDataServiceClient {
     NewsReadDto getById(@PathVariable("id") Long id, @RequestParam("page") Integer page, @RequestParam("size") Integer size);
 
     @GetMapping("/v1/news/params")
-    List<SimpleNewsReadDto> getByParams(@RequestParam("page") Integer page,
-                                        @RequestParam("size") Integer size,
+    List<SimpleNewsReadDto> getByParams(@RequestParam(value = "page", required = false) Integer page,
+                                        @RequestParam(value = "size", required = false) Integer size,
                                         @RequestParam(value = "keyword", required = false) String keyWord,
                                         @SpringQueryMap QueryParamsNews queryParams);
 

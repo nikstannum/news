@@ -1,6 +1,7 @@
 package ru.clevertec.service.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.clevertec.service.dto.UserCreateDto;
 import ru.clevertec.service.dto.UserReadDto;
 import ru.clevertec.service.dto.UserSecureDto;

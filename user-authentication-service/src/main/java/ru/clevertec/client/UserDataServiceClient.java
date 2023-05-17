@@ -9,7 +9,7 @@ import ru.clevertec.service.dto.UserDto;
 /**
  * Client for sending requests to a non-public user-data service
  */
-@FeignClient(name = "user-data-service", url = "http://localhost:8081")
+@FeignClient(name = "user-data-service", configuration = FeignErrorDecoder.class)
 public interface UserDataServiceClient {
 
     @PostMapping("/v1/users/secure")

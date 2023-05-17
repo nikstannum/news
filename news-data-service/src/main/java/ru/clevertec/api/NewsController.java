@@ -108,8 +108,8 @@ public class NewsController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public NewsReadDto findById(@Parameter(description = "news ID") @PathVariable Long id,
-                                @Parameter(description = "Page number") @RequestParam Integer page,
-                                @Parameter(description = "Page size") @RequestParam Integer size) {
+                                @Parameter(description = "Page number") @RequestParam(required = false) Integer page,
+                                @Parameter(description = "Page size") @RequestParam(required = false) Integer size) {
         return service.findById(id, page, size);
     }
 

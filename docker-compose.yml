@@ -1,9 +1,10 @@
 version: '3'
 
+
 services:
   postgres-users:
     image: 'postgres:14-alpine'
-    container_name: 'users-postgres'
+    container_name: 'postgres-users'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
@@ -12,9 +13,10 @@ services:
       - ./docker/init-db:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+
   postgres-news:
     image: 'postgres:14-alpine'
-    container_name: 'news-postgres'
+    container_name: 'postgres-news'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
@@ -23,56 +25,85 @@ services:
       - ./docker/init-db:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
-  postgres-comments:
-    image: 'postgres:14-alpine'
-    container_name: 'comments-postgres'
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=comments
-    volumes:
-      - ./docker/init-db:/docker-entrypoint-initdb.d
+
+  redis-users:
+    container_name: 'redis-users'
+    image: 'redis:7-alpine'
     ports:
-      - "5434:5432"
+      - "6379:6379"
+
+  redis-news:
+    container_name: 'redis-news'
+    image: 'redis:7-alpine'
+    ports:
+      - "6380:6379"
+
+  liquibase:
+    image: 'liquibase/liquibase'
+
   eureka-server:
     build: ./eureka-server
     container_name: 'eureka-server'
     ports:
       - 8079:8079
+
   user-data-service:
     build: ./user-data-service
     container_name: 'user-data-service'
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/users
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-users:5432/users
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8079/eureka
     ports:
       - 8081:8081
     depends_on:
       - postgres-users
+      - liquibase
+      - eureka-server
+
   user-service:
     build: ./user-service
     container_name: 'user-service'
+    environment:
+      - SPRING_CACHE_TYPE=NONE
+      - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
     ports:
       - 8090:8090
+    depends_on:
+      - user-data-service
+      - redis-users
+
   user-auth-service:
     build: ./user-authentication-service
     container_name: 'user-auth-service'
+    environment:
+      - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
     ports:
       - 8091:8091
+    depends_on:
+      - user-data-service
+
   news-data-service:
     build: ./news-data-service
     container_name: 'news-data-service'
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/news
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-news:5432/news
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8079/eureka
     ports:
       - 8082:8082
     depends_on:
       - postgres-news
-  comments-data-service:
-    build: ./comment-data-service
-    container_name: 'comments-data-service'
+      - liquibase
+      - eureka-server
+
+  news-service:
+    build: ./news-service
+    container_name: 'news-service'
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/comments
+      - SPRING_CACHE_TYPE=NONE
+      - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
+      - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_NEWS-DATA-SERVICE_URL=http://news-data-service:8082
     ports:
-      - 8083:8083
+      - 8080:8080
     depends_on:
-      - postgres-comments
+      - news-data-service
+      - redis-news

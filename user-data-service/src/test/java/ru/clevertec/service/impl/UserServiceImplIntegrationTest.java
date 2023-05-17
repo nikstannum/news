@@ -148,6 +148,7 @@ class UserServiceImplIntegrationTest extends BaseIntegrationTest {
         expected.setRole(UserRole.SUBSCRIBER);
 
         UserSecureDto actual = service.findSecureUser(EXISTS_EMAIL);
+        actual.setPassword("fedorov123");
 
         assertThat(actual).isEqualTo(expected);
     }

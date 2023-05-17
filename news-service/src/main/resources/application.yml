@@ -1,7 +1,15 @@
 spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          user-data-service:
+            url: http://localhost:8081
+          news-data-service:
+            url: http://localhost:8082
   application:
     name: news-service
   cache:
-    type: REDIS
+    type: NONE
 server:
   port: 8080
