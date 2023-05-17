@@ -64,8 +64,9 @@ services:
     build: ./user-service
     container_name: 'user-service'
     environment:
-      - SPRING_CACHE_TYPE=NONE
       - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
+      - SPRING_CACHE_TYPE=REDIS
+      - SPRING_DATA_REDIS_URL=redis://redis-users:6379
     ports:
       - 8090:8090
     depends_on:
@@ -99,9 +100,10 @@ services:
     build: ./news-service
     container_name: 'news-service'
     environment:
-      - SPRING_CACHE_TYPE=NONE
       - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
       - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_NEWS-DATA-SERVICE_URL=http://news-data-service:8082
+      - SPRING_CACHE_TYPE=REDIS
+      - SPRING_DATA_REDIS_URL=redis://redis-news:6379
     ports:
       - 8080:8080
     depends_on:
