@@ -9,8 +9,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=users
-    volumes:
-      - ./docker/init-db:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 
@@ -21,8 +19,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=news
-    volumes:
-      - ./docker/init-db:/docker-entrypoint-initdb.d
     ports:
       - "5433:5432"
 

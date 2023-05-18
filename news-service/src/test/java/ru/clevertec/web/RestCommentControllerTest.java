@@ -94,9 +94,10 @@ class RestCommentControllerTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         userServer.start();
         newsServer.start();
+        Thread.sleep(500);
 
         doReturn(true).when(validator).validateAccessToken(any());
         Claims claims = Jwts.claims();
@@ -107,9 +108,10 @@ class RestCommentControllerTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws InterruptedException {
         userServer.stop();
         newsServer.stop();
+        Thread.sleep(500);
     }
 
     @Test

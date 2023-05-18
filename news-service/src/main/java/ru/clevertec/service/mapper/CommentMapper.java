@@ -13,11 +13,13 @@ import ru.clevertec.service.dto.ClientSimpleCommentReadDto;
 @Mapper
 public interface CommentMapper {
 
-    @Mapping(target = "author", source = "userId", ignore = true)
+    @Mapping(target = "author", ignore = true)
     ClientCommentReadDto toClientCommentReadDto(CommentReadDto comment);
 
+    @Mapping(target = "userId", ignore = true)
     CommentCreateDto toCommentCreateDto(ClientCommentCreateDto commentCreateDto);
 
+    @Mapping(target = "userId", ignore = true)
     CommentUpdateDto toCommentUpdateDto(ClientCommentUpdateDto clientCommentUpdateDto);
 
     ClientSimpleCommentReadDto toSimpleClientReadDto(CommentReadDto commentReadDto);
