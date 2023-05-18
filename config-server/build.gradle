@@ -8,10 +8,9 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'org.springframework.cloud:spring-cloud-config-server:3.0.6'
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
 }
 configurations.configureEach {
-    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-test'
     exclude group: 'org.springdoc', module: 'springdoc-openapi-starter-webmvc-ui'
     exclude group: 'org.projectlombok', module: 'lombok'
