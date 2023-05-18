@@ -86,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
         Long authorId = comment.getUserId();
         Long authenticationId = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        if (!authenticationId.equals(authorId) || !authorities.contains(UserRole.ADMIN)) {
+        if (!authenticationId.equals(authorId) && !authorities.contains(UserRole.ADMIN)) {
             throw new AuthenticationException(EXC_MSG_SOMEONE_ELSE_COMMENT);
         }
         newsClient.deleteCommentById(id);

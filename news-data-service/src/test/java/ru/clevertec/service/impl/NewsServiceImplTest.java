@@ -198,12 +198,6 @@ class NewsServiceImplTest {
         newsUpd.setText("new text");
         doReturn(newsUpd).when(newsRepository).save(news);
 
-        Pageable pageable = PageRequest.of(0, 10, Direction.ASC, ATTRIBUTE_ID);
-        Comment comment1 = getStandardComment(1L);
-        Comment comment2 = getStandardComment(2L);
-        List<Comment> list = List.of(comment1, comment2);
-        doReturn(list).when(commentRepository).findByNewsId(1L, pageable);
-
         NewsReadDto newsReadDto = getStandardNewsReadDtoWithoutComments(1L);
         CommentReadDto commentReadDto1 = new CommentReadDto();
         commentReadDto1.setId(1L);

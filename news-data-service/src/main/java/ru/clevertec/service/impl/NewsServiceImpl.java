@@ -84,9 +84,6 @@ public class NewsServiceImpl implements NewsService {
         news.setText(newsUpdateDto.getText());
         news.setTitle(newsUpdateDto.getTitle());
         News updated = newsRepository.save(news);
-        Pageable pageable = PageRequest.of(0, 10, Direction.ASC, ATTRIBUTE_ID);
-        List<Comment> comments = commentRepository.findByNewsId(updated.getId(), pageable);
-        updated.setComments(comments);
         return newsMapper.toNewsReadDto(updated);
     }
 

@@ -237,6 +237,15 @@ class RestNewsControllerTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody(OBJECT_MAPPER.writeValueAsString(getUserDto()))));
 
+        List<Long> usersIds = Arrays.asList(1L, 1L, 1L);
+        List<UserDto> userDtoList = Arrays.asList(getUserDto(), getUserDto());
+        stubFor(put(urlPathEqualTo(BASE_USER_URL + "/ids"))
+                .withRequestBody(equalToJson(OBJECT_MAPPER.writeValueAsString(usersIds)))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(OBJECT_MAPPER.writeValueAsString(userDtoList))));
+
 
         NewsUpdateDto newsUpdateDto = getNewsUpdateDto();
         configureFor(LOCALHOST, NEWS_PORT);
@@ -246,6 +255,15 @@ class RestNewsControllerTest {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(OBJECT_MAPPER.writeValueAsString(getNewsReadDto()))));
+
+        NewsReadDto newsReadDto = getNewsReadDto();
+        stubFor(get(urlPathEqualTo(BASE_NEWS_URL + "/1"))
+                .withQueryParam("page", equalTo("1"))
+                .withQueryParam("size", equalTo("2"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(OBJECT_MAPPER.writeValueAsString(newsReadDto))));
 
         ClientNewsUpdateDto clientNewsUpdateDto = getClientNewsUpdateDto();
         mvc.perform(MockMvcRequestBuilders.put(BASE_NEWS_URL + "/1")

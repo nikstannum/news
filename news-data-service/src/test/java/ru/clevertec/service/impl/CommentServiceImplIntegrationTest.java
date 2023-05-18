@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.clevertec.BaseIntegrationTest;
 import ru.clevertec.data.util.QueryCommentParams;
+import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.CommentCreateDto;
@@ -77,6 +78,15 @@ public class CommentServiceImplIntegrationTest extends BaseIntegrationTest {
         CommentReadDto actual = service.update(commentUpdateDto);
         assertThat(actual.getText()).isEqualTo(SOME_TEXT);
     }
+
+    @Test
+    void checkUpdateShouldThrowBadRequestExc() {
+        CommentUpdateDto commentUpdateDto = new CommentUpdateDto();
+        commentUpdateDto.setId(1L);
+        commentUpdateDto.setNewsId(2L);
+        Assertions.assertThrows(BadRequestException.class, () -> service.update(commentUpdateDto));
+    }
+
 
     @Test
     void checkUpdateShouldThrowNotFoundExc() {

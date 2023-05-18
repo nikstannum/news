@@ -14,6 +14,7 @@ import ru.clevertec.data.NewsRepository;
 import ru.clevertec.data.entity.Comment;
 import ru.clevertec.data.util.CommentSpecificationBuilder;
 import ru.clevertec.data.util.QueryCommentParams;
+import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.logger.LogInvocation;
 import ru.clevertec.service.CommentService;
@@ -30,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     private static final String ATTRIBUTE_ID = "id";
     private static final String EXC_MSG_NOT_FOUND_BY_ID = "wasn't found comment with id = ";
     private static final String EXC_MSG_NEWS_NOT_FOUND = "Error creation comment. May be given news was deleted";
+    public static final String EXC_MSG_NEWS_ID_MISMATCH = "News ID mismatch";
 
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
@@ -79,9 +81,14 @@ public class CommentServiceImpl implements CommentService {
         if (!newsRepository.existsById(newsId)) {
             throw new NotFoundException(EXC_MSG_NEWS_NOT_FOUND + newsId);
         }
-        Comment comment = mapper.toComment(commentUpdateDto);
-        Comment created = commentRepository.save(comment);
-        return mapper.toCommentReadDto(created);
+        Long commentId = commentUpdateDto.getId();
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + commentId));
+        if (!comment.getNewsId().equals(newsId)) {
+            throw new BadRequestException(EXC_MSG_NEWS_ID_MISMATCH);
+        }
+        comment.setText(commentUpdateDto.getText());
+        Comment updated = commentRepository.save(comment);
+        return mapper.toCommentReadDto(updated);
     }
 
     @Override

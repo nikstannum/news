@@ -22,6 +22,7 @@ import ru.clevertec.data.NewsRepository;
 import ru.clevertec.data.entity.Comment;
 import ru.clevertec.data.util.CommentSpecificationBuilder;
 import ru.clevertec.data.util.QueryCommentParams;
+import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.service.dto.CommentCreateDto;
 import ru.clevertec.service.dto.CommentReadDto;
@@ -88,6 +89,7 @@ class CommentServiceImplTest {
         Comment comment = new Comment();
         comment.setId(id);
         comment.setUserId(1L);
+        comment.setNewsId(1L);
         comment.setText(SOME_COMMENT_TEXT);
         return comment;
     }
@@ -153,7 +155,7 @@ class CommentServiceImplTest {
         dto.setId(1L);
         dto.setNewsId(1L);
         dto.setText(SOME_COMMENT_TEXT);
-        doReturn(comment).when(mapper).toComment(dto);
+        doReturn(Optional.of(comment)).when(commentRepository).findById(1L);
         doReturn(comment).when(commentRepository).save(comment);
         CommentReadDto expected = getStandardCommentReadDto(1L);
         doReturn(expected).when(mapper).toCommentReadDto(comment);
@@ -161,6 +163,19 @@ class CommentServiceImplTest {
         CommentReadDto actual = service.update(dto);
 
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void checkUpdateShouldThrowBadRequestExc() {
+        doReturn(true).when(newsRepository).existsById(1L);
+        Comment comment = getStandardComment(1L);
+        comment.setNewsId(2L);
+        CommentUpdateDto dto = new CommentUpdateDto();
+        dto.setId(1L);
+        dto.setNewsId(1L);
+        dto.setText(SOME_COMMENT_TEXT);
+        doReturn(Optional.of(comment)).when(commentRepository).findById(1L);
+        Assertions.assertThrows(BadRequestException.class, () -> service.update(dto));
     }
 
     @Test

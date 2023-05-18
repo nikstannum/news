@@ -1,6 +1,7 @@
 package ru.clevertec.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.NewsDataServiceClient;
@@ -20,6 +22,7 @@ import ru.clevertec.client.dto.NewsUpdateDto;
 import ru.clevertec.client.dto.SimpleNewsReadDto;
 import ru.clevertec.client.dto.UserDto;
 import ru.clevertec.client.entity.News;
+import ru.clevertec.client.entity.User.UserRole;
 import ru.clevertec.service.NewsService;
 import ru.clevertec.service.dto.AuthorReadDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
@@ -93,6 +96,16 @@ public class NewsServiceImpl implements NewsService {
     @LogInvocation
     public ClientNewsReadDto findById(Long id, Integer page, Integer size) {
         NewsReadDto newsReadDto = newsClient.getById(id, page, size);
+        return getClientNewsReadDto(newsReadDto);
+    }
+
+    /**
+     * collects full-fledged news to provide the user
+     *
+     * @param newsReadDto unprocessed news received from a non-public microservice news-data-service
+     * @return processed news
+     */
+    private ClientNewsReadDto getClientNewsReadDto(NewsReadDto newsReadDto) {
         List<CommentReadDto> commentReadDtoList = newsReadDto.getComments();
         List<UserDto> userDtoList = getCommentsAndNewsAuthorsList(newsReadDto, commentReadDtoList);
         Map<Long, UserDto> mapNewsCommentsAuthors = new HashMap<>();
@@ -178,10 +191,7 @@ public class NewsServiceImpl implements NewsService {
         NewsUpdateDto newsUpdateDto = newsMapper.toNewsUpdateDto(clientNewsUpdateDto);
         newsUpdateDto.setUserId(userId);
         NewsReadDto newsReadDto = newsClient.update(id, newsUpdateDto);
-        ClientNewsReadDto clientNewsReadDto = newsMapper.toClientNewsReadDto(newsReadDto);
-        AuthorReadDto author = authorMapper.toAuthor(userDto);
-        clientNewsReadDto.setAuthor(author);
-        return clientNewsReadDto;
+        return getClientNewsReadDto(newsReadDto);
     }
 
     @Override
@@ -192,7 +202,8 @@ public class NewsServiceImpl implements NewsService {
         NewsReadDto newsReadDto = newsClient.getById(id, 1, 1);
         Long authorId = newsReadDto.getUserId();
         Long authenticationId = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (!authorId.equals(authenticationId)) {
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        if (!authorId.equals(authenticationId) && !authorities.contains(UserRole.ADMIN)) {
             throw new AuthenticationException(EXC_MSG_SOMEONE_ELSE_NEWS);
         }
         newsClient.deleteById(id);

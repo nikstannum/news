@@ -35,7 +35,7 @@ public class Comment implements Serializable {
     @Column(name = "text")
     private String text;
 
-    @Generated(GenerationTime.ALWAYS)
+    @Generated(GenerationTime.INSERT)
     @Column(name = "create_time", insertable = false, updatable = false)
     private Instant createTime;
 

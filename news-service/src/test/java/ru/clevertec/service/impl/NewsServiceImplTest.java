@@ -78,18 +78,18 @@ class NewsServiceImplTest {
         doReturn(news).when(newsMapper).toNew(any());
         ClientSimpleNewsReadDto clientSimpleNewsReadDto = getClientSimpleNewsReadDto();
         doReturn(clientSimpleNewsReadDto).when(newsMapper).toClientNewsReadDto(news);
-        UserDto user1 = getStandardUserDto();
-        UserDto user2 = getStandardUserDto();
+        UserDto user1 = getStandardUserDto(1L);
+        UserDto user2 = getStandardUserDto(2L);
         List<UserDto> userDtoList = List.of(user1, user2);
-        doReturn(userDtoList).when(userClient).getAllUsersByIds(Arrays.asList(1L, 1L));
+        doReturn(userDtoList).when(userClient).getAllUsersByIds(Arrays.asList(1L, 2L));
     }
 
     @Test
     void checkFindAllShouldHasSize2() {
         prepareAuthorMock();
         prepareCommonMockForGetOps();
-        SimpleNewsReadDto newsReadDto1 = getSimpleNewsReadDto();
-        SimpleNewsReadDto newsReadDto2 = getSimpleNewsReadDto();
+        SimpleNewsReadDto newsReadDto1 = getSimpleNewsReadDto(1L, 1L);
+        SimpleNewsReadDto newsReadDto2 = getSimpleNewsReadDto(2L, 2L);
         List<SimpleNewsReadDto> list = List.of(newsReadDto1, newsReadDto2);
         doReturn(list).when(newsClient).getAll(1, 2);
         int expectedSize = 2;
@@ -108,9 +108,9 @@ class NewsServiceImplTest {
         return news;
     }
 
-    private UserDto getStandardUserDto() {
+    private UserDto getStandardUserDto(Long id) {
         UserDto user = new UserDto();
-        user.setId(1L);
+        user.setId(id);
         user.setEmail(EMAIL);
         user.setFirstName(FIRST_NAME);
         user.setLastName(LAST_NAME);
@@ -135,10 +135,10 @@ class NewsServiceImplTest {
         return dto;
     }
 
-    private SimpleNewsReadDto getSimpleNewsReadDto() {
+    private SimpleNewsReadDto getSimpleNewsReadDto(Long newsId, Long userId) {
         SimpleNewsReadDto dto = new SimpleNewsReadDto();
-        dto.setId(1L);
-        dto.setUserId(1L);
+        dto.setId(newsId);
+        dto.setUserId(userId);
         dto.setTitle(TITLE);
         dto.setText(TEXT);
         return dto;
@@ -149,7 +149,7 @@ class NewsServiceImplTest {
         prepareAuthorMock();
         NewsReadDto newsReadDto = getNewsReadDto();
         doReturn(newsReadDto).when(newsClient).getById(1L, 1, 2);
-        UserDto userDto = getStandardUserDto();
+        UserDto userDto = getStandardUserDto(1L);
         List<UserDto> userDtoList = List.of(userDto);
         doReturn(userDtoList).when(userClient).getAllUsersByIds(Arrays.asList(1L, 1L, 1L));
         ClientNewsReadDto clientNewsReadDto = getClientNewsReadDto();
@@ -208,8 +208,8 @@ class NewsServiceImplTest {
     void findByParams() {
         prepareAuthorMock();
         prepareCommonMockForGetOps();
-        SimpleNewsReadDto newsReadDto1 = getSimpleNewsReadDto();
-        SimpleNewsReadDto newsReadDto2 = getSimpleNewsReadDto();
+        SimpleNewsReadDto newsReadDto1 = getSimpleNewsReadDto(1L, 1L);
+        SimpleNewsReadDto newsReadDto2 = getSimpleNewsReadDto(2L, 2L);
         List<SimpleNewsReadDto> list = List.of(newsReadDto1, newsReadDto2);
         QueryParamsNews params = new QueryParamsNews();
         params.setUser_id(1L);
@@ -226,7 +226,7 @@ class NewsServiceImplTest {
     @Test
     void create() {
         prepareAuthorMock();
-        UserDto userDto = getStandardUserDto();
+        UserDto userDto = getStandardUserDto(1L);
         doReturn(userDto).when(userClient).getByEmail(EMAIL);
         NewsCreateDto newsCreateDto = new NewsCreateDto();
         newsCreateDto.setUserId(1L);
@@ -252,8 +252,10 @@ class NewsServiceImplTest {
     @Test
     void update() {
         prepareAuthorMock();
-        UserDto userDto = getStandardUserDto();
+
+        UserDto userDto = getStandardUserDto(1L);
         doReturn(userDto).when(userClient).getByEmail(EMAIL);
+
         NewsUpdateDto updateDto = new NewsUpdateDto();
         updateDto.setId(1L);
         updateDto.setUserId(1L);
@@ -262,6 +264,15 @@ class NewsServiceImplTest {
         doReturn(updateDto).when(newsMapper).toNewsUpdateDto(any());
         NewsReadDto newsReadDto = getNewsReadDto();
         doReturn(newsReadDto).when(newsClient).update(1L, updateDto);
+        UserDto user1 = getStandardUserDto(1L);
+        UserDto user2 = getStandardUserDto(2L);
+        UserDto user3 = getStandardUserDto(3L);
+        List<UserDto> userDtoList = Arrays.asList(user1, user2, user3);
+        doReturn(userDtoList).when(userClient).getAllUsersByIds(any());
+        ClientCommentReadDto clientCommentReadDto = getClientCommentReadDto();
+        doReturn(clientCommentReadDto).when(commentMapper).toClientCommentReadDto(any());
+
+
         ClientNewsReadDto clientNewsReadDto = getClientNewsReadDto();
         doReturn(clientNewsReadDto).when(newsMapper).toClientNewsReadDto(newsReadDto);
         ClientNewsUpdateDto clientNewsUpdateDto = new ClientNewsUpdateDto();
