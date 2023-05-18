@@ -12,6 +12,7 @@ dependencies {
 }
 
 configurations.configureEach {
+    exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-config'
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-test'
     exclude group: 'org.springdoc', module: 'springdoc-openapi-starter-webmvc-ui'
     exclude group: 'org.projectlombok', module: 'lombok'

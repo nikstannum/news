@@ -20,13 +20,13 @@ public class JwtProvider {
 
     private final SecretKey jwtAccessSecret;
     private final SecretKey jwtRefreshSecret;
-    @Value("${jwt.access.expiration}")
+    @Value("${app.jwt.access.expiration}")
     private int accessExpiration;
-    @Value("${jwt.refresh.expiration}")
+    @Value("${app.jwt.refresh.expiration}")
     private int refreshExpiration;
 
-    public JwtProvider(@Value("${jwt.access.secret}") String jwtAccessSecret,
-                       @Value("${jwt.refresh.secret}") String jwtRefreshSecret) {
+    public JwtProvider(@Value("${app.jwt.access.secret}") String jwtAccessSecret,
+                       @Value("${app.jwt.refresh.secret}") String jwtRefreshSecret) {
         this.jwtAccessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtAccessSecret));
         this.jwtRefreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtRefreshSecret));
     }

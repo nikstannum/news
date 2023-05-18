@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.access.secret",
+      "type": "java.lang.String",
+      "description": "Application secret word for JSON web token"
+    },
+    {
+      "name": "app.jwt.access.expiration",
+      "type": "java.lang.Long",
+      "description": "JSON web token lifespan (seconds)"
+    },
+    {
+      "name": "app.jwt.refresh.secret",
+      "type": "java.lang.String",
+      "description": "Application secret word for refresh JSON web token"
+    },
+    {
+      "name": "app.jwt.refresh.expiration",
+      "type": "java.lang.Long",
+      "description": "Refresh JSON web token lifespan (seconds)"
+    }
+  ]
+}

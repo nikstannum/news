@@ -1,25 +1,8 @@
 spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
   application:
     name: user-data-service
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 20
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: none
-  data:
-    web:
-      pageable:
-        default-page-size: 10
-        max-page-size: 30
-server:
-  port: 8081
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8079/eureka/
+  config:
+    import: optional:configserver:http://localhost:8888
+  profiles:
+    active:
+      - dev

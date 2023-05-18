@@ -1,15 +1,8 @@
 spring:
-  cloud:
-    openfeign:
-      client:
-        config:
-          user-data-service:
-            url: http://localhost:8081
-          news-data-service:
-            url: http://localhost:8082
   application:
     name: news-service
-  cache:
-    type: NONE
-server:
-  port: 8080
+  config:
+    import: optional:configserver:http://localhost:8888
+  profiles:
+    active:
+      - dev
