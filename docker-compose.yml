@@ -37,11 +37,17 @@ services:
   liquibase:
     image: 'liquibase/liquibase'
 
+  config-server:
+    build: ./config-server
+    container_name: 'config-server'
+    ports:
+      - "8888:8888"
+
   eureka-server:
     build: ./eureka-server
     container_name: 'eureka-server'
     ports:
-      - 8079:8079
+      - "8079:8079"
 
   user-data-service:
     build: ./user-data-service
@@ -50,7 +56,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-users:5432/users
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8079/eureka
     ports:
-      - 8081:8081
+      - "8081:8081"
     depends_on:
       - postgres-users
       - liquibase
@@ -63,10 +69,12 @@ services:
       - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
       - SPRING_CACHE_TYPE=REDIS
       - SPRING_DATA_REDIS_URL=redis://redis-users:6379
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
     ports:
-      - 8090:8090
+      - "8090:8090"
     depends_on:
       - user-data-service
+      - config-server
       - redis-users
 
   user-auth-service:
@@ -75,7 +83,7 @@ services:
     environment:
       - SPRING_CLOUD_OPENFEIGN_CLIENT_CONFIG_USER-DATA-SERVICE_URL=http://user-data-service:8081
     ports:
-      - 8091:8091
+      - "8091:8091"
     depends_on:
       - user-data-service
 
@@ -86,7 +94,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-news:5432/news
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8079/eureka
     ports:
-      - 8082:8082
+      - "8082:8082"
     depends_on:
       - postgres-news
       - liquibase
@@ -101,7 +109,7 @@ services:
       - SPRING_CACHE_TYPE=REDIS
       - SPRING_DATA_REDIS_URL=redis://redis-news:6379
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       - news-data-service
       - redis-news

@@ -1,16 +1,8 @@
 spring:
-  cloud:
-    openfeign:
-      client:
-        config:
-          user-data-service:
-            url: http://localhost:8081
   application:
     name: user-service
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  cache:
-    type: NONE
-server:
-  port: 8090
+  config:
+    import: optional:configserver:http://localhost:8888
+  profiles:
+    active:
+      - dev
