@@ -15,6 +15,7 @@ import ru.clevertec.data.entity.Comment;
 import ru.clevertec.data.util.CommentSpecificationBuilder;
 import ru.clevertec.data.util.QueryCommentParams;
 import ru.clevertec.exception.NotFoundException;
+import ru.clevertec.logger.LogInvocation;
 import ru.clevertec.service.CommentService;
 import ru.clevertec.service.dto.CommentCreateDto;
 import ru.clevertec.service.dto.CommentReadDto;
@@ -36,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentSpecificationBuilder specificationBuilder;
 
     @Override
+    @LogInvocation
     public CommentReadDto create(CommentCreateDto commentCreateDto) {
         Long newsId = commentCreateDto.getNewsId();
         if (!newsRepository.existsById(newsId)) {
@@ -47,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @LogInvocation
     public List<CommentReadDto> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         Page<Comment> commentPage = commentRepository.findAll(pageable);
@@ -54,12 +57,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @LogInvocation
     public CommentReadDto findById(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
         return mapper.toCommentReadDto(comment);
     }
 
     @Override
+    @LogInvocation
     public List<CommentReadDto> findByParams(Integer page, Integer size, QueryCommentParams queryParams) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         Specification<Comment> specification = specificationBuilder.getSpecificationSelectCommentByParams(queryParams);
@@ -68,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @LogInvocation
     public CommentReadDto update(CommentUpdateDto commentUpdateDto) {
         Long newsId = commentUpdateDto.getNewsId();
         if (!newsRepository.existsById(newsId)) {
@@ -79,6 +85,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @LogInvocation
     public void deleteById(Long id) {
         commentRepository.deleteById(id);
     }

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.entity.User;
+import ru.clevertec.loger.LogInvocation;
 import ru.clevertec.service.AuthenticationService;
 import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.dto.LoginDto;
@@ -30,6 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper mapper;
 
     @Override
+    @LogInvocation
     public JwtToken login(LoginDto loginDto) {
         UserDto userDto = client.getByEmail(loginDto.getEmail());
         User user = mapper.toUser(userDto);
@@ -44,6 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @LogInvocation
     public JwtToken getAccessToken(String refreshToken) {
         if (validator.validateRefreshToken(refreshToken)) {
             Claims claims = validator.getRefreshClaims(refreshToken);
@@ -57,6 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @LogInvocation
     public JwtToken refresh(String refreshToken) {
         if (validator.validateRefreshToken(refreshToken)) {
             Claims claims = validator.getRefreshClaims(refreshToken);

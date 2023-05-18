@@ -138,6 +138,6 @@ public class Logger {
     @AfterReturning(value = "excAdvice()")
     private void loggingAdvice(JoinPoint jp) {
         Exception e = (Exception) jp.getArgs()[0];
-        log.error(Arrays.toString(e.getStackTrace()));
+        log.error(String.valueOf(e));
     }
 }

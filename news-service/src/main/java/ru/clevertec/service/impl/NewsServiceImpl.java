@@ -49,6 +49,7 @@ public class NewsServiceImpl implements NewsService {
     private final AuthorMapper authorMapper;
 
     @Override
+    @LogInvocation
     public List<ClientSimpleNewsReadDto> findAll(Integer page, Integer size) {
         List<SimpleNewsReadDto> simpleList = newsClient.getAll(page, size);
         return collectListClientSimpleNewsReadDto(simpleList);

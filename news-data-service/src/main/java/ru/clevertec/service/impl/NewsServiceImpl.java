@@ -16,6 +16,7 @@ import ru.clevertec.data.entity.News;
 import ru.clevertec.data.util.NewsQueryParams;
 import ru.clevertec.data.util.NewsSpecificationBuilder;
 import ru.clevertec.exception.NotFoundException;
+import ru.clevertec.logger.LogInvocation;
 import ru.clevertec.service.NewsService;
 import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
@@ -37,6 +38,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsSpecificationBuilder newsSpecificationBuilder;
 
     @Override
+    @LogInvocation
     public NewsReadDto create(NewsCreateDto newsCreateDto) {
         News news = newsMapper.toNews(newsCreateDto);
         News createdDto = newsRepository.save(news);
@@ -44,6 +46,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @LogInvocation
     public List<SimpleNewsReadDto> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         Page<News> newsPage = newsRepository.findAll(pageable);
@@ -51,6 +54,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @LogInvocation
     public NewsReadDto findById(Long id, Integer page, Integer size) {
         News news = newsRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
@@ -60,6 +64,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @LogInvocation
     public List<SimpleNewsReadDto> findByParams(Integer page, Integer size, String keyWord, NewsQueryParams params) {
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         if (keyWord != null) {
@@ -72,6 +77,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @LogInvocation
     public NewsReadDto update(NewsUpdateDto newsUpdateDto) {
         News news = newsRepository.findById(newsUpdateDto.getId()).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + newsUpdateDto.getId()));
         news.setUserId(newsUpdateDto.getUserId());
@@ -85,6 +91,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @LogInvocation
     public void deleteById(Long id) {
         newsRepository.deleteById(id);
     }

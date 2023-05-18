@@ -116,6 +116,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @LogInvocation
     public List<ClientSimpleCommentReadDto> findByParams(Integer page, Integer size, QueryParamsComment queryParamsComment) {
         List<CommentReadDto> commentReadDto = newsClient.getCommentByParams(page, size, queryParamsComment);
         return commentReadDto.stream()

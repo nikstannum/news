@@ -12,14 +12,12 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     implementation 'commons-io:commons-io:2.11.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation 'org.springframework.cloud:spring-cloud-contract-wiremock:4.0.2'
+    testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock:4.0.2'
 }
 
 test {
