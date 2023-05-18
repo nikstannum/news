@@ -92,7 +92,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @CacheGet
-    @Cacheable(value = "news", key = "#id")
+    @Cacheable(value = "news", key = "#id + ' '+  #page + ' ' +  #size")
     @LogInvocation
     public ClientNewsReadDto findById(Long id, Integer page, Integer size) {
         NewsReadDto newsReadDto = newsClient.getById(id, page, size);

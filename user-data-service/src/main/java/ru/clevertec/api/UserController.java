@@ -98,6 +98,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public List<UserReadDto> findAll(@Parameter(description = "Page number") @RequestParam Integer page,
                                      @Parameter(description = "Page size") @RequestParam Integer size) {
+        page = page < 1 ? 1 : page;
+        size = size < 1 ? 10 : size;
         return service.findAll(page, size);
     }
 

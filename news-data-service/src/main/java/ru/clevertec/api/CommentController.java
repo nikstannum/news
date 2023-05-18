@@ -98,6 +98,8 @@ public class CommentController {
     @ResponseStatus(HttpStatus.OK)
     public List<CommentReadDto> findAll(@Parameter(description = "Page number") @RequestParam Integer page,
                                         @Parameter(description = "Page size") @RequestParam Integer size) {
+        page = page < 1 ? 1 : page;
+        size = size < 1 ? 10 : size;
         return service.findAll(page, size);
     }
 
@@ -128,6 +130,8 @@ public class CommentController {
     public List<CommentReadDto> findByParams(@Parameter(description = "Page number") @RequestParam Integer page,
                                              @Parameter(description = "Page size") @RequestParam Integer size,
                                              QueryCommentParams queryParams) {
+        page = page < 1 ? 1 : page;
+        size = size < 1 ? 10 : size;
         return service.findByParams(page, size, queryParams);
     }
 

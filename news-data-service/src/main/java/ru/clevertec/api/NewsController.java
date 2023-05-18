@@ -93,6 +93,8 @@ public class NewsController {
     @ResponseStatus(HttpStatus.OK)
     public List<SimpleNewsReadDto> findAll(@Parameter(description = "Page number") @RequestParam Integer page,
                                            @Parameter(description = "Page size") @RequestParam Integer size) {
+        page = page < 1 ? 1 : page;
+        size = size < 1 ? 10 : size;
         return service.findAll(page, size);
     }
 
@@ -110,6 +112,8 @@ public class NewsController {
     public NewsReadDto findById(@Parameter(description = "news ID") @PathVariable Long id,
                                 @Parameter(description = "Page number") @RequestParam(required = false) Integer page,
                                 @Parameter(description = "Page size") @RequestParam(required = false) Integer size) {
+        page = page < 1 ? 1 : page;
+        size = size < 1 ? 10 : size;
         return service.findById(id, page, size);
     }
 
@@ -128,6 +132,8 @@ public class NewsController {
                                                 @Parameter(description = "Keyword search")
                                                 @RequestParam(value = "keyword", required = false) String keyWord,
                                                 NewsQueryParams params) {
+        page = page < 1 ? 1 : page;
+        size = size < 1 ? 10 : size;
         return service.findByParams(page, size, keyWord, params);
     }
 
