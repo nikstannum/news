@@ -29,6 +29,7 @@ import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
+import ru.clevertec.service.mapper.CommentMapper;
 import ru.clevertec.service.mapper.NewsMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +46,9 @@ class NewsServiceImplTest {
     @Captor
     ArgumentCaptor<Long> captor;
     @Mock
-    private NewsMapper mapper;
+    private NewsMapper newsMapper;
+    @Mock
+    private CommentMapper commentMapper;
     @Mock
     private NewsRepository newsRepository;
     @Mock
@@ -62,11 +65,11 @@ class NewsServiceImplTest {
         news.setUserId(newsCreateDto.getUserId());
         news.setTitle(newsCreateDto.getTitle());
         news.setText(newsCreateDto.getText());
-        doReturn(news).when(mapper).toNews(newsCreateDto);
+        doReturn(news).when(newsMapper).toNews(newsCreateDto);
         News created = getStandardNews(1L);
         doReturn(created).when(newsRepository).save(news);
         NewsReadDto expected = getStandardNewsReadDtoWithoutComments(1L);
-        doReturn(expected).when(mapper).toNewsReadDto(created);
+        doReturn(expected).when(newsMapper).toNewsReadDto(created);
 
         NewsReadDto actual = service.create(newsCreateDto);
 
@@ -107,8 +110,8 @@ class NewsServiceImplTest {
         List<News> newsList = List.of(news1, news2);
         Page<News> page = new PageImpl<>(newsList);
         doReturn(page).when(newsRepository).findAll(pageable);
-        doReturn(new SimpleNewsReadDto()).when(mapper).toSimpleNewsReadDto(news1);
-        doReturn(new SimpleNewsReadDto()).when(mapper).toSimpleNewsReadDto(news2);
+        doReturn(new SimpleNewsReadDto()).when(newsMapper).toSimpleNewsReadDto(news1);
+        doReturn(new SimpleNewsReadDto()).when(newsMapper).toSimpleNewsReadDto(news2);
         int expectedSize = 2;
 
         List<SimpleNewsReadDto> actual = service.findAll(1, 2);
@@ -120,19 +123,18 @@ class NewsServiceImplTest {
     void checkFindByIdShouldReturnEquals() {
         News news = getStandardNews(1L);
         doReturn(Optional.of(news)).when(newsRepository).findById(1L);
+        NewsReadDto newsReadDto = getStandardNewsReadDtoWithoutComments(1L);
+        doReturn(newsReadDto).when(newsMapper).toNewsReadDto(news);
         Pageable pageable = PageRequest.of(0, 2, Direction.ASC, ATTRIBUTE_ID);
         Comment comment1 = getStandardComment(1L);
         Comment comment2 = getStandardComment(2L);
         List<Comment> comments = List.of(comment1, comment2);
         doReturn(comments).when(commentRepository).findByNewsId(1L, pageable);
-        news.setComments(comments);
-        NewsReadDto newsReadDto = getStandardNewsReadDtoWithoutComments(1L);
-        CommentReadDto commentReadDto1 = new CommentReadDto();
-        CommentReadDto commentReadDto2 = new CommentReadDto();
-        newsReadDto.setComments(List.of(commentReadDto1, commentReadDto2));
-        doReturn(newsReadDto).when(mapper).toNewsReadDto(news);
+        CommentReadDto commentReadDto = new CommentReadDto();
+        doReturn(commentReadDto).when(commentMapper).toCommentReadDto(any());
 
         NewsReadDto actual = service.findById(1L, 1, 2);
+
         assertThat(actual.getComments()).hasSize(2);
     }
 
@@ -160,8 +162,8 @@ class NewsServiceImplTest {
         Page<News> page = new PageImpl<>(list);
         doReturn(page).when(newsRepository).findByTitleContainsOrTextContains(keyWord, keyWord, pageable);
         SimpleNewsReadDto dto = new SimpleNewsReadDto();
-        doReturn(dto).when(mapper).toSimpleNewsReadDto(news1);
-        doReturn(dto).when(mapper).toSimpleNewsReadDto(news2);
+        doReturn(dto).when(newsMapper).toSimpleNewsReadDto(news1);
+        doReturn(dto).when(newsMapper).toSimpleNewsReadDto(news2);
         int expectedSize = 2;
 
         List<SimpleNewsReadDto> actual = service.findByParams(1, 2, keyWord, new NewsQueryParams());
@@ -180,8 +182,8 @@ class NewsServiceImplTest {
         doReturn(specification).when(specificationBuilder).getSpecificationSelectNewsByParams(any());
         doReturn(page).when(newsRepository).findAll(specification, pageable);
         SimpleNewsReadDto dto = new SimpleNewsReadDto();
-        doReturn(dto).when(mapper).toSimpleNewsReadDto(news1);
-        doReturn(dto).when(mapper).toSimpleNewsReadDto(news2);
+        doReturn(dto).when(newsMapper).toSimpleNewsReadDto(news1);
+        doReturn(dto).when(newsMapper).toSimpleNewsReadDto(news2);
         int expectedSize = 2;
 
         List<SimpleNewsReadDto> actual = service.findByParams(1, 2, null, new NewsQueryParams());
@@ -193,26 +195,26 @@ class NewsServiceImplTest {
     void checkUpdateShouldReturnEquals() {
         News news = getStandardNews(1L);
         doReturn(Optional.of(news)).when(newsRepository).findById(1L);
-        news.setText("new text");
-        News newsUpd = getStandardNews(1L);
-        newsUpd.setText("new text");
-        doReturn(newsUpd).when(newsRepository).save(news);
+
+        News updated = getStandardNews(1L);
+        updated.setText("new text");
+        doReturn(updated).when(newsRepository).saveAndFlush(news);
 
         NewsReadDto newsReadDto = getStandardNewsReadDtoWithoutComments(1L);
-        CommentReadDto commentReadDto1 = new CommentReadDto();
-        commentReadDto1.setId(1L);
-        CommentReadDto commentReadDto2 = new CommentReadDto();
-        commentReadDto2.setId(2L);
-        List<CommentReadDto> commentReadDtoList = List.of(commentReadDto1, commentReadDto2);
-        newsReadDto.setComments(commentReadDtoList);
-        doReturn(newsReadDto).when(mapper).toNewsReadDto(news);
+        newsReadDto.setText("new text");
+        doReturn(newsReadDto).when(newsMapper).toNewsReadDto(updated);
+        List<Comment> comments = List.of(new Comment());
+        Pageable pageable = PageRequest.of(0, 10, Direction.ASC, ATTRIBUTE_ID);
+        doReturn(comments).when(commentRepository).findByNewsId(1L, pageable);
+        doReturn(new CommentReadDto()).when(commentMapper).toCommentReadDto(any());
+
         NewsUpdateDto dto = new NewsUpdateDto();
         dto.setId(1L);
         dto.setText("new text");
 
         NewsReadDto actual = service.update(dto);
 
-        assertThat(actual).isEqualTo(newsReadDto);
+        assertThat(actual.getText()).isEqualTo(dto.getText());
     }
 
     @Test

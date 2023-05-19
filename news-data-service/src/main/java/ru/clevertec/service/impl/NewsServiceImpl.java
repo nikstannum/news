@@ -18,10 +18,12 @@ import ru.clevertec.data.util.NewsSpecificationBuilder;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.logger.LogInvocation;
 import ru.clevertec.service.NewsService;
+import ru.clevertec.service.dto.CommentReadDto;
 import ru.clevertec.service.dto.NewsCreateDto;
 import ru.clevertec.service.dto.NewsReadDto;
 import ru.clevertec.service.dto.NewsUpdateDto;
 import ru.clevertec.service.dto.SimpleNewsReadDto;
+import ru.clevertec.service.mapper.CommentMapper;
 import ru.clevertec.service.mapper.NewsMapper;
 
 @Service
@@ -33,6 +35,7 @@ public class NewsServiceImpl implements NewsService {
     private static final String EXC_MSG_NOT_FOUND_BY_ID = "wasn't found news with id = ";
 
     private final NewsMapper newsMapper;
+    private final CommentMapper commentMapper;
     private final NewsRepository newsRepository;
     private final CommentRepository commentRepository;
     private final NewsSpecificationBuilder newsSpecificationBuilder;
@@ -57,10 +60,13 @@ public class NewsServiceImpl implements NewsService {
     @LogInvocation
     public NewsReadDto findById(Long id, Integer page, Integer size) {
         News news = newsRepository.findById(id).orElseThrow(() -> new NotFoundException(EXC_MSG_NOT_FOUND_BY_ID + id));
+        NewsReadDto newsReadDto = newsMapper.toNewsReadDto(news);
         Pageable pageable = PageRequest.of(page - 1, size, Direction.ASC, ATTRIBUTE_ID);
         List<Comment> comments = commentRepository.findByNewsId(news.getId(), pageable);
-        news.setComments(comments);
-        return newsMapper.toNewsReadDto(news);
+        List<CommentReadDto> commentReadDtoList = comments.stream()
+                .map(commentMapper::toCommentReadDto).toList();
+        newsReadDto.setComments(commentReadDtoList);
+        return newsReadDto;
     }
 
     @Override
@@ -83,8 +89,14 @@ public class NewsServiceImpl implements NewsService {
         news.setUserId(newsUpdateDto.getUserId());
         news.setText(newsUpdateDto.getText());
         news.setTitle(newsUpdateDto.getTitle());
-        News updated = newsRepository.save(news);
-        return newsMapper.toNewsReadDto(updated);
+        News updated = newsRepository.saveAndFlush(news);
+        NewsReadDto newsReadDto = newsMapper.toNewsReadDto(updated);
+        Pageable pageable = PageRequest.of(0, 10, Direction.ASC, ATTRIBUTE_ID);
+        List<Comment> comments = commentRepository.findByNewsId(newsReadDto.getId(), pageable);
+        List<CommentReadDto> commentReadDtoList = comments.stream()
+                .map(commentMapper::toCommentReadDto).toList();
+        newsReadDto.setComments(commentReadDtoList);
+        return newsReadDto;
     }
 
     @Override

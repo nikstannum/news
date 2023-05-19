@@ -11,6 +11,7 @@ import ru.clevertec.service.dto.SimpleNewsReadDto;
 @Mapper(uses = CommentMapper.class)
 public interface NewsMapper {
 
+    @Mapping(target = "comments", source = "comments", ignore = true)
     NewsReadDto toNewsReadDto(News news);
 
     SimpleNewsReadDto toSimpleNewsReadDto(News news);
