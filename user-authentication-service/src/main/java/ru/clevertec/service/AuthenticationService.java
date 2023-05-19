@@ -1,6 +1,5 @@
 package ru.clevertec.service;
 
-import lombok.NonNull;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.token.JwtToken;
 

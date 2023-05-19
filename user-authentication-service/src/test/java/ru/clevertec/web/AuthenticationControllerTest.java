@@ -19,10 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.clevertec.client.entity.User;
 import ru.clevertec.client.entity.User.UserRole;
-import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.token.RefreshJwtToken;
+import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.util.JwtValidator;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;

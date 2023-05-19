@@ -17,6 +17,7 @@ import ru.clevertec.service.exception.AppNewsServiceException;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
+
 /**
  * Class for handling exceptions that occur during application operation.
  */

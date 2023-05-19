@@ -8,15 +8,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.clevertec.BaseIntegrationTest;
-import ru.clevertec.service.dto.UserCreateDto;
-import ru.clevertec.service.dto.UserReadDto;
-import ru.clevertec.service.dto.UserSecureDto;
-import ru.clevertec.service.dto.UserUpdateDto;
 import ru.clevertec.data.User.UserRole;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.SecurityException;
 import ru.clevertec.exception.SuchEntityExistsException;
 import ru.clevertec.service.UserService;
+import ru.clevertec.service.dto.UserCreateDto;
+import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.UserSecureDto;
+import ru.clevertec.service.dto.UserUpdateDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -4,8 +4,8 @@ import java.util.List;
 import ru.clevertec.service.dto.ClientCommentCreateDto;
 import ru.clevertec.service.dto.ClientCommentReadDto;
 import ru.clevertec.service.dto.ClientCommentUpdateDto;
-import ru.clevertec.service.dto.QueryParamsComment;
 import ru.clevertec.service.dto.ClientSimpleCommentReadDto;
+import ru.clevertec.service.dto.QueryParamsComment;
 
 /**
  * The interface of the business logic for comment management of the public microservice news-service.

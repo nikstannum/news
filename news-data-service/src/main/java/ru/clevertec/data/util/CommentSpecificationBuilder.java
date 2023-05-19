@@ -20,6 +20,7 @@ public class CommentSpecificationBuilder {
 
     /**
      * Method for building a specification for searching comments by parameters
+     *
      * @param queryParams parameters for searching
      * @return the conjunction of the specifications
      */

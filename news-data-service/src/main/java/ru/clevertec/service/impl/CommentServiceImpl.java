@@ -28,11 +28,10 @@ import ru.clevertec.service.mapper.CommentMapper;
 @Transactional
 public class CommentServiceImpl implements CommentService {
 
+    public static final String EXC_MSG_NEWS_ID_MISMATCH = "News ID mismatch";
     private static final String ATTRIBUTE_ID = "id";
     private static final String EXC_MSG_NOT_FOUND_BY_ID = "wasn't found comment with id = ";
     private static final String EXC_MSG_NEWS_NOT_FOUND = "Error creation comment. May be given news was deleted";
-    public static final String EXC_MSG_NEWS_ID_MISMATCH = "News ID mismatch";
-
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
     private final CommentMapper mapper;

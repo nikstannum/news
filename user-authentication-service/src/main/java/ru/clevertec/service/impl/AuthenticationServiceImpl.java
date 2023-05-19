@@ -8,12 +8,12 @@ import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.entity.User;
 import ru.clevertec.loger.LogInvocation;
 import ru.clevertec.service.AuthenticationService;
-import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.UserMapper;
 import ru.clevertec.service.token.JwtToken;
+import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.util.JwtValidator;
 
 /**

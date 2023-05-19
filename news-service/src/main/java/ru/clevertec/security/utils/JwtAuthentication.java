@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import ru.clevertec.client.entity.User.UserRole;
+
 /**
  * Class representing the token for the authenticated principal. Implements {@link org.springframework.security.core.Authentication}.
  */

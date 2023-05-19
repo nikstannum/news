@@ -13,12 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.entity.User;
 import ru.clevertec.client.entity.User.UserRole;
-import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.dto.LoginDto;
 import ru.clevertec.service.dto.UserDto;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.UserMapper;
 import ru.clevertec.service.token.JwtToken;
+import ru.clevertec.service.util.JwtProvider;
 import ru.clevertec.service.util.JwtValidator;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -47,6 +47,7 @@ public class LRUCacheImpl implements Cache {
     /**
      * Method for removing an object from the cache. The return value is used to log the fact that the object was removed from the cache.
      * If a null value has entered the cache, the fact of deletion is logged at the error level.
+     *
      * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
      * @param target the object on which the method is called
      * @return object removed from the cache
@@ -62,7 +63,8 @@ public class LRUCacheImpl implements Cache {
     }
 
     /**
-     *  Method for checking if an object is in the cache.
+     * Method for checking if an object is in the cache.
+     *
      * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
      * @param target the object on which the method is called
      * @return true if the object being looked up is in the cache, otherwise false
@@ -75,6 +77,7 @@ public class LRUCacheImpl implements Cache {
 
     /**
      * Method for getting an object from the cache. Before getting an object, the fact of its presence in the cache is checked.
+     *
      * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
      * @param target the object on which the method is called
      * @return the object itself ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})

@@ -17,8 +17,8 @@ public interface NewsMapper {
     SimpleNewsReadDto toSimpleNewsReadDto(News news);
 
     @Mappings({@Mapping(target = "comments", ignore = true),
-    @Mapping(target = "id", ignore = true),
-    @Mapping(target = "time", ignore = true)})
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "time", ignore = true)})
     News toNews(NewsCreateDto newsCreateDto);
 
 }

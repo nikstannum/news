@@ -27,15 +27,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.clevertec.service.dto.UserCreateDto;
-import ru.clevertec.service.dto.UserReadDto;
-import ru.clevertec.service.dto.UserSecureDto;
-import ru.clevertec.service.dto.UserUpdateDto;
 import ru.clevertec.exception.BadRequestException;
 import ru.clevertec.exception.ValidationException;
 import ru.clevertec.exception.error.ErrorDto;
 import ru.clevertec.exception.error.ValidationResultDto;
 import ru.clevertec.service.UserService;
+import ru.clevertec.service.dto.UserCreateDto;
+import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.UserSecureDto;
+import ru.clevertec.service.dto.UserUpdateDto;
 
 @Tag(name = "UserController", description = "RRest api for user management on a non-public microservice.")
 @RestController

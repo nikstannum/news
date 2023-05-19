@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 import ru.clevertec.security.utils.JwtAuthentication;
-import ru.clevertec.security.utils.JwtValidator;
 import ru.clevertec.security.utils.JwtAuthenticationGenerator;
+import ru.clevertec.security.utils.JwtValidator;
+
 /**
  * Filter requests from system users. When a valid token is transferred, the user is authenticated and empowered.
  */

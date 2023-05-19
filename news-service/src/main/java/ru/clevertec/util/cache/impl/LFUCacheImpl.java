@@ -84,6 +84,7 @@ public class LFUCacheImpl implements Cache {
 
     /**
      * Method for checking if an object is in the cache.
+     *
      * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
      * @param target the object on which the method is called
      * @return true if the object being looked up is in the cache, otherwise false
@@ -96,6 +97,7 @@ public class LFUCacheImpl implements Cache {
 
     /**
      * Method for getting an object from the cache. Before getting an object, the fact of its presence in the cache is checked.
+     *
      * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
      * @param target the object on which the method is called
      * @return the object itself ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})

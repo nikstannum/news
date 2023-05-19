@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.clevertec.client.dto.UserDto;
+
 /**
  * Client for sending requests to a non-public user-data service
  */

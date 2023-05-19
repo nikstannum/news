@@ -2,6 +2,7 @@ package ru.clevertec.client.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+
 /**
  * Class for creating DTO objects for exchanging data with a non-public user-data-service
  */

@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.clevertec.client.entity.User.UserRole;
+
 /**
  * Auxiliary class for generating an authentication object
  */

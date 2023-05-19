@@ -1,7 +1,6 @@
 package ru.clevertec;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +9,7 @@ import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheAdvice;
 import ru.clevertec.util.cache.impl.LFUCacheImpl;
 import ru.clevertec.util.cache.impl.LRUCacheImpl;
+
 /**
  * Class with configuration for microservice excluding security management
  */

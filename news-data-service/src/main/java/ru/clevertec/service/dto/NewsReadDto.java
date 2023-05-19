@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+
 /**
  * Class for creating DTO objects for exchanging data with public service (news-service)
  */

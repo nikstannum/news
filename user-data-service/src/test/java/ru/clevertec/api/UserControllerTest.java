@@ -9,12 +9,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import ru.clevertec.data.User.UserRole;
+import ru.clevertec.service.UserService;
 import ru.clevertec.service.dto.UserCreateDto;
 import ru.clevertec.service.dto.UserReadDto;
 import ru.clevertec.service.dto.UserSecureDto;
 import ru.clevertec.service.dto.UserUpdateDto;
-import ru.clevertec.data.User.UserRole;
-import ru.clevertec.service.UserService;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;

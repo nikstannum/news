@@ -2,6 +2,7 @@ package ru.clevertec.service.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+
 /**
  * The essence of the web interface for generating news search criteria
  */

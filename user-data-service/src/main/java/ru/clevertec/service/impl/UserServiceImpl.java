@@ -8,18 +8,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import ru.clevertec.logger.LogInvocation;
-import ru.clevertec.service.dto.UserCreateDto;
-import ru.clevertec.service.dto.UserReadDto;
-import ru.clevertec.service.dto.UserSecureDto;
-import ru.clevertec.service.dto.UserUpdateDto;
 import ru.clevertec.data.User;
 import ru.clevertec.data.User.UserRole;
 import ru.clevertec.data.UserRepository;
 import ru.clevertec.exception.NotFoundException;
 import ru.clevertec.exception.SecurityException;
 import ru.clevertec.exception.SuchEntityExistsException;
+import ru.clevertec.logger.LogInvocation;
 import ru.clevertec.service.UserService;
+import ru.clevertec.service.dto.UserCreateDto;
+import ru.clevertec.service.dto.UserReadDto;
+import ru.clevertec.service.dto.UserSecureDto;
+import ru.clevertec.service.dto.UserUpdateDto;
 import ru.clevertec.service.mapper.UserMapper;
 
 /**
