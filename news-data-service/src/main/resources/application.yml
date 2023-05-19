@@ -2,7 +2,4 @@ spring:
   application:
     name: news-data-service
   config:
-    import: optional:configserver:http://localhost:8888
-  profiles:
-    active:
-      - dev
+    import: optional:configserver:http://localhost:8080
