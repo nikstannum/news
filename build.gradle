@@ -1,7 +1,7 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.0.6'
-	id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+    id 'org.springframework.boot' version '3.0.6'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'ru.clevertec'
@@ -9,25 +9,51 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
-repositories {
-	mavenCentral()
+allprojects() {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+        implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+        annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.mapstruct:mapstruct:1.5.3.Final'
+        testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+        compileJava {
+            options.compilerArgs = [
+                    '-Amapstruct.defaultComponentModel=spring'
+            ]
+        }
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

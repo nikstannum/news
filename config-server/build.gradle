@@ -1,0 +1,27 @@
+group 'ru.clevertec'
+version '0.0.1-SNAPSHOT'
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.1"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+}
+configurations.configureEach {
+    exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-config'
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-test'
+    exclude group: 'org.springdoc', module: 'springdoc-openapi-starter-webmvc-ui'
+    exclude group: 'org.projectlombok', module: 'lombok'
+    exclude group: 'org.projectlombok', module: 'lombok-mapstruct-binding'
+    exclude group: 'org.mapstruct', module: 'mapstruct'
+    exclude group: 'org.mapstruct', module: 'mapstruct-processor'
+    exclude group: 'org.junit.jupiter', module: 'junit-jupiter-api'
+    exclude group: 'org.junit.jupiter', module: 'junit-jupiter-engine'
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-validation'
+}
+test {
+    useJUnitPlatform()
+}

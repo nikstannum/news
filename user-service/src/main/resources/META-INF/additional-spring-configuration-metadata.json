@@ -1,0 +1,44 @@
+{
+  "properties": [
+    {
+      "name": "app.cache.type",
+      "type": "java.lang.String",
+      "description": "Application cache type."
+    },
+    {
+      "name": "app.cache.enable",
+      "type": "java.lang.Boolean",
+      "description": "Enable custom cache."
+    },
+    {
+      "name": "app.cache.size",
+      "type": "java.lang.Long",
+      "description": "Application cache size"
+    },
+    {
+      "name": "app.cache.time-to-live",
+      "type": "java.lang.Long",
+      "description": "Application LFU cache time to live"
+    },
+    {
+      "name": "app.jwt.access.secret",
+      "type": "java.lang.String",
+      "description": "Application secret word for JSON web token"
+    },
+    {
+      "name": "app.jwt.access.expiration",
+      "type": "java.lang.Long",
+      "description": "JSON web token lifespan (seconds)"
+    },
+    {
+      "name": "app.jwt.refresh.secret",
+      "type": "java.lang.String",
+      "description": "Application secret word for refresh JSON web token"
+    },
+    {
+      "name": "app.jwt.refresh.expiration",
+      "type": "java.lang.Long",
+      "description": "Refresh JSON web token lifespan (seconds)"
+    }
+  ]
+}

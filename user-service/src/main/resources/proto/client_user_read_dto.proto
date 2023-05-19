@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "ru.clevertec.service.dto";
+option java_outer_classname = "ClientUserReadDtoProto";
+
+import "user_role.proto";
+
+message ClientUserReadDto {
+  int64 id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  ru.clevertec.client.entity.UserRole role = 5;
+}
