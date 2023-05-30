@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheAdvice;
@@ -36,7 +40,19 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnProperty(name = "app.cache.enable", havingValue = "true")
-    public CacheAdvice cacheAdvice(Cache cache) {
-        return new CacheAdvice(cache);
+    public CacheAdvice cacheAdvice(Cache cache, ExpressionParser parser, EvaluationContext context) {
+        return new CacheAdvice(cache, parser, context);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "app.cache.enable", havingValue = "true")
+    public ExpressionParser expressionParser() {
+        return new SpelExpressionParser();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "app.cache.enable", havingValue = "true")
+    public EvaluationContext evaluationContext() {
+        return SimpleEvaluationContext.forReadOnlyDataBinding().build();
     }
 }

@@ -1,12 +1,12 @@
 package ru.clevertec.util.cache.impl;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.NavigableMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheElm;
@@ -16,26 +16,22 @@ import ru.clevertec.util.cache.CacheElm;
  */
 public class LFUCacheImpl implements Cache {
 
-
     private final Map<String, Object> map;
-    private final TreeMap<CacheElm, String> sortedMap;
+    private final Map<String, Timer> timers;
+    private final NavigableMap<CacheElm, String> sortedMap;
     @Value("${app.cache.size}")
     private int cacheSize;
     @Value("${app.cache.time-to-live}")
-    private Integer clearTime;
+    private Integer expirationTime;
 
     public LFUCacheImpl() {
-        this.map = new HashMap<>();
-        this.sortedMap = new TreeMap<>((o1, o2) -> {
+        this.timers = new HashMap<>(cacheSize);
+        this.map = new ConcurrentHashMap<>(cacheSize);
+        this.sortedMap = new ConcurrentSkipListMap<>((o1, o2) -> {
             Integer quantity1 = o1.getQuantityUse();
             Integer quantity2 = o2.getQuantityUse();
             if (!quantity1.equals(quantity2)) {
                 return quantity1.compareTo(quantity2);
-            }
-            LocalDateTime time1 = o1.getLastTimeUse();
-            LocalDateTime time2 = o2.getLastTimeUse();
-            if (!time1.equals(time2)) {
-                return time1.compareTo(time2);
             }
             return o1.toString().compareTo(o2.toString());
         });
@@ -44,112 +40,99 @@ public class LFUCacheImpl implements Cache {
     /**
      * Method for placing an object in the cache.
      *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientUserReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @param value  the object itself ({@link ru.clevertec.service.dto.ClientUserReadDto})
+     * @param key       computed based on expression language
+     * @param cacheName the name given to the cached object. Used when compiling a composite key to access a cached object
+     * @param value     the object itself
      */
     @Override
-    public void put(Object id, Object target, Object value) {
-        deleteUnusedLongTime(map, sortedMap);
-        String compositeId = id + ":" + target;
-        if (contains(id, target)) {
+    public void put(String key, String cacheName, Object value) {
+        String compositeId = key + ":" + cacheName;
+        if (map.containsKey(compositeId)) {
             setUpdatedCacheInf(compositeId, value);
             return;
         }
         if (cacheSize == map.size()) {
             removeElm();
         }
-        putNewCacheElm(value, compositeId);
+        putNewCacheElm(compositeId, value);
+    }
+
+    private void scheduleRemoval(String compositeId) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                CacheElm elm = (CacheElm) map.remove(compositeId);
+                sortedMap.remove(elm);
+                timers.remove(compositeId);
+                timer.cancel();
+            }
+        }, expirationTime * 1000);
+        timers.put(compositeId, timer);
+    }
+
+    private void setUpdatedCacheInf(String compositeId, Object value) {
+        deleteTimer(compositeId);
+        CacheElm cacheElm = (CacheElm) map.get(compositeId);
+        cacheElm.setQuantityUse(cacheElm.getQuantityUse() + 1);
+        cacheElm.setValue(value);
+        scheduleRemoval(compositeId);
     }
 
     /**
-     * Method for removing an object from the cache. The return value is used to log the fact that the object was removed from the cache.
-     * If a null value has entered the cache, the fact of deletion is logged at the error level.
+     * Method for removing an object from the cache.
      *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientUserReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @return object removed from the cache
+     * @param key       computed based on expression language
+     * @param cacheName the name given to the cached object. Used when compiling a composite key to access a cached object
      */
     @Override
-    public Object delete(Object id, Object target) {
-        deleteUnusedLongTime(map, sortedMap);
-        if (contains(id, target)) {
-            String compositeId = id + ":" + target;
+    public void delete(String key, String cacheName) {
+        String compositeId = key + ":" + cacheName;
+        if (map.containsKey(compositeId)) {
+            deleteTimer(compositeId);
             Object obj = map.remove(compositeId);
             CacheElm cacheElm = (CacheElm) obj;
-            return sortedMap.remove(cacheElm);
+            sortedMap.remove(cacheElm);
         }
-        return null;
+    }
+
+    private void deleteTimer(String compositeId) {
+        Timer timer = timers.get(compositeId);
+        if (timer != null) {
+            timer.cancel();
+            timers.remove(compositeId);
+        }
     }
 
     /**
-     * Method for checking if an object is in the cache.
+     * Method for getting an object from the cache.
      *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientUserReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @return true if the object being looked up is in the cache, otherwise false
+     * @param key       computed based on expression language
+     * @param cacheName the name given to the cached object. Used when compiling a composite key to access a cached object
+     * @return the object itself
      */
     @Override
-    public boolean contains(Object id, Object target) {
-        String compositeId = id + ":" + target;
-        return map.containsKey(compositeId);
-    }
-
-    /**
-     * Method for getting an object from the cache. Before getting an object, the fact of its presence in the cache is checked.
-     *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientUserReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @return the object itself ({@link ru.clevertec.service.dto.ClientUserReadDto})
-     */
-    @Override
-    public Object take(Object id, Object target) {
-        String compositeId = id + ":" + target;
+    public Object take(String key, String cacheName) {
+        String compositeId = key + ":" + cacheName;
         CacheElm cacheElm = (CacheElm) map.get(compositeId);
         Object obj = cacheElm.getValue();
         setUpdatedCacheInf(compositeId, obj);
-        deleteUnusedLongTime(map, sortedMap);
         return obj;
     }
 
     private void removeElm() {
         CacheElm firstKeyForRemove = sortedMap.firstKey();
-        String removed = sortedMap.remove(firstKeyForRemove);
-        map.remove(removed);
+        String compositeId = sortedMap.remove(firstKeyForRemove);
+        map.remove(compositeId);
+        deleteTimer(compositeId);
     }
 
-    private boolean isTimeForDeleting(CacheElm inf) {
-        if (clearTime == null) {
-            return false;
-        }
-        LocalDateTime lastTimeUse = inf.getLastTimeUse();
-        Duration realDurationStorage = Duration.between(lastTimeUse, LocalDateTime.now());
-        long secondsInStorage = realDurationStorage.getSeconds();
-        return secondsInStorage >= clearTime;
-    }
-
-    private void putNewCacheElm(Object value, String compositeId) {
+    private void putNewCacheElm(String compositeId, Object value) {
         CacheElm cacheElm = new CacheElm();
         cacheElm.setQuantityUse(1);
-        cacheElm.setLastTimeUse(LocalDateTime.now());
         cacheElm.setValue(value);
         map.put(compositeId, cacheElm);
         sortedMap.put(cacheElm, compositeId);
-    }
-
-    private void deleteUnusedLongTime(Map<String, Object> map, SortedMap<CacheElm, String> sortedMap) {
-        List<CacheElm> listForDelete = sortedMap.keySet().stream()
-                .filter(this::isTimeForDeleting).toList();
-        listForDelete.forEach((key) -> {
-            String keyForMap = sortedMap.remove(key);
-            map.remove(keyForMap);
-        });
-    }
-
-    private void setUpdatedCacheInf(String compositeId, Object value) {
-        CacheElm cacheElm = (CacheElm) map.get(compositeId);
-        cacheElm.setLastTimeUse(LocalDateTime.now());
-        cacheElm.setQuantityUse(cacheElm.getQuantityUse() + 1);
-        cacheElm.setValue(value);
+        scheduleRemoval(compositeId);
     }
 }

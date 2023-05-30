@@ -12,4 +12,7 @@ import org.springframework.stereotype.Component;
 @Target(ElementType.METHOD)
 @ConditionalOnProperty(name = "app.cache.enable", havingValue = "true")
 public @interface CacheDelete {
+    String key() default "";
+
+    String cacheName() default "";
 }

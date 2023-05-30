@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    @CachePutPost
+    @CachePutPost(key = "#result.id", cacheName = "comment")
     @CachePut(value = "comment", key = "#result.id")
     @LogInvocation
     public ClientCommentReadDto create(ClientCommentCreateDto clientCommentCreateDto) {
@@ -62,8 +62,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @CachePutPost
-    @CachePut(value = "comment", key = "#clientCommentUpdateDto.id")
+    @CachePutPost(key = "#result.id", cacheName = "comment")
+    @CachePut(value = "comment", key = "#result.id")
     @LogInvocation
     public ClientCommentReadDto update(ClientCommentUpdateDto clientCommentUpdateDto) {
         UserDto userDto = userClient.getByEmail(clientCommentUpdateDto.getEmail());
@@ -78,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @CacheDelete
+    @CacheDelete(key = "#id", cacheName = "comment")
     @CacheEvict(value = "comment", key = "#id")
     @LogInvocation
     public void delete(Long id) {
@@ -102,8 +102,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @CacheGet
-    @Cacheable(value = "comment")
+    @CacheGet(cacheName = "comment", key = "#id")
+    @Cacheable(value = "comment", key = "#id")
     @LogInvocation
     public ClientCommentReadDto findById(Long id) {
         CommentReadDto commentReadDto = newsClient.getCommentById(id);

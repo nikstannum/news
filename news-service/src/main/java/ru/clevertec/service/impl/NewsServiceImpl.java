@@ -91,7 +91,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @CacheGet
+    @CacheGet(cacheName = "news", key = "#id + ' '+  #page + ' ' +  #size")
     @Cacheable(value = "news", key = "#id + ' '+  #page + ' ' +  #size")
     @LogInvocation
     public ClientNewsReadDto findById(Long id, Integer page, Integer size) {
@@ -163,7 +163,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @CachePutPost
+    @CachePutPost(key = "#result.id", cacheName = "news")
     @CachePut(value = "news", key = "#result.id")
     @LogInvocation
     public ClientNewsReadDto create(ClientNewsCreateDto clientNewsCreateDto) {
@@ -181,8 +181,8 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @CachePutPost
-    @CachePut(value = "news", key = "#clientNewsUpdateDto.id")
+    @CachePutPost(key = "#result.id", cacheName = "news")
+    @CachePut(value = "news", key = "#result.id")
     @LogInvocation
     public ClientNewsReadDto update(Long id, ClientNewsUpdateDto clientNewsUpdateDto) {
         String email = clientNewsUpdateDto.getEmail();
@@ -195,7 +195,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @CacheDelete
+    @CacheDelete(key = "#id", cacheName = "news")
     @CacheEvict(value = "news", key = "#id")
     @LogInvocation
     public void delete(Long id) {

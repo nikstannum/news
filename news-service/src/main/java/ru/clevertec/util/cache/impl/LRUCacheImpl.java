@@ -1,8 +1,11 @@
 package ru.clevertec.util.cache.impl;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.util.cache.Cache;
 
@@ -12,87 +15,99 @@ import ru.clevertec.util.cache.Cache;
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
-    private final LinkedList<String> keyList;
+    private final Deque<String> keyList;
+    private final Map<String, Timer> timers;
     @Value("${app.cache.size}")
-    private int size;
+    private int cacheSize;
+    @Value("${app.cache.time-to-live}")
+    private Integer expirationTime;
 
     public LRUCacheImpl() {
-        this.map = new HashMap<>();
-        this.keyList = new LinkedList<>();
+        this.timers = new ConcurrentHashMap<>(cacheSize);
+        this.map = new ConcurrentHashMap<>();
+        this.keyList = new ConcurrentLinkedDeque<>();
     }
 
     /**
      * Method for placing an object in the cache.
      *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})
-     *               unique identifier
-     * @param target the object on which the method is called
-     * @param value  the object itself ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})
+     * @param key       computed based on expression language
+     * @param cacheName the name given to the cached object. Used when compiling a composite key to access a cached object
+     * @param value     the object itself
      */
     @Override
-    public void put(Object id, Object target, Object value) {
-        String compositeId = id + ":" + target;
-        if (contains(id, target)) {
+    public void put(String key, String cacheName, Object value) {
+        String compositeId = key + ":" + cacheName;
+        if (map.containsKey(compositeId)) {
             moveToFirst(compositeId, value);
             return;
         }
-        if (keyList.size() == size) {
+        if (keyList.size() == cacheSize) {
             String forRemove = keyList.removeLast();
             map.remove(forRemove);
         }
         keyList.addFirst(compositeId);
         map.put(compositeId, value);
+        scheduleRemoval(compositeId);
     }
 
     /**
-     * Method for removing an object from the cache. The return value is used to log the fact that the object was removed from the cache.
-     * If a null value has entered the cache, the fact of deletion is logged at the error level.
+     * Method for removing an object from the cache.
      *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @return object removed from the cache
+     * @param key       computed based on expression language
+     * @param cacheName the name given to the cached object. Used when compiling a composite key to access a cached object
      */
     @Override
-    public Object delete(Object id, Object target) {
-        if (contains(id, target)) {
-            String compositeId = id + ":" + target;
+    public void delete(String key, String cacheName) {
+        String compositeId = key + ":" + cacheName;
+        if (map.containsKey(compositeId)) {
+            deleteTimer(compositeId);
             keyList.remove(compositeId);
-            return map.remove(compositeId);
+            map.remove(compositeId);
         }
-        return null;
     }
 
     /**
-     * Method for checking if an object is in the cache.
+     * Method for getting an object from the cache.
      *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @return true if the object being looked up is in the cache, otherwise false
+     * @param key       computed based on expression language
+     * @param cacheName the name given to the cached object. Used when compiling a composite key to access a cached object
+     * @return the object itself
      */
     @Override
-    public boolean contains(Object id, Object target) {
-        String compositeId = id + ":" + target;
-        return map.containsKey(compositeId);
-    }
-
-    /**
-     * Method for getting an object from the cache. Before getting an object, the fact of its presence in the cache is checked.
-     *
-     * @param id     object ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto}) unique identifier
-     * @param target the object on which the method is called
-     * @return the object itself ({@link ru.clevertec.service.dto.ClientNewsReadDto} or {@link ru.clevertec.service.dto.ClientCommentReadDto})
-     */
-    @Override
-    public Object take(Object id, Object target) {
-        String compositeId = id + ":" + target;
+    public Object take(String key, String cacheName) {
+        String compositeId = key + ":" + cacheName;
         Object value = map.get(compositeId);
         moveToFirst(compositeId, value);
         return value;
     }
 
     private void moveToFirst(String compositeId, Object value) {
+        deleteTimer(compositeId);
         keyList.remove(compositeId);
         keyList.addFirst(compositeId);
         map.put(compositeId, value);
+        scheduleRemoval(compositeId);
+    }
+
+    private void deleteTimer(String compositeId) {
+        Timer timer = timers.get(compositeId);
+        if (timer != null) {
+            timer.cancel();
+            timers.remove(compositeId);
+        }
+    }
+
+    private void scheduleRemoval(String compositeId) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                map.remove(compositeId);
+                timers.remove(compositeId);
+                timer.cancel();
+            }
+        }, expirationTime * 1000);
+        timers.put(compositeId, timer);
     }
 }

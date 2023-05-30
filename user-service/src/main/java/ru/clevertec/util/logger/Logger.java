@@ -23,7 +23,7 @@ public class Logger {
      * @param jp join point for advice
      */
 
-    @AfterReturning("@annotation(LogInvocation) && !within(ru.clevertec.web..*)")
+    @AfterReturning("@annotation(LogInvocation)")
     private void loggingInfo(JoinPoint jp) {
         log.info("Method " + jp.getSignature().getName() + " with args " + Arrays.toString(jp.getArgs())
                 + " on the object " + jp.getTarget() + " was called successfully.");
@@ -37,62 +37,6 @@ public class Logger {
     @AfterThrowing(pointcut = "@annotation(LogInvocation) && within(ru.clevertec.client.FeignErrorDecoder)", throwing = "e")
     private void loggingError(Exception e) {
         log.error(String.valueOf(e));
-    }
-
-
-    @Pointcut("execution(* ru.clevertec..Cache.take(..))")
-    public void takeFromCache() {
-    }
-
-    /**
-     * Logging the fact of getting an object from the cache. The pointcut is defined in takeFromCache().
-     *
-     * @param returnValue object retrieved from cache
-     */
-    @AfterReturning(value = "takeFromCache()", returning = "returnValue")
-    private void loggingTakeFromCache(Object returnValue) {
-        if (returnValue != null) {
-            log.info("taken from cache " + returnValue);
-        } else {
-            log.error("cache returned null value");
-        }
-    }
-
-    @Pointcut("execution(* ru.clevertec..Cache.put(..))")
-    public void putIntoCache() {
-    }
-
-    /**
-     * Logging the fact of placing an object in the cache. Pointcut is defined in putIntoCache()
-     *
-     * @param jp join point for advice
-     */
-    @AfterReturning(value = "putIntoCache()")
-    private void loggingPutInCache(JoinPoint jp) {
-        Object value = jp.getArgs()[2];
-        if (value != null) {
-            log.info("put in cache " + value);
-        } else {
-            log.error("cache set to null");
-        }
-    }
-
-    @Pointcut("execution(* ru.clevertec..Cache.delete(..))")
-    public void deleteFromCache() {
-    }
-
-    /**
-     * Logging the fact of deleting an object from the cache. The pointcut is defined in deleteFromCache()
-     *
-     * @param returnValue object removed from the cache
-     */
-    @AfterReturning(value = "deleteFromCache()", returning = "returnValue")
-    private void loggingDeleteFromCache(Object returnValue) {
-        if (returnValue != null) {
-            log.info("delete from cache " + returnValue);
-        } else {
-            log.error("the cache contained a null value");
-        }
     }
 
     @Pointcut("within(ru.clevertec.web.RestUserController)")

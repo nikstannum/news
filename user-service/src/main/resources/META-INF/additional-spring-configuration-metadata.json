@@ -18,7 +18,7 @@
     {
       "name": "app.cache.time-to-live",
       "type": "java.lang.Long",
-      "description": "Application LFU cache time to live"
+      "description": "Application LFU cache time to live in seconds"
     },
     {
       "name": "app.jwt.access.secret",

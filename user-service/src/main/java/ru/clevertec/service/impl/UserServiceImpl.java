@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
 
     @Override
-    @CacheGet
+    @CacheGet(cacheName = "user", key = "#id")
     @Cacheable(value = "user")
     @LogInvocation
     public ClientUserReadDto findById(Long id) {
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CachePutPost
+    @CachePutPost(key = "#result.id", cacheName = "user")
     @CachePut(value = "user", key = "#result.id")
     @LogInvocation
     public ClientUserReadDto create(ClientUserCreateDto dto) {
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CachePutPost
+    @CachePutPost(key = "#result.id", cacheName = "user")
     @CachePut(value = "user", key = "#clientUserUpdateDto.id")
     @LogInvocation
     public ClientUserReadDto update(ClientUserUpdateDto clientUserUpdateDto) {
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheDelete
+    @CacheDelete(key = "#id", cacheName = "user")
     @CacheEvict(value = "user", key = "#id")
     @LogInvocation
     public void delete(Long id) {
