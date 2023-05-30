@@ -3,15 +3,14 @@ package ru.clevertec.security.filter;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
 import ru.clevertec.security.utils.JwtAuthentication;
 import ru.clevertec.security.utils.JwtAuthenticationGenerator;
 import ru.clevertec.security.utils.JwtValidator;
@@ -21,7 +20,7 @@ import ru.clevertec.security.utils.JwtValidator;
  */
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter extends HttpFilter {
 
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER_ = "Bearer ";
@@ -40,8 +39,8 @@ public class JwtFilter extends GenericFilterBean {
      * @throws ServletException if an exception has occurred that interferes with the filterChain's normal operation
      */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        final String token = getTokenFromRequest((HttpServletRequest) request);
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        final String token = getTokenFromRequest(request);
         if (token != null && validator.validateAccessToken(token)) {
             Claims claims = validator.getAccessClaims(token);
             JwtAuthentication authentication = JwtAuthenticationGenerator.generate(claims);

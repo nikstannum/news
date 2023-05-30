@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.clevertec.service.filter.FilterHandler;
 import ru.clevertec.service.filter.JwtFilter;
 
 @Configuration
@@ -25,6 +26,7 @@ public class SecurityConfig {
     };
 
     private final JwtFilter jwtFilter;
+    private final FilterHandler filterHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -33,6 +35,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .csrf().disable()
+                .addFilterBefore(filterHandler, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/v1/security/login", "/v1/security/token").permitAll()

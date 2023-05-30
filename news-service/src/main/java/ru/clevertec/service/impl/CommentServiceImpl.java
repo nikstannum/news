@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.clevertec.cache.CacheDelete;
+import ru.clevertec.cache.CacheGet;
+import ru.clevertec.cache.CachePutPost;
 import ru.clevertec.client.NewsDataServiceClient;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.CommentCreateDto;
@@ -27,9 +30,6 @@ import ru.clevertec.service.dto.QueryParamsComment;
 import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.mapper.AuthorMapper;
 import ru.clevertec.service.mapper.CommentMapper;
-import ru.clevertec.util.cache.CacheDelete;
-import ru.clevertec.util.cache.CacheGet;
-import ru.clevertec.util.cache.CachePutPost;
 import ru.clevertec.util.logger.LogInvocation;
 
 @Service

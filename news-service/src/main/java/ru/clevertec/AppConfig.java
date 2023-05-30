@@ -9,10 +9,10 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
-import ru.clevertec.util.cache.Cache;
-import ru.clevertec.util.cache.CacheAdvice;
-import ru.clevertec.util.cache.impl.LFUCacheImpl;
-import ru.clevertec.util.cache.impl.LRUCacheImpl;
+import ru.clevertec.cache.Cache;
+import ru.clevertec.cache.CacheAdvice;
+import ru.clevertec.cache.impl.LFUCacheImpl;
+import ru.clevertec.cache.impl.LRUCacheImpl;
 
 /**
  * Class with configuration for microservice excluding security management

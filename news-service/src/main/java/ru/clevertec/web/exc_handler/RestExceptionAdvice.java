@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.clevertec.service.dto.error.ErrorDto;
 import ru.clevertec.service.dto.error.ValidationResultDto;
 import ru.clevertec.service.exception.AppNewsServiceException;
+import ru.clevertec.service.exception.AuthenticationException;
 import ru.clevertec.service.exception.BadRequestException;
 import ru.clevertec.service.exception.NotFoundException;
 import ru.clevertec.service.exception.ValidationException;
@@ -21,7 +22,7 @@ import ru.clevertec.service.exception.ValidationException;
 /**
  * Class for handling exceptions that occur during application operation.
  */
-@RestControllerAdvice("ru.clevertec")
+@RestControllerAdvice(basePackages = "ru.clevertec")
 public class RestExceptionAdvice {
     private static final String MSG_SERVER_ERROR = "Server error";
     private static final String MSG_CLIENT_ERROR = "Client error";
@@ -62,6 +63,12 @@ public class RestExceptionAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDto error(AccessDeniedException e) {
+        return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto error(AuthenticationException e) {
         return new ErrorDto(MSG_CLIENT_ERROR, e.getMessage());
     }
 

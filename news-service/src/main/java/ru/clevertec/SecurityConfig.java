@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.clevertec.security.filter.FilterHandler;
 import ru.clevertec.security.filter.JwtFilter;
 
 /**
@@ -30,6 +31,7 @@ public class SecurityConfig {
             "/swagger-ui.html"
     };
     private final JwtFilter jwtFilter;
+    private final FilterHandler filterHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,6 +39,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(filterHandler, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers(DOCUMENTATION).permitAll()

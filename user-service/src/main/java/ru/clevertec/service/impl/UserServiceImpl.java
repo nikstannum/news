@@ -8,6 +8,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.clevertec.cache.CacheDelete;
+import ru.clevertec.cache.CacheGet;
+import ru.clevertec.cache.CachePutPost;
 import ru.clevertec.client.UserDataServiceClient;
 import ru.clevertec.client.dto.UserCreateDto;
 import ru.clevertec.client.dto.UserReadDto;
@@ -17,9 +20,6 @@ import ru.clevertec.service.dto.ClientUserCreateDto;
 import ru.clevertec.service.dto.ClientUserReadDto;
 import ru.clevertec.service.dto.ClientUserUpdateDto;
 import ru.clevertec.service.mapper.UserMapper;
-import ru.clevertec.util.cache.CacheDelete;
-import ru.clevertec.util.cache.CacheGet;
-import ru.clevertec.util.cache.CachePutPost;
 import ru.clevertec.util.logger.LogInvocation;
 
 /**
