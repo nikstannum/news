@@ -2,24 +2,25 @@ package ru.clevertec.util.cache.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.TreeMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.util.cache.Cache;
 import ru.clevertec.util.cache.CacheElm;
 
 /**
- * Implementation of the LFU Cache. When performing operations with the cache, the time spent by objects in the cache is checked.
- * If the time spent by objects exceeds the set value, then these objects are removed from the cache.
+ * Implementation of the LFU Cache. When performing operations with the cache, the time spent by objects in the cache is checked. If the time spent by objects exceeds the set value, then these objects are removed from the cache.
  */
 public class LFUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
     private final Map<String, Timer> timers;
-    private final NavigableMap<CacheElm, String> sortedMap;
+    private final TreeMap<CacheElm, String> sortedMap;
+    private final Lock lock = new ReentrantLock(true);
     @Value("${app.cache.size}")
     private int cacheSize;
     @Value("${app.cache.time-to-live}")
@@ -27,8 +28,8 @@ public class LFUCacheImpl implements Cache {
 
     public LFUCacheImpl() {
         this.timers = new HashMap<>(cacheSize);
-        this.map = new ConcurrentHashMap<>(cacheSize);
-        this.sortedMap = new ConcurrentSkipListMap<>((o1, o2) -> {
+        this.map = new HashMap<>(cacheSize);
+        this.sortedMap = new TreeMap<>((o1, o2) -> {
             Integer quantity1 = o1.getQuantityUse();
             Integer quantity2 = o2.getQuantityUse();
             if (!quantity1.equals(quantity2)) {
@@ -48,14 +49,17 @@ public class LFUCacheImpl implements Cache {
     @Override
     public void put(String key, String cacheName, Object value) {
         String compositeId = key + ":" + cacheName;
+        lock.lock();
         if (map.containsKey(compositeId)) {
             setUpdatedCacheInf(compositeId, value);
+            lock.unlock();
             return;
         }
         if (cacheSize == map.size()) {
             removeElm();
         }
         putNewCacheElm(compositeId, value);
+        lock.unlock();
     }
 
     private void scheduleRemoval(String compositeId) {
@@ -89,12 +93,18 @@ public class LFUCacheImpl implements Cache {
     @Override
     public void delete(String key, String cacheName) {
         String compositeId = key + ":" + cacheName;
+        lock.lock();
         if (map.containsKey(compositeId)) {
             deleteTimer(compositeId);
             Object obj = map.remove(compositeId);
+            if (obj == null) {
+                lock.unlock();
+                return;
+            }
             CacheElm cacheElm = (CacheElm) obj;
             sortedMap.remove(cacheElm);
         }
+        lock.unlock();
     }
 
     private void deleteTimer(String compositeId) {
@@ -104,7 +114,6 @@ public class LFUCacheImpl implements Cache {
             timers.remove(compositeId);
         }
     }
-
 
     /**
      * Method for getting an object from the cache.
@@ -116,9 +125,15 @@ public class LFUCacheImpl implements Cache {
     @Override
     public Object take(String key, String cacheName) {
         String compositeId = key + ":" + cacheName;
+        lock.lock();
         CacheElm cacheElm = (CacheElm) map.get(compositeId);
+        if (Objects.isNull(cacheElm)) {
+            lock.unlock();
+            return null;
+        }
         Object obj = cacheElm.getValue();
         setUpdatedCacheInf(compositeId, obj);
+        lock.unlock();
         return obj;
     }
 

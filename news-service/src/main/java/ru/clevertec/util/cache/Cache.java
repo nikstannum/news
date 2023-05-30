@@ -4,7 +4,8 @@ package ru.clevertec.util.cache;
  * Application cache interface. Implementation classes: {@link ru.clevertec.util.cache.impl.LRUCacheImpl},
  * {@link ru.clevertec.util.cache.impl.LFUCacheImpl}
  */
-public interface Cache { // TODO javadoc
+public interface Cache {
+
     /**
      * Method for placing an object in the cache.
      *

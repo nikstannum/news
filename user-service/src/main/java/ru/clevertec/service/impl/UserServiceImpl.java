@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CachePutPost(key = "#result.id", cacheName = "user")
-    @CachePut(value = "user", key = "#clientUserUpdateDto.id")
+    @CachePut(value = "user", key = "#result.id")
     @LogInvocation
     public ClientUserReadDto update(ClientUserUpdateDto clientUserUpdateDto) {
         UserUpdateDto user = mapper.toUserUpdateDto(clientUserUpdateDto);

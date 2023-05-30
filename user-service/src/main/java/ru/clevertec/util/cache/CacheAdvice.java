@@ -2,8 +2,6 @@ package ru.clevertec.util.cache;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -22,7 +20,6 @@ public class CacheAdvice {
     private final Cache cache;
     private final ExpressionParser parser;
     private final EvaluationContext context;
-    private final Lock lock = new ReentrantLock(true);
 
     /**
      * The advice to apply when trying to get an object. If the object is not in the cache, the application continues to work to get the object
@@ -39,15 +36,12 @@ public class CacheAdvice {
         CacheGet annotation = method.getAnnotation(CacheGet.class);
         String cacheName = annotation.cacheName();
         String key = generateKey(annotation.key(), jp);
-        lock.lock();
         Object object = cache.take(key, cacheName);
         if (Objects.nonNull(object)) {
-            lock.unlock();
             return object;
         } else {
             Object value = jp.proceed();
             cache.put(key, cacheName, value);
-            lock.unlock();
             return value;
         }
     }
@@ -77,10 +71,16 @@ public class CacheAdvice {
         MethodSignature signature = (MethodSignature) jp.getSignature();
         Method method = signature.getMethod();
         CachePutPost annotation = method.getAnnotation(CachePutPost.class);
-        String key = annotation.key();
+        String key = generateKeyForPostPut(value, annotation.key());
         String cacheName = annotation.cacheName();
         cache.put(key, cacheName, value);
         return value;
+    }
+
+    private String generateKeyForPostPut(Object object, String keyExpression) {
+        context.setVariable("result", object);
+        Expression expression = parser.parseExpression(keyExpression);
+        return expression.getValue(context, String.class);
     }
 
     /**
@@ -95,7 +95,7 @@ public class CacheAdvice {
         MethodSignature signature = (MethodSignature) jp.getSignature();
         Method method = signature.getMethod();
         CacheDelete annotation = method.getAnnotation(CacheDelete.class);
-        String key = annotation.key();
+        String key = generateKey(annotation.key(), jp);
         String cacheName = annotation.cacheName();
         cache.delete(key, cacheName);
         jp.proceed();

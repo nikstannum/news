@@ -1,11 +1,12 @@
 package ru.clevertec.util.cache.impl;
 
-import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.springframework.beans.factory.annotation.Value;
 import ru.clevertec.util.cache.Cache;
 
@@ -15,17 +16,18 @@ import ru.clevertec.util.cache.Cache;
 public class LRUCacheImpl implements Cache {
 
     private final Map<String, Object> map;
-    private final Deque<String> keyList;
+    private final LinkedList<String> keyList;
     private final Map<String, Timer> timers;
+    private final Lock lock = new ReentrantLock(true);
     @Value("${app.cache.size}")
     private int cacheSize;
     @Value("${app.cache.time-to-live}")
     private Integer expirationTime;
 
     public LRUCacheImpl() {
-        this.timers = new ConcurrentHashMap<>(cacheSize);
-        this.map = new ConcurrentHashMap<>();
-        this.keyList = new ConcurrentLinkedDeque<>();
+        this.timers = new HashMap<>(cacheSize);
+        this.map = new HashMap<>();
+        this.keyList = new LinkedList<>();
     }
 
     /**
@@ -38,8 +40,10 @@ public class LRUCacheImpl implements Cache {
     @Override
     public void put(String key, String cacheName, Object value) {
         String compositeId = key + ":" + cacheName;
+        lock.lock();
         if (map.containsKey(compositeId)) {
             moveToFirst(compositeId, value);
+            lock.unlock();
             return;
         }
         if (keyList.size() == cacheSize) {
@@ -49,6 +53,7 @@ public class LRUCacheImpl implements Cache {
         keyList.addFirst(compositeId);
         map.put(compositeId, value);
         scheduleRemoval(compositeId);
+        lock.unlock();
     }
 
     /**
@@ -60,12 +65,15 @@ public class LRUCacheImpl implements Cache {
     @Override
     public void delete(String key, String cacheName) {
         String compositeId = key + ":" + cacheName;
+        lock.lock();
         if (map.containsKey(compositeId)) {
             deleteTimer(compositeId);
             keyList.remove(compositeId);
             map.remove(compositeId);
         }
+        lock.unlock();
     }
+
 
     /**
      * Method for getting an object from the cache.
@@ -77,8 +85,10 @@ public class LRUCacheImpl implements Cache {
     @Override
     public Object take(String key, String cacheName) {
         String compositeId = key + ":" + cacheName;
+        lock.lock();
         Object value = map.get(compositeId);
         moveToFirst(compositeId, value);
+        lock.unlock();
         return value;
     }
 
