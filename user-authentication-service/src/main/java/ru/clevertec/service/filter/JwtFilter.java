@@ -3,15 +3,14 @@ package ru.clevertec.service.filter;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
 import ru.clevertec.service.util.JwtAuthentication;
 import ru.clevertec.service.util.JwtAuthenticationGenerator;
 import ru.clevertec.service.util.JwtValidator;
@@ -21,7 +20,7 @@ import ru.clevertec.service.util.JwtValidator;
  */
 @Component
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter extends HttpFilter {
 
 
     private static final String AUTHORIZATION = "Authorization";
@@ -31,23 +30,23 @@ public class JwtFilter extends GenericFilterBean {
     /**
      * Method for filtering requests in a filter embedded in a filter chain.
      *
-     * @param request  The request to process
-     * @param response The response associated with the request
-     * @param chain    Provides access to the next filter in the chain for this filter to pass the request and response
-     *                 to for further processing
+     * @param req   The request to process
+     * @param res   The response associated with the request
+     * @param chain Provides access to the next filter in the chain for this filter to pass the request and response
+     *              to for further processing
      * @throws IOException      if an I/O related error has occurred during the processing
      * @throws ServletException if an exception has occurred that interferes with the filterChain's normal operation
      */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String token = getTokenFromRequest((HttpServletRequest) request);
+    public void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, IOException {
+        String token = getTokenFromRequest(req);
         if (token != null && validator.validateAccessToken(token)) {
             Claims claims = validator.getAccessClaims(token);
             JwtAuthentication authentication = JwtAuthenticationGenerator.generate(claims);
             authentication.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        chain.doFilter(request, response);
+        chain.doFilter(req, res);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
